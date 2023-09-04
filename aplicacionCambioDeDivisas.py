@@ -40,7 +40,7 @@ monto_origen = st.number_input(f"Ingrese el monto en {divisa_origen}:", min_valu
 
 # Calcular el monto en la divisa de destino
 codigo_origen= df.loc[df['Divisa'] == divisa_origen, 'codigos'].values[0]
-codigo_destino= df.loc[df['Divisa'] == divisa_origen, 'codigos'].values[0]
+codigo_destino= df.loc[df['Divisa'] == divisa_destino, 'codigos'].values[0]
 tasa_origen = df.loc[df['Divisa'] == divisa_origen, 'Tasa de Cambio a USD'].values[0]
 tasa_destino = df.loc[df['Divisa'] == divisa_destino, 'Tasa de Cambio a USD'].values[0]
 monto_destino = (monto_origen / tasa_origen) * tasa_destino
