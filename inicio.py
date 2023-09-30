@@ -21,6 +21,10 @@ list_recetas = [
         "nombre": "Pasta Marinara",
         "ingredientes": ["pasta", "salsa de tomate", "albahaca", "queso"]
     },
+    {
+        "nombre": "Arroz con pollo",
+        "ingredientes": ["arroz", "pollo", "cebolla", "zanahoria"]
+    }
 ]
 # Obtener la divisa de origen y destino
 ingredientes_usuario = st.multiselect("Selecciona los ingredientes:", list_ingredientes)
