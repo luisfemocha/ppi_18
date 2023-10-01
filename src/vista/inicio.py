@@ -3,7 +3,47 @@ import streamlit as st
 
 import numpy as np
 import pandas as pd
-import matplotlib
+import random
+
+import formularios
+import extras
+
+try:
+    from control import util
+except:
+    import os
+    import sys
+
+    # Obtiene el directorio del script actual (inicio.py)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Obtiene el directorio del padre (src)
+    parent_dir = os.path.dirname(current_dir)
+
+    # Agrega el directorio del padre al sys.path
+    sys.path.append(parent_dir)
+
+    from control import util
+
+try:
+    import matplotlib
+except:
+    # TODO
+    print("Problemas para importar matplotlib")
+
+st.sidebar.title("Cuenta")
+
+# Opción para registrarse
+if st.sidebar.button("Registrarse"):
+    formularios.desplegarForm('registro')
+
+# Opción para iniciar sesión
+if st.sidebar.button("Iniciar Sesión"):
+    formularios.desplegarForm('ingreso')
+
+# Contenido principal de la aplicación
+st.title("Aplicación Principal")
+st.write("Este es el contenido principal de tu aplicación.")
 
 # Configurar la aplicacion Streamlit
 st.title("Appetito")
