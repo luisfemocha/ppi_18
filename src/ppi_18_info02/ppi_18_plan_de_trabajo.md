@@ -1,2 +1,0 @@
-Listado de actividades
-
