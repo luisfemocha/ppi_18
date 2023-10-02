@@ -1,0 +1,5 @@
+# Librerias necesarias para el programa
+matplotlib
+numpy
+pandas
+streamlit
