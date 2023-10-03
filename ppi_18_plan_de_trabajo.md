@@ -27,7 +27,7 @@
 | Tarea                                 | Responsable                                           | Estado       |
 | ------------------------------------- | ---------------------------------------------------- | ------------ |
 | Filtrar recetas por fit, sencilla     | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
-| Filtrar receta (comidas, postres, bebidas) | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo        |
+| Filtrar receta (comidas, postres, bebidas) | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
 | Detalle de receta                     | [Luis Felipe Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
 | Reseñas de las recetas                | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
 
