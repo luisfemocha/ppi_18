@@ -48,7 +48,6 @@ st.write("Este es el contenido principal de tu aplicación.")
 # Configurar la aplicacion Streamlit
 st.title("Appetito")
 st.title("Daniel")
-st.title("Jean")
 st.title("Luis")
 
 # Ingredientes para iniciar la prueba
