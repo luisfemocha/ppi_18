@@ -1,23 +1,54 @@
-Actividades:
+# Agenda de Trabajo
 
-    Investigación y recolección de recetas: Responsable - Daniel Garzón
-  
-    Creación y gestión de la base de datos de recetas: Responsable - Daniel Garzón
-  
-    Implementación de la lógica de la aplicación (búsqueda y recomendación de recetas): Responsable - Luis Felipe Moreno Chamorro
-  
-    Pruebas e integración: Responsable - Todos los miembros del equipo
-  
-    Despliegue de la aplicación: Responsable - Luis Felipe Moreno Chamorro
+## 25/09/2023 - 02/10/2023
+| Tarea                                 | Responsable                                           | Estado   |
+| ------------------------------------- | ---------------------------------------------------- | -------- |
+| hola mundo                            | [Luis Felipe Chamorro](https://github.com/Luisfemocha) y [Daniel Felipe Garzon Acosta](https://github.com/Dgarzonac9) | Listo    |
+| Estructura de código                 | [Luis Felipe Chamorro](https://github.com/Luisfemocha) y [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo    |
+| Definición del calendario             | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo    |
+| Creación de repositorio compartido    | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Listo    |
+| Despliegue inicial de aplicativo      | [Luis Fernando Chamorro](https://github.com/Luisfemocha) y [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo    |
 
-Contenidos de los informes:
+## 02/10/2023 - 09/10/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Inicio de sesión que permita autenticar a los usuarios | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+| Investigación y recolección de recetas | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
 
-    Informe 03: Descripción detallada del proceso de investigación y recolección de recetas, incluyendo las fuentes utilizadas y cualquier desafío encontrado.
-  
-    Informe 04: Explicación detallada de cómo se creó y se gestiona la base de datos de recetas, incluyendo cómo se almacenan, recuperan y utilizan los datos.
-  
-    Informe 05: Descripción detallada de cómo se implementó la lógica de la aplicación, incluyendo cómo se realizan las búsquedas y las recomendaciones de recetas.
-  
-    Informe 06: Resultados de las pruebas realizadas, problemas encontrados durante la integración y cómo se resolvieron.
-  
-    Informe 07: Detalles sobre el despliegue de la aplicación, incluyendo dónde y cómo se aloja y cualquier problema o desafío encontrado durante el proceso.
+## 16/10/2023 - 23/10/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Diseño de barra de navegacion                     | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Perfil de usuario                     | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+| Creación de base de datos recetas     | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Visualización de recetas (página principal) | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+
+## 23/10/2023 - 30/10/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Filtrar recetas por fit, sencilla     | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+| Filtrar receta (comidas, postres, bebidas) | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Detalle de receta                     | [Luis Felipe Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+| Reseñas de las recetas                | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+
+## 30/10/2023 - 06/11/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Filtros de búsqueda de recetas por ingredientes | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Registrar recetas para los usuarios    | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+
+## 06/11/2023 - 13/11/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Mostrar gráficas de detalles nutricionales | [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+| Pasos de las recetas                  | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+
+## 13/11/2023 - 20/11/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Pruebas e integración                 | [Luis Fernando Chamorro](https://github.com/Luisfemocha) y [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+
+## 20/11/2023 - 27/11/2023
+| Tarea                                 | Responsable                                           | Estado       |
+| ------------------------------------- | ---------------------------------------------------- | ------------ |
+| Pruebas finales y correcciones         | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) y [Luis Fernando Chamorro](https://github.com/Luisfemocha) | Sin Empezar |
