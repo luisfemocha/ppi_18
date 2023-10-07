@@ -3,13 +3,12 @@ import streamlit as st
 
 import numpy as np
 import pandas as pd
-import random
 
 import formularios
 import extras
 
 try:
-    from control import util
+    import control.utils as utils
 except:
     import os
     import sys
@@ -23,7 +22,7 @@ except:
     # Agrega el directorio del padre al sys.path
     sys.path.append(parent_dir)
 
-    from control import util
+    import control.utils as utils
 
 try:
     import matplotlib
@@ -34,52 +33,22 @@ except:
 st.sidebar.title("Cuenta")
 
 # Opción para registrarse
-if st.sidebar.button("Registrarse"):
+if st.sidebar.button("Registrarse", key="registro"):
     formularios.desplegarForm('registro')
 
 # Opción para iniciar sesión
-if st.sidebar.button("Iniciar Sesión"):
+if st.sidebar.button("Iniciar Sesión", key="ingreso"):
     formularios.desplegarForm('ingreso')
 
-# Contenido principal de la aplicación
-st.title("Aplicación Principal")
-st.write("Este es el contenido principal de tu aplicación.")
+with st.empty():
+    with st.container():
+        # Configurar la aplicacion Streamlit
+        st.title("Appetito")
+        st.text("Daniel")
+        st.text("Luis")
 
-# Configurar la aplicacion Streamlit
-st.title("Appetito")
-st.title("Daniel")
-st.title("Luis")
+        list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
+        ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
 
-# Ingredientes para iniciar la prueba
-list_ingredientes = ["pollo", "pasta", "tomate", "queso", "lechuga", "zanahoria", "arroz", "cebolla"]
-
-# Recetas para la prueba
-list_recetas = [
-    {
-        "nombre": "Ensalada César",
-        "ingredientes": ["lechuga", "pollo", "crutones", "aderezo"]
-    },
-    {
-        "nombre": "Pasta Marinara",
-        "ingredientes": ["pasta", "salsa de tomate", "albahaca", "queso"]
-    },
-    {
-        "nombre": "Arroz con pollo",
-        "ingredientes": ["arroz", "pollo", "cebolla", "zanahoria"]
-    }
-]
-# Obtener la divisa de origen y destino
-ingredientes_usuario = st.multiselect("Selecciona los ingredientes:", list_ingredientes)
-ingredientes_usuario = [ingrediente.lower() for ingrediente in ingredientes_usuario]
-
-if ingredientes_usuario:
-    recetas_disponibles = []
-    for receta in list_recetas:
-        if all(ingrediente in ingredientes_usuario for ingrediente in receta["ingredientes"]):
-            recetas_disponibles.append(receta["nombre"])
-
-    if recetas_disponibles:
-        st.success("¡Aquí tienes algunas recetas que puedes hacer!")
-        st.write(random.choice(recetas_disponibles))
-    else:
-        st.warning("Lo siento, no encontré ninguna receta con esos ingredientes.")
+        if ingredientes_usuario:
+            utils.trigger_recetas(ingredientes_usuario)
