@@ -3,7 +3,7 @@
 #class conexion: def __init__(self):
 
 def get_cuentas():
-    cuentas= {
+    return {
         'Daniel': 'asddfg654654',
         'Luis': '123clave_321',
         'admin': 'grupo18_ppi'
