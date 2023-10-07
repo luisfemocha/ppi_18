@@ -5,7 +5,6 @@
 def get_cuentas():
     cuentas= {
         'Daniel': 'asddfg654654',
-        'Jean': '321_123asd',
         'Luis': '123clave_321',
         'admin': 'grupo18_ppi'
     }
@@ -17,3 +16,5 @@ def check_cuenta(usn, pas):
 def registrar_cuenta(usn, pas):
     # TODO
     print('se guarda la nueva cuenta')
+
+# Conexion a Kaggle
