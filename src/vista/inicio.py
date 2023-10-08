@@ -31,17 +31,9 @@ except:
     print("Problemas para importar matplotlib")
 
 st.sidebar.title("Cuenta")
-
-# Opción para registrarse
-if st.sidebar.button("Registrarse", key="registro"):
-    formularios.desplegarForm('registro')
-
-# Opción para iniciar sesión
-if st.sidebar.button("Iniciar Sesión", key="ingreso"):
-    formularios.desplegarForm('ingreso')
-
-with st.empty():
-    with st.container():
+home_page = st.empty()
+with home_page:
+    if st.sidebar.button("Inicio", key="inicio"):
         # Configurar la aplicacion Streamlit
         st.title("Appetito")
         st.text("Daniel")
@@ -52,3 +44,22 @@ with st.empty():
 
         if ingredientes_usuario:
             utils.trigger_recetas(ingredientes_usuario)
+# Opción para registrarse
+if st.sidebar.button("Registrarse", key="registro"):
+    formularios.desplegarForm('registro')
+    home_page.empty()
+
+# Opción para iniciar sesión
+if st.sidebar.button("Iniciar Sesión", key="ingreso"):
+    formularios.desplegarForm('ingreso')
+    home_page.empty()
+
+# Opción para registrarse
+if st.sidebar.button("Recetas fit", key="recetas_fit"):
+    formularios.recetas_fit()
+    home_page.empty()
+
+# Opción para iniciar sesión
+if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
+    formularios.recetas_sencillas()
+    home_page.empty()
