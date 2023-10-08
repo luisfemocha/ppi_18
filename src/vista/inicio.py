@@ -1,11 +1,12 @@
 # Se importan las librerias especificadas en el informe 01 y Streamlit
-import streamlit as st
-
 import numpy as np
 import pandas as pd
 
-import formularios
+import streamlit as st
+
 import extras
+import formularios
+
 
 try:
     import control.utils as utils
@@ -31,35 +32,47 @@ except:
     print("Problemas para importar matplotlib")
 
 st.sidebar.title("Cuenta")
-home_page = st.empty()
-with home_page:
-    if st.sidebar.button("Inicio", key="inicio"):
-        # Configurar la aplicacion Streamlit
-        st.title("Appetito")
-        st.text("Daniel")
-        st.text("Luis")
+pagina = "inicio"
 
-        list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
-        ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+if st.sidebar.button("Inicio", key="inicio"):
+    pagina = "inicio"
 
+if st.sidebar.button("Registrarse", key="registro"):
+    pagina = "registro"
+
+if st.sidebar.button("Iniciar Sesión", key="ingreso"):
+    pagina = "ingreso"
+
+if st.sidebar.button("Recetas fit", key="recetas_fit"):
+    pagina = "recetas_fit"
+
+if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
+    pagina = "recetas_sencillas"
+
+if pagina == "inicio":
+    # Configurar la aplicacion Streamlit
+    st.title("Appetito")
+    st.text("Daniel")
+    st.text("Luis")
+
+    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
+    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+
+    try:
         if ingredientes_usuario:
             utils.trigger_recetas(ingredientes_usuario)
-# Opción para registrarse
-if st.sidebar.button("Registrarse", key="registro"):
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+elif pagina == "registro":
     formularios.desplegarForm('registro')
-    home_page.empty()
 
-# Opción para iniciar sesión
-if st.sidebar.button("Iniciar Sesión", key="ingreso"):
+elif pagina == "ingreso":
     formularios.desplegarForm('ingreso')
-    home_page.empty()
 
-# Opción para registrarse
-if st.sidebar.button("Recetas fit", key="recetas_fit"):
+elif pagina == "recetas_fit":
     formularios.recetas_fit()
-    home_page.empty()
 
-# Opción para iniciar sesión
-if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
+elif pagina == "recetas_sencillas":
     formularios.recetas_sencillas()
-    home_page.empty()

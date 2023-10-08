@@ -31,7 +31,10 @@ def desplegarForm(option):
 def recetas_fit():
     # Aqui van a ir las recetas fit
     st.title("Recetas fit")
+    st.write("Aqui van a ir las recetas fit")
+
 
 def recetas_sencillas():
     # Aqui van a ir las recetas sencillas
     st.title("Recetas sencillas")
+    st.write("Aqui van a ir las recetas sencillas")
