@@ -1,7 +1,6 @@
 import streamlit as st
 
-import inicio
-import formularios
+import extras
 
 def show_modal(msg):
     # TODO ==> Corregir

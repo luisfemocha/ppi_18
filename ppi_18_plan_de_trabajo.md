@@ -12,8 +12,8 @@
 ## 02/10/2023 - 09/10/2023
 | Tarea                                      | Responsable                                          | Estado       |
 |--------------------------------------------| --------------------------------------------------- | ------------ |
-| Inicio de sesión con cuentas predefinidas. | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
-| Investigación y recolección de recetas.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Inicio de sesión con cuentas predefinidas. | [Luis Chamorro](https://github.com/Luisfemocha) y [Daniel Felipe Garzon](https://github.com/Dgarzonac9)| Listo  |
+| Investigación y recolección de recetas.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) y [Luis Chamorro](https://github.com/Luisfemocha)| Listo  |
 
 ## 16/10/2023 - 23/10/2023
 | Tarea                                        | Responsable                                         | Estado       |
