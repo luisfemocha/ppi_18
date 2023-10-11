@@ -1,8 +1,3 @@
-
-
-
-
-
 class Receta:
     def __init__(self, id, url, image, name, description, author, rattings, ingredients, steps, nutrients, times, serves, difficult, vote_count, subcategory, dish_type, maincategory):
         self.id = id

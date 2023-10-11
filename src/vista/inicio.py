@@ -1,56 +1,19 @@
 # Se importan las librerias especificadas en el informe 01 y Streamlit
-import numpy as np
-import pandas as pd
-
 import streamlit as st
 
+# librerias de paquete
 import extras
-import funciones as funciones
+
+# librerias de capa control
+# from control import utils
+import control.utils as utils
+
+listener_lateral = None
 
 
-try:
-    import control.utils as utils
-except:
-    import os
-    import sys
-
-    # Obtiene el directorio del script actual (inicio.py)
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Obtiene el directorio del padre (src)
-    parent_dir = os.path.dirname(current_dir)
-
-    # Agrega el directorio del padre al sys.path
-    sys.path.append(parent_dir)
-
-    import control.utils as utils
-
-try:
-    import matplotlib
-except:
-    # TODO
-    print("Problemas para importar matplotlib")
-
-st.sidebar.title("Cuenta")
-pagina = "inicio"
-
-if st.sidebar.button("Inicio", key="inicio"):
-    pagina = "inicio"
-
-if st.sidebar.button("Registrarse", key="registro"):
-    pagina = "registro"
-
-if st.sidebar.button("Iniciar Sesión", key="ingreso"):
-    pagina = "ingreso"
-
-if st.sidebar.button("Recetas fit", key="recetas_fit"):
-    pagina = "recetas_fit"
-
-if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
-    pagina = "recetas_sencillas"
-
-if pagina == "inicio":
-    # Configurar la aplicacion Streamlit
+def pagina_principal():
+    listener_lateral = extras.sidebar()
+    # Pagina principal
     st.title("Appetito")
     st.text("Daniel")
     st.text("Luis")
@@ -63,20 +26,11 @@ if pagina == "inicio":
             utils.trigger_recetas(ingredientes_usuario)
     except Exception as e:
         print(f"An error occurred: {e}")
-    funciones.footer()
 
-elif pagina == "registro":
-    funciones.desplegar_form('registro')
-    funciones.footer()
+    extras.footer()
 
-elif pagina == "ingreso":
-    funciones.desplegar_form('ingreso')
-    funciones.footer()
 
-elif pagina == "recetas_fit":
-    funciones.recetas_fit()
-    funciones.footer()
+pagina_principal()
 
-elif pagina == "recetas_sencillas":
-    funciones.recetas_sencillas()
-    funciones.footer()
+if listener_lateral != None and listener_lateral != "pagina_principal":
+    pagina_principal()
