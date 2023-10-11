@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 import extras
-import formularios
+import funciones as funciones
 
 
 try:
@@ -63,16 +63,20 @@ if pagina == "inicio":
             utils.trigger_recetas(ingredientes_usuario)
     except Exception as e:
         print(f"An error occurred: {e}")
-
+    funciones.footer()
 
 elif pagina == "registro":
-    formularios.desplegarForm('registro')
+    funciones.desplegar_form('registro')
+    funciones.footer()
 
 elif pagina == "ingreso":
-    formularios.desplegarForm('ingreso')
+    funciones.desplegar_form('ingreso')
+    funciones.footer()
 
 elif pagina == "recetas_fit":
-    formularios.recetas_fit()
+    funciones.recetas_fit()
+    funciones.footer()
 
 elif pagina == "recetas_sencillas":
-    formularios.recetas_sencillas()
+    funciones.recetas_sencillas()
+    funciones.footer()
