@@ -1,11 +1,12 @@
 # Se importan las librerias especificadas en el informe 01 y Streamlit
-import streamlit as st
-
 import numpy as np
 import pandas as pd
 
-import formularios
+import streamlit as st
+
 import extras
+import funciones as funciones
+
 
 try:
     import control.utils as utils
@@ -31,24 +32,51 @@ except:
     print("Problemas para importar matplotlib")
 
 st.sidebar.title("Cuenta")
+pagina = "inicio"
 
-# Opción para registrarse
+if st.sidebar.button("Inicio", key="inicio"):
+    pagina = "inicio"
+
 if st.sidebar.button("Registrarse", key="registro"):
-    formularios.desplegarForm('registro')
+    pagina = "registro"
 
-# Opción para iniciar sesión
 if st.sidebar.button("Iniciar Sesión", key="ingreso"):
-    formularios.desplegarForm('ingreso')
+    pagina = "ingreso"
 
-with st.empty():
-    with st.container():
-        # Configurar la aplicacion Streamlit
-        st.title("Appetito")
-        st.text("Daniel")
-        st.text("Luis")
+if st.sidebar.button("Recetas fit", key="recetas_fit"):
+    pagina = "recetas_fit"
 
-        list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
-        ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
+    pagina = "recetas_sencillas"
 
+if pagina == "inicio":
+    # Configurar la aplicacion Streamlit
+    st.title("Appetito")
+    st.text("Daniel")
+    st.text("Luis")
+
+    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
+    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+
+    try:
         if ingredientes_usuario:
             utils.trigger_recetas(ingredientes_usuario)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    funciones.footer()
+
+elif pagina == "registro":
+    funciones.desplegar_form('registro')
+    funciones.footer()
+
+elif pagina == "ingreso":
+    funciones.desplegar_form('ingreso')
+    funciones.footer()
+
+elif pagina == "recetas_fit":
+    funciones.recetas_fit()
+    funciones.footer()
+
+elif pagina == "recetas_sencillas":
+    funciones.recetas_sencillas()
+    funciones.footer()
