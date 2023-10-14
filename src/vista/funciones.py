@@ -1,20 +1,25 @@
 import streamlit as st
-
+import pandas as pd
 import json
 
-# Pie de pagina aqui se van a mirar el contacto y los desarrolladores
-def footer():
-    st.markdown("""
-    <style>
-    .reportview-container .main footer {visibility: hidden;}
-    </style>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <footer style='position: fixed; bottom: 0; width: 100%; height: 50px; background-color: #f5f5f5; text-align: left; padding-top: 15px; padding-left: 10px;'>
-        Desarrollado por: Daniel Garzon Y Luis Moreno | Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
-    </footer>
-    """, unsafe_allow_html=True)
+# se ajustan los datos para utilizarlos en las funciones
+@st.cache
+def cargar_recetas(ruta):
+    with open(ruta, encoding='utf8') as contenido:
+        data = json.load(contenido)
+    return pd.DataFrame(data)
+
+# Ruta del archivo recetas saludables json temporal para usar en consola local
+ruta_saludable = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\saludables.json'
+df_recetas_saludables = cargar_recetas(ruta_saludable)
+
+# Ruta del archivo recetas presupuesto json temporal para usar en consola local
+ruta_presupuesto = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\presupuesto.json'
+df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
+
+# Ruta del archivo recetas presupuesto json temporal para usar en consola local
+ruta_horneados = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\horneados.json'
+df_recetas_horneados = cargar_recetas(ruta_horneados)
 
 # Aqui se despliega el login y el registro de la pagina
 def desplegar_form(option):
@@ -87,21 +92,12 @@ def detalles_abiertos(receta):
     #      # Si no se debe mostrar, muestra solo el nombre de la receta como enlace
     #      st.write(f"**Receta:** [{receta['name']}]({receta['url']})")
 
-#Se cargan las recetas de el archivo json para ejecutarlo en la pagina            
-def cargar_recetas(ruta):
-      with open(ruta, encoding='utf8') as contenido:
-           return json.load(contenido)
-           
-#Ruta del archivo json temporal para usar en consola local
-ruta = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\health.json'
-recetas = cargar_recetas(ruta)
-print(recetas)
+# Aqui estan las recetas
 
-# Aqui se despliegan las recetas fit
-def recetas_fit():
-    st.title("Recetas Fit")
-    
-    for receta in recetas:
+def recetas_saludables():
+    # Aqui se despliegan las recetas saludables
+    st.title("Recetas saludables")
+    for index, receta in df_recetas_saludables.iterrows():
         # Mostrar la imagen previa con borde
         st.markdown(
             f"""
@@ -111,17 +107,57 @@ def recetas_fit():
             """,
             unsafe_allow_html=True,
         )
-        # Crear un elemento expansible con los detalles de la receta
-        # with st.expander(f"Ver Detalles de {receta['name']}"):
-        #     # Cuando se hace clic en el botón, actualiza la variable de estado
-        #     if st.button(f"Ver Detalles de {receta['name']}"):
-        #         detalles_abiertos = receta['id']
 
-        #     # Llama a la función para mostrar los detalles
+            # Crear un elemento expansible con los detalles de la receta
+            # with st.expander(f"Ver Detalles de {receta['name']}"):
+            #     # Cuando se hace clic en el botón, actualiza la variable de estado
+            #     if st.button(f"Ver Detalles de {receta['name']}"):
+            #         detalles_abiertos = receta['id']
+
+            #     # Llama a la función para mostrar los detalles
         detalles_abiertos(receta)
-        
-# Aqui se despliegan las recetas sencillas
-def recetas_sencillas():
-    # Aqui van a ir las recetas sencillas
+
+
+def recetas_presupuesto():
+    # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas sencillas")
-    st.write("Aqui van a ir las recetas sencillas")
+    for index, receta1 in df_recetas_presupuesto.iterrows():
+        # Aqui van a ir las recetas de presupuesto
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <img src="{receta1['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        detalles_abiertos(receta1)
+
+def recetas_horneados():
+    # Aqui se despliegan las recetas de presupuesto
+    st.title("Recetas horneadas")
+    for index, receta2 in df_recetas_horneados.iterrows():
+        # Aqui van a ir las recetas de presupuesto
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <img src="{receta2['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        detalles_abiertos(receta2)
+
+# Pie de pagina aqui se van a mirar el contacto y los desarrolladores
+def footer():
+    st.markdown("""
+    <style>
+    .reportview-container .main footer {visibility: hidden;}
+    </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <footer style='position: fixed; bottom: 0; width: 100%; height: 50px; background-color: #f5f5f5; text-align: left; padding-top: 15px; padding-left: 10px;'>
+        Desarrollado por: Daniel Garzon Y Luis Moreno | Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
+    </footer>
+    """, unsafe_allow_html=True)

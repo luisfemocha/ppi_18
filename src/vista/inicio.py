@@ -43,11 +43,14 @@ if st.sidebar.button("Registrarse", key="registro"):
 if st.sidebar.button("Iniciar Sesión", key="ingreso"):
     pagina = "ingreso"
 
-if st.sidebar.button("Recetas fit", key="recetas_fit"):
-    pagina = "recetas_fit"
+if st.sidebar.button("Recetas saludables", key="recetas_saludables"):
+    pagina = "recetas_saludables"
 
-if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
-    pagina = "recetas_sencillas"
+if st.sidebar.button("Recetas presupuesto", key="recetas_presupuesto"):
+    pagina = "recetas_presupuesto"
+
+if st.sidebar.button("Recetas con horno", key="recetas_horneados"):
+    pagina = "recetas_horneados"
 
 if pagina == "inicio":
     # Configurar la aplicacion Streamlit
@@ -73,10 +76,14 @@ elif pagina == "ingreso":
     funciones.desplegar_form('ingreso')
     funciones.footer()
 
-elif pagina == "recetas_fit":
-    funciones.recetas_fit()
+elif pagina == "recetas_saludables":
+    funciones.recetas_saludables()
     funciones.footer()
 
-elif pagina == "recetas_sencillas":
-    funciones.recetas_sencillas()
+elif pagina == "recetas_presupuesto":
+    funciones.recetas_presupuesto()
+    funciones.footer()
+ 
+elif pagina == "recetas_horneados":
+    funciones.recetas_horneados()
     funciones.footer()
