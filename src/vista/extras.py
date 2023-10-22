@@ -1,6 +1,6 @@
 import streamlit as st
 
-import control.funciones as funciones
+from control import funciones
 
 
 def sidebar():
