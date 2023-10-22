@@ -10,10 +10,52 @@ import control.utils as utils
 
 listener_lateral = None
 
+try:
+    import control.utils as utils
+except:
+    import os
+    import sys
 
-def pagina_principal():
-    listener_lateral = extras.sidebar()
-    # Pagina principal
+    # Obtiene el directorio del script actual (inicio.py)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Obtiene el directorio del padre (src)
+    parent_dir = os.path.dirname(current_dir)
+
+    # Agrega el directorio del padre al sys.path
+    sys.path.append(parent_dir)
+
+    import control.utils as utils
+
+try:
+    import matplotlib
+except:
+    # TODO
+    print("Problemas para importar matplotlib")
+
+st.sidebar.title("Cuenta")
+pagina = "inicio"
+
+if st.sidebar.button("Inicio", key="inicio"):
+    pagina = "inicio"
+
+if st.sidebar.button("Registrarse", key="registro"):
+    pagina = "registro"
+
+if st.sidebar.button("Iniciar Sesión", key="ingreso"):
+    pagina = "ingreso"
+
+if st.sidebar.button("Recetas saludables", key="recetas_saludables"):
+    pagina = "recetas_saludables"
+
+if st.sidebar.button("Recetas presupuesto", key="recetas_presupuesto"):
+    pagina = "recetas_presupuesto"
+
+if st.sidebar.button("Recetas con horno", key="recetas_horneados"):
+    pagina = "recetas_horneados"
+
+if pagina == "inicio":
+    # Configurar la aplicacion Streamlit
     st.title("Appetito")
     st.text("Daniel")
     st.text("Luis")
@@ -28,9 +70,3 @@ def pagina_principal():
         print(f"An error occurred: {e}")
 
     extras.footer()
-
-
-pagina_principal()
-
-if listener_lateral != None and listener_lateral != "pagina_principal":
-    pagina_principal()
