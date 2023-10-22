@@ -4,10 +4,11 @@ import streamlit as st
 
 from datos import conexion
 
-cuentas= []
+cuentas = []
+
 
 def registro(usn, pas, conf):
-    if (pas == conf):
+    if pas == conf:
         # TODO
         #  vista.extras.show_modal("se realiza el registro")
         st.write("se registra")
@@ -18,16 +19,19 @@ def registro(usn, pas, conf):
         st.write("no se registra")
         print("no coinciden las contraseñas")
 
-def ingreso(usn,pas):
-    if cuentas==None or len(cuentas)==0:
-        cuentas=conexion.get_cuentas()
-        print("se obtienen las cuentas\n"+str(cuentas))
+
+def ingreso(usn, pas):
+    if cuentas == None or len(cuentas) == 0:
+        cuentas = conexion.get_cuentas()
+        print("se obtienen las cuentas\n" + str(cuentas))
+
 
 def get_ingredientes():
     return ["pollo", "pasta", "tomate", "queso", "lechuga", "zanahoria", "arroz", "cebolla"]
 
+
 def get_recetas():
-    return[
+    return [
         {
             "nombre": "Ensalada César",
             "ingredientes": ["lechuga", "pollo", "crutones", "aderezo"]
@@ -42,8 +46,9 @@ def get_recetas():
         }
     ]
 
+
 def trigger_recetas(ingredientes_usuario):
-    list_recetas= utils.get_recetas()
+    list_recetas = utils.get_recetas()
     recetas_disponibles = []
 
     for receta in list_recetas:
