@@ -5,8 +5,8 @@ import streamlit as st
 import extras
 
 # librerias de capa control
-import control.utils as utils
-import control.funciones as funciones
+from control import utils
+from control import funciones
 
 extras.sidebar()
 
