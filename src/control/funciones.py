@@ -1,9 +1,15 @@
 import streamlit as st
-
+import pandas as pd
 import json
 
 # Para menor uso de memoria se limita la app en la fase de desarrollo
 limite_recetas = 10
+
+
+# se ajustan los datos para utilizarlos en las funciones
+def cargar_recetas(ruta):
+    with open(ruta, encoding='utf8') as contenido:
+        return pd.DataFrame(json.load(contenido))
 
 
 # Aqui se despliega el login y el registro de la pagina
@@ -35,7 +41,6 @@ def desplegar_form(option):
                 utils.ingreso(username, password)
 
 
-detalles_abiertos= None
 # Visualizacion de cada receta
 def detalles_abiertos(receta):
     # Verifica si se debe mostrar los detalles de esta receta
@@ -80,29 +85,23 @@ def detalles_abiertos(receta):
 #      # Si no se debe mostrar, muestra solo el nombre de la receta como enlace
 #      st.write(f"**Receta:** [{receta['name']}]({receta['url']})")
 
-# Se cargan las recetas de el archivo json para ejecutarlo en la pagina
-def cargar_recetas(ruta):
-    with open(ruta, encoding='utf8') as contenido:
-        return json.load(contenido)
+# Aqui estan las recetas
 
+def recetas_saludables():
+    # Ruta del archivo recetas saludables json temporal para usar en consola local
+    ruta_saludable = '..\\datos\\saludables.json'
+    df_recetas_saludables = cargar_recetas(ruta_saludable)
 
-# Aqui se despliegan las recetas fit
-def recetas_fit():
-    # Ruta del archivo json temporal para usar en consola local
-    # ruta = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\health.json'
-    ruta = '..\datos\health.json'
-    recetas = cargar_recetas(ruta)
-    print(recetas)
+    # Aqui se despliegan las recetas saludables
+    st.title("Recetas saludables")
 
-    st.title("Recetas Fit")
     if limite_recetas:
         aux_limite = limite_recetas
     else:
-        aux_limite = len(recetas)
+        aux_limite = len(df_recetas_saludables)
 
-    print("funciones")
+    for index, receta in df_recetas_saludables.iterrows():
 
-    for receta in recetas:
         if aux_limite > 0:
             aux_limite -= 1
         else:
@@ -117,6 +116,7 @@ def recetas_fit():
             """,
             unsafe_allow_html=True,
         )
+
         # Crear un elemento expansible con los detalles de la receta
         # with st.expander(f"Ver Detalles de {receta['name']}"):
         #     # Cuando se hace clic en el botón, actualiza la variable de estado
@@ -127,8 +127,56 @@ def recetas_fit():
         detalles_abiertos(receta)
 
 
-# Aqui se despliegan las recetas sencillas
-def recetas_sencillas():
-    # Aqui van a ir las recetas sencillas
+def recetas_presupuesto():
+    # Ruta del archivo recetas presupuesto json temporal para usar en consola local
+    ruta_presupuesto = '..\\datos\\presupuesto.json'
+    df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
+
+    # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas sencillas")
-    st.write("Aqui van a ir las recetas sencillas")
+    for index, receta1 in df_recetas_presupuesto.iterrows():
+        # Aqui van a ir las recetas de presupuesto
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <img src="{receta1['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        detalles_abiertos(receta1)
+
+
+def recetas_horneados():
+    # Ruta del archivo recetas presupuesto json temporal para usar en consola local
+    ruta_horneados = '..\\datos\\horneados.json'
+    df_recetas_horneados = cargar_recetas(ruta_horneados)
+
+    # Aqui se despliegan las recetas de presupuesto
+    st.title("Recetas horneadas")
+    for index, receta2 in df_recetas_horneados.iterrows():
+        # Aqui van a ir las recetas de presupuesto
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <img src="{receta2['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        detalles_abiertos(receta2)
+
+
+# Pie de pagina aqui se van a mirar el contacto y los desarrolladores
+def footer():
+    st.markdown("""
+    <style>
+    .reportview-container .main footer {visibility: hidden;}
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <footer style='position: fixed; bottom: 0; width: 100%; height: 50px; background-color: #f5f5f5; text-align: left; padding-top: 15px; padding-left: 10px;'>
+        Desarrollado por: Daniel Garzon Y Luis Moreno | Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
+    </footer>
+    """, unsafe_allow_html=True)
