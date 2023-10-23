@@ -8,24 +8,26 @@ import streamlit as st
 import funciones
 
 def sidebar():
-    st.sidebar.title("Cuenta")
-
     pagina = ''
 
     if st.sidebar.button("Inicio", key="inicio") or pagina=='':
         pagina='principal'
+
+    st.sidebar.title("Recetas")
+
+    if st.sidebar.button("Recetas fit", key="recetas_fit"):
+            pagina = 'saludable'
+
+    if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
+        pagina = 'presupuesto'
+
+    st.sidebar.title("Cuenta")
 
     if st.sidebar.button("Registrarse", key="registro"):
         pagina = 'registro'
 
     if st.sidebar.button("Iniciar Sesión", key="ingreso"):
         pagina= 'ingreso'
-
-    if st.sidebar.button("Recetas fit", key="recetas_fit"):
-        pagina = 'saludable'
-
-    if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
-        pagina = 'presupuesto'
 
     funciones.vistas(pagina)
 

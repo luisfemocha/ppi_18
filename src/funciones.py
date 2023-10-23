@@ -18,7 +18,6 @@ def cargar_recetas(ruta):
 
 # Aqui se despliega el login y el registro de la pagina
 def desplegar_form(option):
-
     # Este es para el registro de la pagina
     if option == 'registro':
         with st.form(key='registration_form'):
@@ -34,15 +33,17 @@ def desplegar_form(option):
 
     # Este es para el login de la pagina
     elif option == 'ingreso':
-        with st.form(key='login_form'):
-            st.header('Inicio de Sesión')
-            username = st.text_input('Nombre de usuario')
-            password = st.text_input('Contraseña', type='password')
-            login_button = st.form_submit_button('Iniciar Sesión')
+        # with st.form(key='login_form'):
+        st.header('Inicio de Sesión')
+        username = st.text_input('Nombre de usuario')
+        password = st.text_input('Contraseña', type='password')
+        login_button = st.button("Iniciar sesión")
+        #st.form_submit_button('Iniciar Sesión')
 
-            # Para llamar a la funcion de login
-            if login_button:
-                utils.ingreso(username, password)
+        # Para llamar a la funcion de login
+        if login_button:
+            st.title("se comienza")
+            utils.ingreso(username, password)
 
 
 # Visualizacion de cada receta
@@ -85,12 +86,6 @@ def detalles_abiertos(receta):
         st.write(f"**Categoría principal:** {receta['maincategory']}")
 
 
-# else:
-#      # Si no se debe mostrar, muestra solo el nombre de la receta como enlace
-#      st.write(f"**Receta:** [{receta['name']}]({receta['url']})")
-
-# Aqui estan las recetas
-
 def vistas(vista):
     if vista == 'principal':
         pagina_principal()
@@ -119,6 +114,7 @@ def pagina_principal():
             utils.trigger_recetas(ingredientes_usuario)
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local

@@ -1,18 +1,18 @@
 # CAPA DATOS
 
 # En este archivo se realizara la lectura de los dataset para manejarlos en control
+import streamlit as st
+from deta import Deta
 
-import numpy as np
-import pandas as pd
-import matplotlib
+token = st.secrets["token"]
+#open(".streamlit/token.txt", "r").read()
 
+espacio = Deta(token)
+base = espacio.Base("ppi18_usuarios")
 
 def get_cuentas():
-    return {
-        'Daniel': 'asddfg654654',
-        'Luis': '123clave_321',
-        'admin': 'grupo18_ppi'
-    }
+    print("cuentas:",base.fetch().items)
+    return base.fetch().items
 
 
 def check_cuenta(usn, pas):
@@ -23,5 +23,3 @@ def check_cuenta(usn, pas):
 def registrar_cuenta(usn, pas):
     # TODO
     print('se guarda la nueva cuenta')
-
-# Conexion a Kaggle
