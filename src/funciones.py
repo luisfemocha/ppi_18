@@ -21,6 +21,7 @@ def cargar_recetas(ruta):
                 return pd.DataFrame(json.load(contenido))
         except:
             st.title("Error al leer el archivo "+ruta)
+            return pd.DataFrame()
 
 
 # Aqui se despliega el login y el registro de la pagina
@@ -125,8 +126,12 @@ def pagina_principal():
 
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_saludable = 'datos\\saludables.json'
+    ruta_saludable = '..\\src\\datos\\saludables.json'
     df_recetas_saludables = cargar_recetas(ruta_saludable)
+
+    if df_recetas_saludables.empty:
+        st.title("No se despliegan las recetas saludables.")
+        return None
 
     # Aqui se despliegan las recetas saludables
     st.title("Recetas saludables")
@@ -165,8 +170,12 @@ def recetas_saludables():
 
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_presupuesto = 'datos\\presupuesto.json'
+    ruta_presupuesto = '..\\src\\datos\\presupuesto.json'
     df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
+
+    if df_recetas_presupuesto.empty:
+        st.title("No se despliegan las recetas de bajo presupuesto.")
+        return None
 
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas sencillas")
@@ -185,8 +194,12 @@ def recetas_presupuesto():
 
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_horneados = 'datos\\horneados.json'
+    ruta_horneados = '..\\src\\datos\\horneados.json'
     df_recetas_horneados = cargar_recetas(ruta_horneados)
+
+    if df_recetas_horneados.empty:
+        st.title("No se despliegan las recetas horneadas.")
+        return None
 
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas horneadas")
