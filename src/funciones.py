@@ -3,24 +3,29 @@
 import streamlit as st
 import pandas as pd
 import json
+import requests
 
 import utils
 
 # Para menor uso de memoria se limita la app en la fase de desarrollo
 limite_recetas = 10
 
-
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_recetas(ruta):
     try:
-        with open(ruta, encoding='utf8') as contenido:
-            return pd.DataFrame(json.load(contenido))
-    except:
-        try:
-            with open("\\"+ruta, encoding='utf8') as contenido:
+        if ruta.find("raw") > -1:
+            response = requests.get(ruta)
+            # Confirmar que el request de un resultado exitoso.
+            if response.status_code == 200:
+                return pd.DataFrame(response.json())  # Usa .json() para archivos JSON, .text para archivos de texto, etc.
+            else:
+                st.title("Error al leer la url.")
+        else:
+            with open(ruta, encoding='utf8') as contenido:
                 return pd.DataFrame(json.load(contenido))
-        except:
-            st.title("Error al leer el archivo "+ruta)
+    except:
+        st.title("Error al leer el archivo "+ruta)
+        return pd.DataFrame()
 
 
 # Aqui se despliega el login y el registro de la pagina
@@ -125,8 +130,12 @@ def pagina_principal():
 
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_saludable = 'datos\\saludables.json'
+    ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
     df_recetas_saludables = cargar_recetas(ruta_saludable)
+
+    if df_recetas_saludables.empty:
+        st.title("No se despliegan las recetas saludables.")
+        return None
 
     # Aqui se despliegan las recetas saludables
     st.title("Recetas saludables")
@@ -165,8 +174,12 @@ def recetas_saludables():
 
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_presupuesto = 'datos\\presupuesto.json'
+    ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
     df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
+
+    if df_recetas_presupuesto.empty:
+        st.title("No se despliegan las recetas de bajo presupuesto.")
+        return None
 
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas sencillas")
@@ -185,8 +198,12 @@ def recetas_presupuesto():
 
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_horneados = 'datos\\horneados.json'
+    ruta_horneados = '..\\src\\datos\\horneados.json'
     df_recetas_horneados = cargar_recetas(ruta_horneados)
+
+    if df_recetas_horneados.empty:
+        st.title("No se despliegan las recetas horneadas.")
+        return None
 
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas horneadas")
