@@ -1,6 +1,10 @@
+# CAPA CONTROL
+
 import streamlit as st
 import pandas as pd
 import json
+
+import utils
 
 # Para menor uso de memoria se limita la app en la fase de desarrollo
 limite_recetas = 10
@@ -14,11 +18,11 @@ def cargar_recetas(ruta):
 
 # Aqui se despliega el login y el registro de la pagina
 def desplegar_form(option):
-    col1, col2 = st.columns(2)
 
     # Este es para el registro de la pagina
     if option == 'registro':
         with st.form(key='registration_form'):
+            st.header("Registro")
             username = st.text_input('Nombre de usuario')
             password = st.text_input('Contraseña', type='password')
             confirm_password = st.text_input('Confirmar contraseña', type='password')
@@ -31,7 +35,7 @@ def desplegar_form(option):
     # Este es para el login de la pagina
     elif option == 'ingreso':
         with st.form(key='login_form'):
-            col2.header('Iniciar Sesión')
+            st.header('Inicio de Sesión')
             username = st.text_input('Nombre de usuario')
             password = st.text_input('Contraseña', type='password')
             login_button = st.form_submit_button('Iniciar Sesión')
@@ -87,9 +91,38 @@ def detalles_abiertos(receta):
 
 # Aqui estan las recetas
 
+def vistas(vista):
+    if vista == 'principal':
+        pagina_principal()
+    elif vista =='saludable':
+        recetas_saludables()
+    elif vista == 'presupuesto':
+        recetas_presupuesto()
+    elif vista == 'horneado':
+        recetas_horneados()
+    elif vista == 'registro':
+        desplegar_form('registro')
+    elif vista == 'ingreso':
+        desplegar_form('ingreso')
+
+
+def pagina_principal():
+    st.title("Appetito")
+    st.text("Daniel")
+    st.text("Luis")
+
+    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
+    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+
+    try:
+        if ingredientes_usuario:
+            utils.trigger_recetas(ingredientes_usuario)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_saludable = '..\\datos\\saludables.json'
+    ruta_saludable = 'datos\\saludables.json'
     df_recetas_saludables = cargar_recetas(ruta_saludable)
 
     # Aqui se despliegan las recetas saludables
@@ -129,7 +162,7 @@ def recetas_saludables():
 
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_presupuesto = '..\\datos\\presupuesto.json'
+    ruta_presupuesto = 'datos\\presupuesto.json'
     df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
 
     # Aqui se despliegan las recetas de presupuesto
@@ -149,7 +182,7 @@ def recetas_presupuesto():
 
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_horneados = '..\\datos\\horneados.json'
+    ruta_horneados = 'datos\\horneados.json'
     df_recetas_horneados = cargar_recetas(ruta_horneados)
 
     # Aqui se despliegan las recetas de presupuesto
