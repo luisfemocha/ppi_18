@@ -1,11 +1,13 @@
+# CAPA CONTROL
+
 # En este archivo de van a poner las funciones que van a manejar los datos y la lógica de la aplicación.
 
 import streamlit as st
 
-from datos import conexion
+# import desde la capa de datos
+import conexion
 
 cuentas = []
-
 
 def registro(usn, pas, conf):
     if pas == conf:
