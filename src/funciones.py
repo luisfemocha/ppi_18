@@ -126,7 +126,7 @@ def pagina_principal():
 
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_saludable = '..\\src\\datos\\saludables.json'
+    ruta_saludable = 'datos\\saludables.json'
     df_recetas_saludables = cargar_recetas(ruta_saludable)
 
     if df_recetas_saludables.empty:
@@ -170,7 +170,7 @@ def recetas_saludables():
 
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_presupuesto = '..\\src\\datos\\presupuesto.json'
+    ruta_presupuesto = "datos\\presupuesto.json"
     df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
 
     if df_recetas_presupuesto.empty:
