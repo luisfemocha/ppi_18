@@ -27,6 +27,8 @@ def ingreso(usn, pas):
         cuentas = conexion.get_cuentas()
         print("se obtienen las cuentas\n" + str(cuentas))
 
+    st.title(cuentas)
+
 
 def get_ingredientes():
     return ["pollo", "pasta", "tomate", "queso", "lechuga", "zanahoria", "arroz", "cebolla"]
