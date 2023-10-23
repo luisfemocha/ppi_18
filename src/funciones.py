@@ -12,8 +12,15 @@ limite_recetas = 10
 
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_recetas(ruta):
-    with open(ruta, encoding='utf8') as contenido:
-        return pd.DataFrame(json.load(contenido))
+    try:
+        with open(ruta, encoding='utf8') as contenido:
+            return pd.DataFrame(json.load(contenido))
+    except:
+        try:
+            with open("\\"+ruta, encoding='utf8') as contenido:
+                return pd.DataFrame(json.load(contenido))
+        except:
+            st.title("Error al leer el archivo "+ruta)
 
 
 # Aqui se despliega el login y el registro de la pagina
