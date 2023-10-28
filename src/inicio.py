@@ -1,35 +1,35 @@
+# CAPA VISTA
+
 import streamlit as st
 
-import control.funciones as funciones
+# librerias de capa vista
 
+# librerias de capa control
+import funciones
 
 def sidebar():
+    pagina = ''
+
+    if st.sidebar.button("Inicio", key="inicio") or pagina=='':
+        pagina='principal'
+
+    st.sidebar.title("Recetas")
+
+    if st.sidebar.button("Recetas fit", key="recetas_fit"):
+            pagina = 'saludable'
+
+    if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
+        pagina = 'presupuesto'
+
     st.sidebar.title("Cuenta")
-    pagina = "inicio"
 
-    if st.sidebar.button("Inicio", key="inicio"):
-        pagina = "inicio"
-        return "pagina_principal"
+    if st.sidebar.button("Registrarse", key="registro"):
+        pagina = 'registro'
 
-    elif st.sidebar.button("Registrarse", key="registro"):
-        pagina = "registro"
-        funciones.desplegar_form('registro')
+    if st.sidebar.button("Iniciar Sesión", key="ingreso"):
+        pagina= 'ingreso'
 
-    elif st.sidebar.button("Iniciar Sesión", key="ingreso"):
-        pagina = "ingreso"
-        funciones.desplegar_form('ingreso')
-
-    elif st.sidebar.button("Recetas fit", key="recetas_fit"):
-        pagina = "recetas_fit"
-        funciones.recetas_fit()
-
-    elif st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
-        pagina = "recetas_sencillas"
-        funciones.recetas_sencillas()
-
-    else:
-        return None
-
+    funciones.vistas(pagina)
 
 # Pie de pagina aqui se vera el contacto y los desarrolladores
 def footer():
@@ -57,3 +57,6 @@ def footer():
         Desarrollado por: Daniel Garzon Y Luis Moreno | Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
     </footer>
     """, unsafe_allow_html=True)
+
+sidebar()
+footer()

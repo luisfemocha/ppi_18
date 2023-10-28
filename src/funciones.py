@@ -1,24 +1,39 @@
+# CAPA CONTROL
+
 import streamlit as st
 import pandas as pd
 import json
+import requests
+
+import utils
 
 # Para menor uso de memoria se limita la app en la fase de desarrollo
 limite_recetas = 10
 
-
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_recetas(ruta):
-    with open(ruta, encoding='utf8') as contenido:
-        return pd.DataFrame(json.load(contenido))
+    try:
+        if ruta.find("raw") > -1:
+            response = requests.get(ruta)
+            # Confirmar que el request de un resultado exitoso.
+            if response.status_code == 200:
+                return pd.DataFrame(response.json())  # Usa .json() para archivos JSON, .text para archivos de texto, etc.
+            else:
+                st.title("Error al leer la url.")
+        else:
+            with open(ruta, encoding='utf8') as contenido:
+                return pd.DataFrame(json.load(contenido))
+    except:
+        st.title("Error al leer el archivo "+ruta)
+        return pd.DataFrame()
 
 
 # Aqui se despliega el login y el registro de la pagina
 def desplegar_form(option):
-    col1, col2 = st.columns(2)
-
     # Este es para el registro de la pagina
     if option == 'registro':
         with st.form(key='registration_form'):
+            st.header("Registro")
             username = st.text_input('Nombre de usuario')
             password = st.text_input('Contraseña', type='password')
             confirm_password = st.text_input('Confirmar contraseña', type='password')
@@ -30,15 +45,17 @@ def desplegar_form(option):
 
     # Este es para el login de la pagina
     elif option == 'ingreso':
-        with st.form(key='login_form'):
-            col2.header('Iniciar Sesión')
-            username = st.text_input('Nombre de usuario')
-            password = st.text_input('Contraseña', type='password')
-            login_button = st.form_submit_button('Iniciar Sesión')
+        # with st.form(key='login_form'):
+        st.header('Inicio de Sesión')
+        username = st.text_input('Nombre de usuario')
+        password = st.text_input('Contraseña', type='password')
+        login_button = st.button("Iniciar sesión")
+        #st.form_submit_button('Iniciar Sesión')
 
-            # Para llamar a la funcion de login
-            if login_button:
-                utils.ingreso(username, password)
+        # Para llamar a la funcion de login
+        if login_button:
+            st.title("se comienza")
+            utils.ingreso(username, password)
 
 
 # Visualizacion de cada receta
@@ -81,16 +98,44 @@ def detalles_abiertos(receta):
         st.write(f"**Categoría principal:** {receta['maincategory']}")
 
 
-# else:
-#      # Si no se debe mostrar, muestra solo el nombre de la receta como enlace
-#      st.write(f"**Receta:** [{receta['name']}]({receta['url']})")
+def vistas(vista):
+    if vista == 'principal':
+        pagina_principal()
+    elif vista =='saludable':
+        recetas_saludables()
+    elif vista == 'presupuesto':
+        recetas_presupuesto()
+    elif vista == 'horneado':
+        recetas_horneados()
+    elif vista == 'registro':
+        desplegar_form('registro')
+    elif vista == 'ingreso':
+        desplegar_form('ingreso')
 
-# Aqui estan las recetas
+
+def pagina_principal():
+    st.title("Appetito")
+    st.text("Daniel")
+    st.text("Luis")
+
+    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
+    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+
+    try:
+        if ingredientes_usuario:
+            utils.trigger_recetas(ingredientes_usuario)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_saludable = '..\\datos\\saludables.json'
+    ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
     df_recetas_saludables = cargar_recetas(ruta_saludable)
+
+    if df_recetas_saludables.empty:
+        st.title("No se despliegan las recetas saludables.")
+        return None
 
     # Aqui se despliegan las recetas saludables
     st.title("Recetas saludables")
@@ -129,8 +174,12 @@ def recetas_saludables():
 
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_presupuesto = '..\\datos\\presupuesto.json'
+    ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
     df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
+
+    if df_recetas_presupuesto.empty:
+        st.title("No se despliegan las recetas de bajo presupuesto.")
+        return None
 
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas sencillas")
@@ -149,8 +198,12 @@ def recetas_presupuesto():
 
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_horneados = '..\\datos\\horneados.json'
+    ruta_horneados = '..\\src\\datos\\horneados.json'
     df_recetas_horneados = cargar_recetas(ruta_horneados)
+
+    if df_recetas_horneados.empty:
+        st.title("No se despliegan las recetas horneadas.")
+        return None
 
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas horneadas")
