@@ -107,6 +107,8 @@ def vistas(vista):
         recetas_presupuesto()
     elif vista == 'horneado':
         recetas_horneados()
+    elif vista == 'especiales':
+        recetas_especiales() 
     elif vista == 'registro':
         desplegar_form('registro')
     elif vista == 'ingreso':
@@ -126,6 +128,14 @@ def pagina_principal():
             utils.trigger_recetas(ingredientes_usuario)
     except Exception as e:
         print(f"An error occurred: {e}")
+def ingredientes():
+    ruta_recetas="C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\recipes.json"
+    df_recetas = cargar_recetas(ruta_recetas)
+    for index, receta in df_recetas.iterrows():
+        ingredientes = []
+        ingredientes.append(receta["ingredients"])
+    return ingredientes
+
 
 
 def recetas_saludables():
@@ -133,8 +143,18 @@ def recetas_saludables():
     ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
     df_recetas_saludables = cargar_recetas(ruta_saludable)
 
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Smoothies', 'Salads', 'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
+
+    # Filtrar las recetas basándose en la dificultad y subcategoría
+    if difficult != 'Todos':
+        df_recetas_saludables = df_recetas_saludables[df_recetas_saludables['difficult'] == difficult]
+    if subcategory != 'Todos':
+        df_recetas_saludables = df_recetas_saludables[df_recetas_saludables['subcategory'] == subcategory]
+
     if df_recetas_saludables.empty:
-        st.title("No se despliegan las recetas saludables.")
+        st.title("No hay recetas saludables disponibles.")
         return None
 
     # Aqui se despliegan las recetas saludables
@@ -172,19 +192,29 @@ def recetas_saludables():
         detalles_abiertos(receta)
 
 
+
 def recetas_presupuesto():
-    # Ruta del archivo recetas presupuesto json temporal para usar en consola local
+    # Ruta del archivo recetas presupuesto json 
     ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
     df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
 
     if df_recetas_presupuesto.empty:
-        st.title("No se despliegan las recetas de bajo presupuesto.")
+        st.title("No hay recetas sencillas disponibles")
         return None
 
-    # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas sencillas")
+
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Budget dinners', 'Batch cooking', 'Student meals', 'Freezable meals', 'Slow cooker'])
+
+    # Filtrar las recetas basándose en la dificultad y subcategoría
+    if difficult != 'Todos':
+        df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['difficult'] == difficult]
+    if subcategory != 'Todos':
+        df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['subcategory'] == subcategory]
+
     for index, receta1 in df_recetas_presupuesto.iterrows():
-        # Aqui van a ir las recetas de presupuesto
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
@@ -196,13 +226,24 @@ def recetas_presupuesto():
         detalles_abiertos(receta1)
 
 
+
 def recetas_horneados():
-    # Ruta del archivo recetas presupuesto json temporal para usar en consola local
-    ruta_horneados = '..\\src\\datos\\horneados.json'
+    # Ruta del archivo recetas presupuesto json 
+    ruta_horneados = 'https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA'
     df_recetas_horneados = cargar_recetas(ruta_horneados)
 
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Bread', 'Cakes', 'Desserts', "Kids' baking", 'Quick bakes','Savoury pastries','Sweet treats','Vegan baking','Biscuit recipes'])
+
+    # Filtrar las recetas basándose en la dificultad y subcategoría
+    if difficult != 'Todos':
+        df_recetas_horneados = df_recetas_horneados[df_recetas_horneados['difficult'] == difficult]
+    if subcategory != 'Todos':
+        df_recetas_horneados = df_recetas_horneados[df_recetas_horneados['subcategory'] == subcategory]
+
     if df_recetas_horneados.empty:
-        st.title("No se despliegan las recetas horneadas.")
+        st.title("No hay recetas horneadas disponibles.")
         return None
 
     # Aqui se despliegan las recetas de presupuesto
@@ -219,6 +260,51 @@ def recetas_horneados():
         )
         detalles_abiertos(receta2)
 
+
+def recetas_especiales():
+    # Ruta del archivo recetas presupuesto json 
+    ruta_especiales = "https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA"
+    df_recetas_especiales = cargar_recetas(ruta_especiales)
+
+    if df_recetas_especiales.empty:
+        st.title("No  hay recetas especiales disponibles.")
+        return None
+
+    st.title("Recetas especiales")
+
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Birthdays', 'Cocktails', 'Hosting', 'Slow cooker',"Kids' birthdays","Mocktails",'Picnics','Barbecues','Spring recipes','Special occasions','Teas'])
+
+    # Filtrar las recetas basándose en la dificultad y subcategoría
+    if difficult != 'Todos':
+        df_recetas_especiales = df_recetas_especiales[df_recetas_especiales['difficult'] == difficult]
+    if subcategory != 'Todos':
+        df_recetas_especiales = df_recetas_especiales[df_recetas_especiales['subcategory'] == subcategory]
+
+    for index, receta1 in df_recetas_especiales.iterrows():
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <img src="{receta1['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        detalles_abiertos(receta1)
+
+
+
+def filtro_principal():
+    # Aqui se despliegan los filtros
+    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
+    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+
+    try:
+        if ingredientes_usuario:
+            utils.trigger_recetas(ingredientes_usuario)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 # Pie de pagina aqui se van a mirar el contacto y los desarrolladores
 def footer():
