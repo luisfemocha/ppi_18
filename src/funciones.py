@@ -1,11 +1,13 @@
 # CAPA CONTROL
 
-import streamlit as st
-import pandas as pd
 import json
 import requests
 
+import pandas as pd
+import streamlit as st
+
 import utils
+
 
 # Para menor uso de memoria se limita la app en la fase de desarrollo
 limite_recetas = 10
@@ -15,9 +17,10 @@ def cargar_recetas(ruta):
     try:
         if ruta.find("raw") > -1:
             response = requests.get(ruta)
-            # Confirmar que el request de un resultado exitoso.
+        # Confirmar que el request de un resultado exitoso.
             if response.status_code == 200:
-                return pd.DataFrame(response.json())  # Usa .json() para archivos JSON, .text para archivos de texto, etc.
+        # Usa .json() para archivos JSON, .text para archivos de texto, etc.
+                return pd.DataFrame(response.json()) 
             else:
                 st.title("Error al leer la url.")
         else:
@@ -97,8 +100,12 @@ def detalles_abiertos(receta):
         st.write(f"**Tipo de platillo:** {receta['dish_type']}")
         st.write(f"**Categoría principal:** {receta['maincategory']}")
 
-
+# Segun esta funcion se cambian de vistas
 def vistas(vista):
+    """
+    esta Funcion es para cambiar las vistas de la pagina 
+    segun el sidebar y la opcion que escoga el usario
+    """
     if vista == 'principal':
         pagina_principal()
     elif vista =='saludable':
@@ -114,30 +121,62 @@ def vistas(vista):
     elif vista == 'ingreso':
         desplegar_form('ingreso')
 
-
+# Aqui se mira la pagina principal
 def pagina_principal():
-    st.title("Appetito")
+    st.title("Appetito") 
     st.text("Daniel")
     st.text("Luis")
+    recetas_normales()
 
-    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
-    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
+#Se muestran las erecetas sin clasificacion alguna
+def recetas_normales():
+    # Ruta del archivo recetas saludables json temporal para usar en consola local
+    ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/recipes.json'
+    df_recetas_normales = cargar_recetas(ruta_normales)
+    lista_ingredientes = "" 
+    lista_ingredientes.insert(0,'Todos')
+    
+    # Crear una caja de selección para el filtro de dificultad
+    ingredientes_deseados = st.multiselect("Selecciona los ingredientes:", lista_ingredientes)
+    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Smoothies', 'Salads', 'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
 
-    try:
-        if ingredientes_usuario:
-            utils.trigger_recetas(ingredientes_usuario)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-def ingredientes():
-    ruta_recetas="C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\recipes.json"
-    df_recetas = cargar_recetas(ruta_recetas)
-    for index, receta in df_recetas.iterrows():
-        ingredientes = []
-        ingredientes.append(receta["ingredients"])
-    return ingredientes
+    # Filtrar las recetas basándose en la dificultad y subcategoría
+    if ingredientes_deseados:
+        df_recetas_normales = df_recetas_normales[df_recetas_normales['ingredients'].apply(lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
+    if difficult != 'Todos':
+        df_recetas_normales = df_recetas_normales[df_recetas_normales['difficult'] == difficult]
+    if subcategory != 'Todos':
+        df_recetas_normales = df_recetas_normales[df_recetas_normales['subcategory'] == subcategory]
 
+    if df_recetas_normales.empty:
+        st.title("No hay recetas saludables disponibles.")
+        return None
 
+    if limite_recetas:
+        aux_limite = limite_recetas
+    else:
+        aux_limite = len(df_recetas_normales)
 
+    for index, receta in df_recetas_normales.iterrows():
+
+        if aux_limite > 0:
+            aux_limite -= 1
+        else:
+            break
+
+        # Mostrar la imagen previa con borde
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <img src="{receta['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        detalles_abiertos(receta)
+
+# Se muestran las recetas saludables
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
     ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
@@ -191,8 +230,7 @@ def recetas_saludables():
         #     # Llama a la función para mostrar los detalles
         detalles_abiertos(receta)
 
-
-
+# Se muestras las recetas para un corto presupuesto(sencillaes)
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json 
     ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
@@ -225,8 +263,7 @@ def recetas_presupuesto():
         )
         detalles_abiertos(receta1)
 
-
-
+# Se muestran las recetas para hornearse
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json 
     ruta_horneados = 'https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA'
@@ -260,7 +297,7 @@ def recetas_horneados():
         )
         detalles_abiertos(receta2)
 
-
+# Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
     # Ruta del archivo recetas presupuesto json 
     ruta_especiales = "https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA"
@@ -292,30 +329,3 @@ def recetas_especiales():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta1)
-
-
-
-def filtro_principal():
-    # Aqui se despliegan los filtros
-    list_ingredientes = st.multiselect("Selecciona los ingredientes:", utils.get_ingredientes(), key="ingredientes")
-    ingredientes_usuario = [ingrediente.lower() for ingrediente in list_ingredientes]
-
-    try:
-        if ingredientes_usuario:
-            utils.trigger_recetas(ingredientes_usuario)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-# Pie de pagina aqui se van a mirar el contacto y los desarrolladores
-def footer():
-    st.markdown("""
-    <style>
-    .reportview-container .main footer {visibility: hidden;}
-    </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <footer style='position: fixed; bottom: 0; width: 100%; height: 50px; background-color: #f5f5f5; text-align: left; padding-top: 15px; padding-left: 10px;'>
-        Desarrollado por: Daniel Garzon Y Luis Moreno | Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
-    </footer>
-    """, unsafe_allow_html=True)
