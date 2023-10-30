@@ -130,9 +130,11 @@ def vistas(vista):
 
 # Aqui se mira la pagina principal
 def pagina_principal():
+    """
+    En esta funcion se define las funciones que se 
+    van a desplegar en la pagina principal
+    """
     st.title("Appetito") 
-    st.text("Daniel")
-    st.text("Luis")
     recetas_normales()
 
 #Se muestran las erecetas sin clasificacion alguna
@@ -148,53 +150,57 @@ def recetas_normales():
 
     # Crear una caja de selección para el filtro de dificultad
     ingredientes_deseados = st.multiselect("Selecciona los ingredientes:", lista_ingredientes)
-    difficult = st.selectbox('Selecciona el nivel de dificultad',
-                              ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría',
-                                ['Todos', 'Smoothies', 'Salads', 'Dinner',
-                                 'Fitness & lifestyle','High protein', 'Keto'])
+    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', "Lunch recipes", "Dinner recipes", "Breakfast recipes",
+                                                               "Storecupboard","Cheese recipes", "Desserts", "Fish and seafood",
+                                                               "Pasta", "Chicken", "Meat", "Vegetarian"])
 
     # Filtrar las recetas basándose en la dificultad,subcategoría y ingredientes
     if ingredientes_deseados:
         df_recetas_normales = df_recetas_normales[df_recetas_normales['ingredients'].apply(
-            lambda x: any(
-                ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
+            lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
+        
     if difficult != 'Todos':
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['difficult'] == difficult]
     if subcategory != 'Todos':
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['subcategory'] == subcategory]
-    
-    # Si la lista esta vacia no se muestra nada
-    if df_recetas_normales.empty:
-        st.title("No hay recetas saludables disponibles.")
-        return None
-    
-    if limite_recetas:
-        aux_limite = limite_recetas
+
+    # Define el número de recetas por página
+    recetas_por_pagina = 10
+
+    # Calcula el número total de páginas
+    total_paginas = len(df_recetas_normales) // recetas_por_pagina
+    if len(df_recetas_normales) % recetas_por_pagina > 0:
+        total_paginas += 1
+
+    # Verifica si hay páginas para mostrar
+    if total_paginas > 0:
+        # Crea un selector para la página
+        pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+
+        # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+        inicio = (pagina - 1) * recetas_por_pagina
+        fin = inicio + recetas_por_pagina
+        df_recetas_pagina = df_recetas_normales.iloc[inicio:fin]
+
+        # Ahora puedes mostrar las recetas de df_recetas_pagina
+        for _, receta in df_recetas_pagina.iterrows():
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                    <img src="{receta['image']}" alt="Imagen de la receta" 
+                    style="max-width: 100%; border-radius: 5px;">
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            detalles_abiertos(receta)
     else:
-        aux_limite = len(df_recetas_normales)
+        st.title("No hay recetas para mostrar.")
 
-    for index, receta in df_recetas_normales.iterrows():
 
-        if aux_limite > 0:
-            aux_limite -= 1
-        else:
-            break
-
-        # Mostrar la imagen previa con borde
-        st.markdown(
-            f"""
-            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
-                <img src="{receta['image']}" alt="Imagen de la receta" 
-                style="max-width: 100%; border-radius: 5px;">
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        detalles_abiertos(receta)
-recetas_normales()
 # Se muestran las recetas saludables
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
@@ -220,21 +226,27 @@ def recetas_saludables():
         st.title("No hay recetas saludables disponibles.")
         return None
 
+    # Define el número de recetas por página
+    recetas_por_pagina = 10
+
+    # Calcula el número total de páginas
+    total_paginas = len(df_recetas_saludables) // recetas_por_pagina
+    if len(df_recetas_saludables) % recetas_por_pagina > 0:
+        total_paginas += 1
+
+    # Crea un selector para la página
+    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+
+    # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+    if pagina != None:
+        inicio = (pagina - 1) * recetas_por_pagina
+        fin = inicio + recetas_por_pagina
+        df_recetas_pagina = df_recetas_saludables.iloc[inicio:fin]
+
     # Aqui se despliegan las recetas saludables
     st.title("Recetas saludables")
 
-    if limite_recetas:
-        aux_limite = limite_recetas
-    else:
-        aux_limite = len(df_recetas_saludables)
-
-    for index, receta in df_recetas_saludables.iterrows():
-
-        if aux_limite > 0:
-            aux_limite -= 1
-        else:
-            break
-
+    for index, receta in df_recetas_pagina.iterrows():
         # Mostrar la imagen previa con borde
         st.markdown(
             f"""
@@ -246,6 +258,7 @@ def recetas_saludables():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta)
+
 
 # Se muestras las recetas para un corto presupuesto(sencillaes)
 def recetas_presupuesto():
@@ -269,7 +282,23 @@ def recetas_presupuesto():
     if subcategory != 'Todos':
         df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['subcategory'] == subcategory]
 
-    for index, receta1 in df_recetas_presupuesto.iterrows():
+    # Define el número de recetas por página
+    recetas_por_pagina = 10
+
+    # Calcula el número total de páginas
+    total_paginas = len(df_recetas_presupuesto) // recetas_por_pagina
+    if len(df_recetas_presupuesto) % recetas_por_pagina > 0:
+        total_paginas += 1
+
+    # Crea un selector para la página
+    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+
+    # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+    inicio = (pagina - 1) * recetas_por_pagina
+    fin = inicio + recetas_por_pagina
+    df_recetas_pagina = df_recetas_presupuesto.iloc[inicio:fin]
+
+    for index, receta1 in df_recetas_pagina.iterrows():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
@@ -279,6 +308,7 @@ def recetas_presupuesto():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta1)
+
 
 # Se muestran las recetas para hornearse
 def recetas_horneados():
@@ -306,10 +336,26 @@ def recetas_horneados():
         st.title("No hay recetas horneadas disponibles.")
         return None
 
+    # Define el número de recetas por página
+    recetas_por_pagina = 10
+
+    # Calcula el número total de páginas
+    total_paginas = len(df_recetas_horneados) // recetas_por_pagina
+    if len(df_recetas_horneados) % recetas_por_pagina > 0:
+        total_paginas += 1
+
+    # Crea un selector para la página
+    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+
+    # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+    inicio = (pagina - 1) * recetas_por_pagina
+    fin = inicio + recetas_por_pagina
+    df_recetas_pagina = df_recetas_horneados.iloc[inicio:fin]
+
     # Aqui se despliegan las recetas de presupuesto
     st.title("Recetas horneadas")
-    for index, receta2 in df_recetas_horneados.iterrows():
-        # Aqui van a ir las recetas de presupuesto
+    
+    for index, receta2 in df_recetas_pagina.iterrows():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
@@ -320,6 +366,7 @@ def recetas_horneados():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta2)
+
 
 # Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
@@ -349,7 +396,23 @@ def recetas_especiales():
         df_recetas_especiales = df_recetas_especiales[
             df_recetas_especiales['subcategory'] == subcategory]
 
-    for index, receta1 in df_recetas_especiales.iterrows():
+    # Define el número de recetas por página
+    recetas_por_pagina = 10
+
+    # Calcula el número total de páginas
+    total_paginas = len(df_recetas_especiales) // recetas_por_pagina
+    if len(df_recetas_especiales) % recetas_por_pagina > 0:
+        total_paginas += 1
+
+    # Crea un selector para la página
+    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+
+    # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+    inicio = (pagina - 1) * recetas_por_pagina
+    fin = inicio + recetas_por_pagina
+    df_recetas_pagina = df_recetas_especiales.iloc[inicio:fin]
+
+    for index, receta1 in df_recetas_pagina.iterrows():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">

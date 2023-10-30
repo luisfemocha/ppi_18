@@ -22,24 +22,24 @@ def sidebar():
     # Esta es la parte de recetas
     st.sidebar.title("Recetas")
 
-    # Para desplegar las recetas fit
+        # Para desplegar las recetas fit
     if st.sidebar.button("Recetas fit", key="recetas_fit"
-                         ) or pagina == 'saludable':
+                         ) or st.session_state.get('pagina') == 'saludable':
         st.session_state.pagina = 'saludable'
 
     # Para desplegar las recetas sencillas
     if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"
-                         ) or pagina == 'presupuesto':
+                         ) or st.session_state.get('pagina') == 'presupuesto':
         st.session_state.pagina = 'presupuesto'
     
     # Para desplegar las recetas especiales
     if st.sidebar.button("Recetas especiales", key="recetas_especiales"
-                         ) or pagina == 'especiales':
+                         ) or st.session_state.get('pagina') == 'especiales':
             st.session_state.pagina = 'especiales'
     
     # Para desplegar las recetas horneadas
     if st.sidebar.button("Recetas horneadas", key="recetas_horneadas"
-                         ) or pagina == 'horneado':
+                         ) or st.session_state.get('pagina') == 'horneado':
         st.session_state.pagina = 'horneado'
     
     # Aqui es la parte de cuenta de la apliacion
@@ -47,12 +47,12 @@ def sidebar():
 
     # Para reguistrarse
     if st.sidebar.button("Registrarse", key="registro"
-                         ) or pagina == 'registro':
+                         ) or st.session_state.get('pagina') == 'registro':
         st.session_state.pagina = 'registro'
     
     # Para iniciar sesion
     if st.sidebar.button("Iniciar Sesión", key="ingreso"
-                         ) or pagina == 'ingreso':
+                         ) or st.session_state.get('pagina') == 'ingreso':
         st.session_state.pagina = 'ingreso'
 
     # Llamar a la función para mostrar la página correspondiente
