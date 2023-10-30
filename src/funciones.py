@@ -13,7 +13,7 @@ import utils
 limite_recetas = 10
 
 # se ajustan los datos para utilizarlos en las funciones
-def cargar_recetas(ruta):
+def cargar_datos(ruta):
     try:
         if ruta.find("raw") > -1:
             response = requests.get(ruta)
@@ -30,36 +30,42 @@ def cargar_recetas(ruta):
         st.title("Error al leer el archivo "+ruta)
         return pd.DataFrame()
 
-
-# Aqui se despliega el login y el registro de la pagina
+# Aquí se despliega el login y el registro de la página
 def desplegar_form(option):
-    # Este es para el registro de la pagina
+    # URL del tratamiento de datos personales
+    data_policy_link = "https://www.privacypolicies.com/live/510a8632-963e-45eb-b10b-dd5bf94ba46d"
+
+    # Este es para el registro de la página
     if option == 'registro':
         with st.form(key='registration_form'):
             st.header("Registro")
             username = st.text_input('Nombre de usuario')
             password = st.text_input('Contraseña', type='password')
             confirm_password = st.text_input('Confirmar contraseña', type='password')
+            
+            # Agregar casilla de verificación para el acuerdo de tratamiento de datos personales
+            data_agreement = st.checkbox(
+                f' Acepto el [ tratamiento de mis datos personales]({data_policy_link})')          
             register_button = st.form_submit_button('Registrarse')
 
-            # Para llamar a la funcion de registro
+            # Para llamar a la función de registro
             if register_button:
-                utils.registro(username, password, confirm_password)
+                if data_agreement:
+                    utils.registro(username, password, confirm_password)
+                else:
+                    st.error('Debes aceptar el tratamiento de tus datos personales para registrarte.')
 
-    # Este es para el login de la pagina
+    # Este es para el login de la página
     elif option == 'ingreso':
-        # with st.form(key='login_form'):
         st.header('Inicio de Sesión')
         username = st.text_input('Nombre de usuario')
         password = st.text_input('Contraseña', type='password')
         login_button = st.button("Iniciar sesión")
-        #st.form_submit_button('Iniciar Sesión')
 
-        # Para llamar a la funcion de login
+        # Para llamar a la función de inicio de sesión
         if login_button:
-            st.title("se comienza")
+            st.title("Se comienza")
             utils.ingreso(username, password)
-
 
 # Visualizacion de cada receta
 def detalles_abiertos(receta):
@@ -131,28 +137,34 @@ def pagina_principal():
 #Se muestran las erecetas sin clasificacion alguna
 def recetas_normales():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/recipes.json'
-    df_recetas_normales = cargar_recetas(ruta_normales)
-    lista_ingredientes = "" 
-    lista_ingredientes.insert(0,'Todos')
+    ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/dgarzonac/src/datos/recetas.json'
+    df_recetas_normales = cargar_datos(ruta_normales)
     
+    # Leer la lista de ingredientes
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/dgarzonac/src/datos/ingredientes.json'
+    lista_ingredientes = pd.read_json(ruta_ingredientes)
+    lista_ingredientes = lista_ingredientes["ingredients"][0]
+
     # Crear una caja de selección para el filtro de dificultad
     ingredientes_deseados = st.multiselect("Selecciona los ingredientes:", lista_ingredientes)
     difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Smoothies', 'Salads', 'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
+    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Smoothies', 'Salads', 'Dinner',
+                                                               'Fitness & lifestyle','High protein', 'Keto'])
 
-    # Filtrar las recetas basándose en la dificultad y subcategoría
+    # Filtrar las recetas basándose en la dificultad,subcategoría y ingredientes
     if ingredientes_deseados:
-        df_recetas_normales = df_recetas_normales[df_recetas_normales['ingredients'].apply(lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
+        df_recetas_normales = df_recetas_normales[df_recetas_normales['ingredients'].apply(
+            lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
     if difficult != 'Todos':
         df_recetas_normales = df_recetas_normales[df_recetas_normales['difficult'] == difficult]
     if subcategory != 'Todos':
         df_recetas_normales = df_recetas_normales[df_recetas_normales['subcategory'] == subcategory]
-
+    
+    # Si la lista esta vacia no se muestra nada
     if df_recetas_normales.empty:
         st.title("No hay recetas saludables disponibles.")
         return None
-
+    
     if limite_recetas:
         aux_limite = limite_recetas
     else:
@@ -175,12 +187,12 @@ def recetas_normales():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta)
-
+recetas_normales()
 # Se muestran las recetas saludables
 def recetas_saludables():
     # Ruta del archivo recetas saludables json temporal para usar en consola local
     ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
-    df_recetas_saludables = cargar_recetas(ruta_saludable)
+    df_recetas_saludables = cargar_datos(ruta_saludable)
 
     # Crear una caja de selección para el filtro de dificultad
     difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
@@ -220,21 +232,13 @@ def recetas_saludables():
             """,
             unsafe_allow_html=True,
         )
-
-        # Crear un elemento expansible con los detalles de la receta
-        # with st.expander(f"Ver Detalles de {receta['name']}"):
-        #     # Cuando se hace clic en el botón, actualiza la variable de estado
-        #     if st.button(f"Ver Detalles de {receta['name']}"):
-        #         detalles_abiertos = receta['id']
-
-        #     # Llama a la función para mostrar los detalles
         detalles_abiertos(receta)
 
 # Se muestras las recetas para un corto presupuesto(sencillaes)
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json 
     ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
-    df_recetas_presupuesto = cargar_recetas(ruta_presupuesto)
+    df_recetas_presupuesto = cargar_datos(ruta_presupuesto)
 
     if df_recetas_presupuesto.empty:
         st.title("No hay recetas sencillas disponibles")
@@ -267,7 +271,7 @@ def recetas_presupuesto():
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json 
     ruta_horneados = 'https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA'
-    df_recetas_horneados = cargar_recetas(ruta_horneados)
+    df_recetas_horneados = cargar_datos(ruta_horneados)
 
     # Crear una caja de selección para el filtro de dificultad
     difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
@@ -301,7 +305,7 @@ def recetas_horneados():
 def recetas_especiales():
     # Ruta del archivo recetas presupuesto json 
     ruta_especiales = "https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA"
-    df_recetas_especiales = cargar_recetas(ruta_especiales)
+    df_recetas_especiales = cargar_datos(ruta_especiales)
 
     if df_recetas_especiales.empty:
         st.title("No  hay recetas especiales disponibles.")
