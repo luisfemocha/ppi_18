@@ -1,39 +1,68 @@
 # CAPA VISTA
 
 import streamlit as st
-
 # librerias de capa vista
-
-# librerias de capa control
-import funciones
+import funciones  
 
 def sidebar():
-    pagina = ''
+    """
+    esta es la funcion del sidebar segun esto se llama a la opcion de la
+    aplicacion que desee el usario, para mirar una categoria de recetas
+    o estar en la pagina principal
+    """
+    # Obtener la página actual de la sesión o establecerla en 'principal' 
+    # Por defecto
+    pagina = st.session_state.get('pagina', 'principal')
+    
+    # Esta pagina home es la pagina principal y de inicio cuando el usuario 
+    # Recien entra a la pagina
+    if st.sidebar.button("Home", key="inicio"):
+        st.session_state.pagina = 'principal'
 
-    if st.sidebar.button("Inicio", key="inicio") or pagina=='':
-        pagina='principal'
-
+    # Esta es la parte de recetas
     st.sidebar.title("Recetas")
 
-    if st.sidebar.button("Recetas fit", key="recetas_fit"):
-            pagina = 'saludable'
+    # Para desplegar las recetas fit
+    if st.sidebar.button("Recetas fit", key="recetas_fit"
+                         ) or pagina == 'saludable':
+        st.session_state.pagina = 'saludable'
 
-    if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"):
-        pagina = 'presupuesto'
-
+    # Para desplegar las recetas sencillas
+    if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"
+                         ) or pagina == 'presupuesto':
+        st.session_state.pagina = 'presupuesto'
+    
+    # Para desplegar las recetas especiales
+    if st.sidebar.button("Recetas especiales", key="recetas_especiales"
+                         ) or pagina == 'especiales':
+            st.session_state.pagina = 'especiales'
+    
+    # Para desplegar las recetas horneadas
+    if st.sidebar.button("Recetas horneadas", key="recetas_horneadas"
+                         ) or pagina == 'horneado':
+        st.session_state.pagina = 'horneado'
+    
+    # Aqui es la parte de cuenta de la apliacion
     st.sidebar.title("Cuenta")
 
-    if st.sidebar.button("Registrarse", key="registro"):
-        pagina = 'registro'
+    # Para reguistrarse
+    if st.sidebar.button("Registrarse", key="registro"
+                         ) or pagina == 'registro':
+        st.session_state.pagina = 'registro'
+    
+    # Para iniciar sesion
+    if st.sidebar.button("Iniciar Sesión", key="ingreso"
+                         ) or pagina == 'ingreso':
+        st.session_state.pagina = 'ingreso'
 
-    if st.sidebar.button("Iniciar Sesión", key="ingreso"):
-        pagina= 'ingreso'
-
+    # Llamar a la función para mostrar la página correspondiente
     funciones.vistas(pagina)
 
 # Pie de pagina aqui se vera el contacto y los desarrolladores
 def footer():
-    # .reportview-container .main footer { visibility: hidden; }
+    """
+    Esta funcion es para mirar el nombre de los desarrolladores
+    """
     st.markdown("""
     <style>
         /* Se ocultan el header y footer defaults mientras se desarrolla la app */
@@ -54,9 +83,11 @@ def footer():
 
     st.markdown("""
     <footer class='pie_de_pagina'>
-        Desarrollado por: Daniel Garzon Y Luis Moreno | Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
+        Desarrollado por: Daniel Garzon Y Luis Moreno | 
+                Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
     </footer>
     """, unsafe_allow_html=True)
 
+# Se llama siemopre sidebar y footer por que siempre son visibles
 sidebar()
 footer()

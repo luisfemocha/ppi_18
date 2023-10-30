@@ -19,17 +19,17 @@
 | Tarea                                                  | Responsable                                         | Estado   |
 |--------------------------------------------------------| -------------------------------------------------- |----------|
 | Diseño de barra de navegacion.                         | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo    |
-| Filtros de búsqueda de recetas por ingredientes.       | [Luis Chamorro](https://github.com/Luisfemocha) | Empezada |
-| Diseño de inicio de sesión.             | [Luis Chamorro](https://github.com/Luisfemocha) | Empezada |
-| Visualización de recetas saludables. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9)  | Listo    |
+| Filtros de búsqueda de recetas por ingredientes.       | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) |    Listo |
+| Diseño de inicio de sesión.             | [Luis Chamorro](https://github.com/Luisfemocha) | Listo |
+| Visualización de recetas saludables. | [Luis Chamorro](https://github.com/Luisfemocha)  | Listo    |
 | Visualización de recetas sencillas.  | [Daniel Felipe Garzon](https://github.com/Dgarzonac9)  | Listo    |
 
 ## 23/10/2023 - 30/10/2023
 | Tarea                                                  | Responsable                                         | Estado      |
 |--------------------------------------------------------| -------------------------------------------------- |-------------|
-| Filtrar recetas por categoría (fit, sencilla...)       | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar |
-| Filtrar receta por dificultad.                         | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar |
-| Detalle de receta (incluyendo pasos, descripciones...) | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar |
+| Filtrar recetas por categoría (fit, sencilla.)       | [Luis Chamorro](https://github.com/Luisfemocha) | Listo |
+| Filtrar receta por dificultad y subcategoria.             | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo |
+| Detalle de receta (incluyendo pasos, descripciones.) | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo |
 | Perfil de usuario.                           | [Luis Chamorro](https://github.com/Luisfemocha) | Empezado    |
 
 ## 30/10/2023 - 06/11/2023
