@@ -26,9 +26,9 @@ def ingreso(usn, pas):
     cuentas = cuentas = conexion.get_cuentas()
     print("se obtienen las cuentas\n" + str(cuentas))
 
-    # st.title(cuentas)
+    st.title("Se obtienen las cuentas\n" + str(cuentas))
 
-    if (type(cuentas) is list ):
+    if (type(cuentas) is list):
         if (len(cuentas) >0):
             print("se tiene alguna cuenta")
         else:

@@ -65,7 +65,6 @@ def desplegar_form(option):
 
         # Para llamar a la función de inicio de sesión
         if login_button:
-            st.title("Se comienza")
             utils.ingreso(username, password)
 
 # Visualizacion de cada receta
