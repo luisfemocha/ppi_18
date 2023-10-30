@@ -4,6 +4,8 @@ import streamlit as st
 # librerias de capa vista
 import funciones  
 
+version= "0.20231030L"
+
 def sidebar():
     """
     esta es la funcion del sidebar segun esto se llama a la opcion de la
@@ -85,6 +87,8 @@ def footer():
     <footer class='pie_de_pagina'>
         Desarrollado por: Daniel Garzon Y Luis Moreno | 
                 Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
+                
+                Version: """ + version + """
     </footer>
     """, unsafe_allow_html=True)
 
