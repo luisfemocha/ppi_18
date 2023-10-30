@@ -23,11 +23,16 @@ def registro(usn, pas, conf):
 
 
 def ingreso(usn, pas):
-    if cuentas == None or len(cuentas) == 0:
-        cuentas = conexion.get_cuentas()
-        print("se obtienen las cuentas\n" + str(cuentas))
+    cuentas = cuentas = conexion.get_cuentas()
+    print("se obtienen las cuentas\n" + str(cuentas))
 
-    st.title(cuentas)
+    # st.title(cuentas)
+
+    if (type(cuentas) is list ):
+        if (len(cuentas) >0):
+            print("se tiene alguna cuenta")
+        else:
+            print("funcion vacia")
 
 
 def get_ingredientes():
