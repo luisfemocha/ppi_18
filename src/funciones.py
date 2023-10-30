@@ -53,7 +53,8 @@ def desplegar_form(option):
                 if data_agreement:
                     utils.registro(username, password, confirm_password)
                 else:
-                    st.error('Debes aceptar el tratamiento de tus datos personales para registrarte.')
+                    st.error(
+                        'Debes aceptar el tratamiento de tus datos personales para registrarte.')
 
     # Este es para el login de la página
     elif option == 'ingreso':
@@ -147,18 +148,23 @@ def recetas_normales():
 
     # Crear una caja de selección para el filtro de dificultad
     ingredientes_deseados = st.multiselect("Selecciona los ingredientes:", lista_ingredientes)
-    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Smoothies', 'Salads', 'Dinner',
-                                                               'Fitness & lifestyle','High protein', 'Keto'])
+    difficult = st.selectbox('Selecciona el nivel de dificultad',
+                              ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría',
+                                ['Todos', 'Smoothies', 'Salads', 'Dinner',
+                                 'Fitness & lifestyle','High protein', 'Keto'])
 
     # Filtrar las recetas basándose en la dificultad,subcategoría y ingredientes
     if ingredientes_deseados:
         df_recetas_normales = df_recetas_normales[df_recetas_normales['ingredients'].apply(
-            lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
+            lambda x: any(
+                ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
     if difficult != 'Todos':
-        df_recetas_normales = df_recetas_normales[df_recetas_normales['difficult'] == difficult]
+        df_recetas_normales = df_recetas_normales[
+            df_recetas_normales['difficult'] == difficult]
     if subcategory != 'Todos':
-        df_recetas_normales = df_recetas_normales[df_recetas_normales['subcategory'] == subcategory]
+        df_recetas_normales = df_recetas_normales[
+            df_recetas_normales['subcategory'] == subcategory]
     
     # Si la lista esta vacia no se muestra nada
     if df_recetas_normales.empty:
@@ -181,7 +187,8 @@ def recetas_normales():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
-                <img src="{receta['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+                <img src="{receta['image']}" alt="Imagen de la receta" 
+                style="max-width: 100%; border-radius: 5px;">
             </div>
             """,
             unsafe_allow_html=True,
@@ -195,14 +202,19 @@ def recetas_saludables():
     df_recetas_saludables = cargar_datos(ruta_saludable)
 
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Smoothies', 'Salads', 'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
+    difficult = st.selectbox('Selecciona el nivel de dificultad',
+                              ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría',
+                                ['Todos', 'Smoothies', 'Salads',
+                                  'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
     if difficult != 'Todos':
-        df_recetas_saludables = df_recetas_saludables[df_recetas_saludables['difficult'] == difficult]
+        df_recetas_saludables = df_recetas_saludables[
+            df_recetas_saludables['difficult'] == difficult]
     if subcategory != 'Todos':
-        df_recetas_saludables = df_recetas_saludables[df_recetas_saludables['subcategory'] == subcategory]
+        df_recetas_saludables = df_recetas_saludables[
+            df_recetas_saludables['subcategory'] == subcategory]
 
     if df_recetas_saludables.empty:
         st.title("No hay recetas saludables disponibles.")
@@ -227,7 +239,8 @@ def recetas_saludables():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
-                <img src="{receta['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+                <img src="{receta['image']}" alt="Imagen de la receta"
+                  style="max-width: 100%; border-radius: 5px;">
             </div>
             """,
             unsafe_allow_html=True,
@@ -270,18 +283,24 @@ def recetas_presupuesto():
 # Se muestran las recetas para hornearse
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json 
-    ruta_horneados = 'https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA'
+    ruta_horneados = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/horneados.json'
     df_recetas_horneados = cargar_datos(ruta_horneados)
 
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Bread', 'Cakes', 'Desserts', "Kids' baking", 'Quick bakes','Savoury pastries','Sweet treats','Vegan baking','Biscuit recipes'])
+    difficult = st.selectbox('Selecciona el nivel de dificultad',
+                              ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría',
+                                ['Todos', 'Bread', 'Cakes', 'Desserts',
+                                  "Kids' baking", 'Quick bakes','Savoury pastries',
+                                  'Sweet treats','Vegan baking','Biscuit recipes'])
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
     if difficult != 'Todos':
-        df_recetas_horneados = df_recetas_horneados[df_recetas_horneados['difficult'] == difficult]
+        df_recetas_horneados = df_recetas_horneados[
+            df_recetas_horneados['difficult'] == difficult]
     if subcategory != 'Todos':
-        df_recetas_horneados = df_recetas_horneados[df_recetas_horneados['subcategory'] == subcategory]
+        df_recetas_horneados = df_recetas_horneados[
+            df_recetas_horneados['subcategory'] == subcategory]
 
     if df_recetas_horneados.empty:
         st.title("No hay recetas horneadas disponibles.")
@@ -294,7 +313,8 @@ def recetas_horneados():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
-                <img src="{receta2['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+                <img src="{receta2['image']}" alt="Imagen de la receta" 
+                style="max-width: 100%; border-radius: 5px;">
             </div>
             """,
             unsafe_allow_html=True,
@@ -304,7 +324,7 @@ def recetas_horneados():
 # Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
     # Ruta del archivo recetas presupuesto json 
-    ruta_especiales = "https://raw.githubusercontent.com/Dgarzonac9/pruebappi/main/horneados.json?token=GHSAT0AAAAAACHURJUBCDFFSXUDK75IVUYUZJ6VNOA"
+    ruta_especiales = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/especiales.json"
     df_recetas_especiales = cargar_datos(ruta_especiales)
 
     if df_recetas_especiales.empty:
@@ -314,20 +334,27 @@ def recetas_especiales():
     st.title("Recetas especiales")
 
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Birthdays', 'Cocktails', 'Hosting', 'Slow cooker',"Kids' birthdays","Mocktails",'Picnics','Barbecues','Spring recipes','Special occasions','Teas'])
+    difficult = st.selectbox('Selecciona el nivel de dificultad',
+                              ['Todos', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Selecciona la subcategoría',
+                                ['Todos', 'Birthdays', 'Cocktails', 'Hosting',
+                                  'Slow cooker',"Kids' birthdays","Mocktails",
+                                  'Picnics','Barbecues','Spring recipes','Special occasions','Teas'])
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
     if difficult != 'Todos':
-        df_recetas_especiales = df_recetas_especiales[df_recetas_especiales['difficult'] == difficult]
+        df_recetas_especiales = df_recetas_especiales[
+            df_recetas_especiales['difficult'] == difficult]
     if subcategory != 'Todos':
-        df_recetas_especiales = df_recetas_especiales[df_recetas_especiales['subcategory'] == subcategory]
+        df_recetas_especiales = df_recetas_especiales[
+            df_recetas_especiales['subcategory'] == subcategory]
 
     for index, receta1 in df_recetas_especiales.iterrows():
         st.markdown(
             f"""
             <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
-                <img src="{receta1['image']}" alt="Imagen de la receta" style="max-width: 100%; border-radius: 5px;">
+                <img src="{receta1['image']}" alt="Imagen de la receta" 
+                style="max-width: 100%; border-radius: 5px;">
             </div>
             """,
             unsafe_allow_html=True,
