@@ -1,25 +1,30 @@
-# CAPA VISTA
+# PRESENTATION TIER
 
+# No standard imports
+# 3rd party library imports
 import streamlit as st
-# librerias de capa vista
-import funciones  
+
+# local imports from CONTROL tier
+import funciones
+from utils import get_user
+
+version = "0.20231102L"
 
 def sidebar():
     """
-    esta es la funcion del sidebar segun esto se llama a la opcion de la
-    aplicacion que desee el usario, para mirar una categoria de recetas
-    o estar en la pagina principal
+    This is the sidebar function, it creates a sidebar as its name says in it, it creates buttons according to the
+    different views of the webpage.
+    If any button is pressed the session_state changes and then the function functions.vista() is called.
     """
-    # Obtener la página actual de la sesión o establecerla en 'principal' 
-    # Por defecto
+    # Get the current page of the session or establish it as 'principal' by default.
     pagina = st.session_state.get('pagina', 'principal')
-    
-    # Esta pagina home es la pagina principal y de inicio cuando el usuario 
-    # Recien entra a la pagina
+
+    # Home is the splash page of the webpage, that is to say, the first view the user sees when entering the page either
+    # as unregistered or registered.
     if st.sidebar.button("Home", key="inicio"):
         st.session_state.pagina = 'principal'
 
-    # Esta es la parte de recetas
+    print('User from start '+str(get_user()))
     st.sidebar.title("Recetas")
 
         # Para desplegar las recetas fit
@@ -85,6 +90,8 @@ def footer():
     <footer class='pie_de_pagina'>
         Desarrollado por: Daniel Garzon Y Luis Moreno | 
                 Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
+                
+                Version: """ + version + """
     </footer>
     """, unsafe_allow_html=True)
 
