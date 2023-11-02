@@ -10,8 +10,27 @@ token = st.secrets["token"]
 espacio = Deta(token)
 base = espacio.Base("ppi18_usuarios")
 
-def get_cuentas():
-    return base.fetch().items
+def get_cuentas() -> object:
+    try:
+        lista_cuentas = base.fetch().items
+        cuentas = {}
+
+        for a in lista_cuentas:
+            # bandera primer objeto || llave inicial == username
+            bpo = None
+            for key in a.keys():
+                if bpo is None:
+                    bpo = a[key]
+                    if bpo in cuentas:
+                        break
+                    else:
+                        cuentas[bpo]= {}
+                else:
+                    cuentas[bpo][key] = a[key]
+
+        return cuentas
+    except:
+        return "Error en conexion, intente de nuevo."
 
 
 def check_cuenta(usn, pas):

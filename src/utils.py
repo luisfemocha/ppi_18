@@ -1,13 +1,17 @@
-# CAPA CONTROL
+# CONTROL TIER
+# In this file the functions that manage the data and logics of the app.
 
-# En este archivo de van a poner las funciones que van a manejar los datos y la lógica de la aplicación.
+from typing import Dict, Any
 
 import streamlit as st
 
-# import desde la capa de datos
+# DATA Tier import
 import conexion
 
-cuentas = []
+# CONTROL Tier import
+import funciones
+
+user = None
 
 def registro(usn, pas, conf):
     if pas == conf:
@@ -23,16 +27,28 @@ def registro(usn, pas, conf):
 
 
 def ingreso(usn, pas):
-    cuentas = cuentas = conexion.get_cuentas()
-    print("se obtienen las cuentas\n" + str(cuentas))
+    accounts: object = conexion.get_cuentas()
+    print("Successful get accounts:\n" + str(accounts))
 
-    st.title("Se obtienen las cuentas\n" + str(cuentas))
+    if type(accounts) is dict:
+        if len(accounts) > 0:
+            print('Accounts are found')
 
-    if (type(cuentas) is list):
-        if (len(cuentas) >0):
-            print("se tiene alguna cuenta")
+            if usn in accounts:
+                if accounts[usn]['password'] == pas:
+                    print('Login successful')
+
+                    user = accounts[usn]
+
+                    st.session_state.pagina = 'principal'
+                else:
+                    print('Incorrect password')
+            else:
+                print('User not found')
         else:
-            print("funcion vacia")
+            print("There are not accounts")
+    else:
+        print('Wrong data type of accounts')
 
 
 def get_ingredientes():
@@ -69,3 +85,7 @@ def trigger_recetas(ingredientes_usuario):
         st.write(random.choice(recetas_disponibles))
     else:
         st.warning("Lo siento, no encontré ninguna receta con esos ingredientes.")
+
+
+def get_user():
+    return user

@@ -1,4 +1,4 @@
-# CAPA CONTROL
+# CONTROL TIER
 
 import json
 import requests
@@ -50,11 +50,21 @@ def desplegar_form(option):
 
             # Para llamar a la función de registro
             if register_button:
-                if data_agreement:
-                    utils.registro(username, password, confirm_password)
+                if username and password and password == confirm_password and data_agreement:
+                    if len(username) >= 8 and len(password) >= 8:
+                        utils.registro(username, password, confirm_password)
+                    else:
+                        st.error('Username and password must be at least 8 characters long.')
+                elif not username:
+                    st.error('You must specify a username.')
+                elif not password:
+                    st.error('You must specify a password.')
+                elif password != confirm_password:
+                    st.error('Passwords don\'t match.')
+                elif not data_agreement:
+                    st.error('In order to signup you must accept the personal data agreement')
                 else:
-                    st.error(
-                        'Debes aceptar el tratamiento de tus datos personales para registrarte.')
+                    st.error('An error has occurred, please try again.')
 
     # Este es para el login de la página
     elif option == 'ingreso':
