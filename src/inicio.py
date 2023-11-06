@@ -20,38 +20,38 @@ def sidebar():
         st.session_state.pagina = 'principal'
 
     # Esta es la parte de recetas
-    st.sidebar.title("Recetas")
+    st.sidebar.title("Recipes")
 
         # Para desplegar las recetas fit
-    if st.sidebar.button("Recetas fit", key="recetas_fit"
+    if st.sidebar.button("Healthy recipes", key="recetas_fit"
                          ) or st.session_state.get('pagina') == 'saludable':
         st.session_state.pagina = 'saludable'
 
     # Para desplegar las recetas sencillas
-    if st.sidebar.button("Recetas sencillas", key="recetas_sencillas"
+    if st.sidebar.button("Simple Recipes", key="recetas_sencillas"
                          ) or st.session_state.get('pagina') == 'presupuesto':
         st.session_state.pagina = 'presupuesto'
     
     # Para desplegar las recetas especiales
-    if st.sidebar.button("Recetas especiales", key="recetas_especiales"
+    if st.sidebar.button("Special Recipes", key="recetas_especiales"
                          ) or st.session_state.get('pagina') == 'especiales':
             st.session_state.pagina = 'especiales'
     
     # Para desplegar las recetas horneadas
-    if st.sidebar.button("Recetas horneadas", key="recetas_horneadas"
+    if st.sidebar.button("Baked Recipes", key="recetas_horneadas"
                          ) or st.session_state.get('pagina') == 'horneado':
         st.session_state.pagina = 'horneado'
     
     # Aqui es la parte de cuenta de la apliacion
-    st.sidebar.title("Cuenta")
+    st.sidebar.title("Account")
 
     # Para reguistrarse
-    if st.sidebar.button("Registrarse", key="registro"
+    if st.sidebar.button("Register", key="registro"
                          ) or st.session_state.get('pagina') == 'registro':
         st.session_state.pagina = 'registro'
     
     # Para iniciar sesion
-    if st.sidebar.button("Iniciar Sesión", key="ingreso"
+    if st.sidebar.button("Log In", key="ingreso"
                          ) or st.session_state.get('pagina') == 'ingreso':
         st.session_state.pagina = 'ingreso'
 
@@ -82,11 +82,11 @@ def footer():
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <footer class='pie_de_pagina'>
-        Desarrollado por: Daniel Garzon Y Luis Moreno | 
-                Contacto: dgarzonac@unal.edu.co</a> Y lumorenoc@unal.edu.co</a>
+    <footer class='footer'>
+        Developed by: Daniel Garzon and Luis Moreno | 
+                Contact: dgarzonac@unal.edu.co</a> and lumorenoc@unal.edu.co</a>
     </footer>
-    """, unsafe_allow_html=True)
+    """,unsafe_allow_html=True)
 
 # Se llama siemopre sidebar y footer por que siempre son visibles
 sidebar()
