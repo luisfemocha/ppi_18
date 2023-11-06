@@ -69,43 +69,43 @@ def desplegar_form(option):
             utils.ingreso(username, password)
 
 # Visualizacion de cada receta
-def detalles_abiertos(receta):
+def detalles_abiertos(recipe):
     # Verifica si se debe mostrar los detalles de esta receta
     # if receta['id'] in detalles_abiertos and detalles_abiertos[receta['id']]:
-    with st.expander(f"Ver Detalles de {receta['name']}"):
-        st.subheader(receta["name"])
+    with st.expander(f"View Details of {recipe['name']}"):
+        st.subheader(recipe["name"])
 
         # Detalles de la receta (puedes usar un bucle para iterar sobre los datos)
-        st.header("Detalles de la Receta")
-        st.write(f"**Descripción:** {receta['description']}")
-        st.write(f"**Autor:** {receta['author']}")
-        st.write(f"**Calificación:** {receta['rattings']}")
+        st.header("Recipe Details")
+        st.write(f"**Description:** {recipe['description']}")
+        st.write(f"**Author:** {recipe['author']}")
+        st.write(f"**Rating:** {recipe['rattings']}")
 
         # Ingredientes
-        st.header("Ingredientes")
-        for i, ingrediente in enumerate(receta["ingredients"]):
-            st.write(f"{i + 1}. {ingrediente}")
+        st.header("Ingredients")
+        for i, ingredient in enumerate(recipe["ingredients"]):
+            st.write(f"{i + 1}. {ingredient}")
 
         # Pasos
-        st.header("Pasos")
-        for i, paso in enumerate(receta["steps"]):
-            st.write(f"{i + 1}. {paso}")
+        st.header("Steps")
+        for i, step in enumerate(recipe["steps"]):
+            st.write(f"{i + 1}. {step}")
 
         # Tiempos
-        st.header("Tiempos")
-        preparacion = receta['times'].get('Preparation', 'No Time')
-        cocina = receta['times'].get('Cooking', 'No Time')
-        st.write(f"**Preparación:** {preparacion}")
-        st.write(f"**Cocción:** {cocina}")
+        st.header("Times")
+        preparation = recipe['times'].get('Preparation', 'No Time')
+        cooking = recipe['times'].get('Cooking', 'No Time')
+        st.write(f"**Preparation:** {preparation}")
+        st.write(f"**Cooking:** {cooking}")
 
         # Otros detalles
-        st.header("Otros Detalles")
-        st.write(f"**Porciones:** {receta['serves']}")
-        st.write(f"**Dificultad:** {receta['difficult']}")
-        st.write(f"**Conteo de votos:** {receta['vote_count']}")
-        st.write(f"**Subcategoría:** {receta['subcategory']}")
-        st.write(f"**Tipo de platillo:** {receta['dish_type']}")
-        st.write(f"**Categoría principal:** {receta['maincategory']}")
+        st.header("Other Details")
+        st.write(f"**Servings:** {recipe['serves']}")
+        st.write(f"**Difficulty:** {recipe['difficult']}")
+        st.write(f"**Vote Count:** {recipe['vote_count']}")
+        st.write(f"**Subcategory:** {recipe['subcategory']}")
+        st.write(f"**Dish Type:** {recipe['dish_type']}")
+        st.write(f"**Main Category:** {recipe['maincategory']}")
 
 # Segun esta funcion se cambian de vistas
 def vistas(vista):
@@ -144,7 +144,7 @@ def recetas_normales():
     df_recetas_normales = cargar_datos(ruta_normales)
     
     # Leer la lista de ingredientes
-    ruta_ingredientes = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\ingredientes.json'
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
     lista_ingredientes = pd.read_json(ruta_ingredientes)
     lista_ingredientes = lista_ingredientes["ingredients"][0]
 
@@ -226,7 +226,7 @@ def recetas_saludables():
     df_recetas_saludables = cargar_datos(ruta_saludable)
 
     # Leer la lista de ingredientes
-    ruta_ingredientes = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\ingredientes.json'
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
     lista_ingredientes = pd.read_json(ruta_ingredientes)
     lista_ingredientes = lista_ingredientes["ingredients"][0]
 
@@ -302,7 +302,7 @@ def recetas_presupuesto():
     df_recetas_presupuesto = cargar_datos(ruta_presupuesto)
 
     # Leer la lista de ingredientes
-    ruta_ingredientes = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\ingredientes.json'
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
     lista_ingredientes = pd.read_json(ruta_ingredientes)
     lista_ingredientes = lista_ingredientes["ingredients"][0]
 
@@ -369,7 +369,7 @@ def recetas_horneados():
     df_recetas_horneados = cargar_datos(ruta_horneados)
 
     # Leer la lista de ingredientes
-    ruta_ingredientes = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\ingredientes.json'
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
     lista_ingredientes = pd.read_json(ruta_ingredientes)
     lista_ingredientes = lista_ingredientes["ingredients"][0]
     
@@ -444,7 +444,7 @@ def recetas_especiales():
     df_recetas_especiales = cargar_datos(ruta_especiales)
 
     # Leer la lista de ingredientes
-    ruta_ingredientes = 'C:\\Users\\Asus\\Documents\\unal\\Programacion\\POO\\Grupo18_ppi\\src\\datos\\ingredientes.json'
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
     lista_ingredientes = pd.read_json(ruta_ingredientes)
     lista_ingredientes = lista_ingredientes["ingredients"][0]
 
