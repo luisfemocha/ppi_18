@@ -78,43 +78,43 @@ def desplegar_form(option):
             utils.ingreso(username, password)
 
 # Visualizacion de cada receta
-def detalles_abiertos(receta):
+def detalles_abiertos(recipe):
     # Verifica si se debe mostrar los detalles de esta receta
     # if receta['id'] in detalles_abiertos and detalles_abiertos[receta['id']]:
-    with st.expander(f"Ver Detalles de {receta['name']}"):
-        st.subheader(receta["name"])
+    with st.expander(f"View Details of {recipe['name']}"):
+        st.subheader(recipe["name"])
 
         # Detalles de la receta (puedes usar un bucle para iterar sobre los datos)
-        st.header("Detalles de la Receta")
-        st.write(f"**Descripción:** {receta['description']}")
-        st.write(f"**Autor:** {receta['author']}")
-        st.write(f"**Calificación:** {receta['rattings']}")
+        st.header("Recipe Details")
+        st.write(f"**Description:** {recipe['description']}")
+        st.write(f"**Author:** {recipe['author']}")
+        st.write(f"**Rating:** {recipe['rattings']}")
 
         # Ingredientes
-        st.header("Ingredientes")
-        for i, ingrediente in enumerate(receta["ingredients"]):
-            st.write(f"{i + 1}. {ingrediente}")
+        st.header("Ingredients")
+        for i, ingredient in enumerate(recipe["ingredients"]):
+            st.write(f"{i + 1}. {ingredient}")
 
         # Pasos
-        st.header("Pasos")
-        for i, paso in enumerate(receta["steps"]):
-            st.write(f"{i + 1}. {paso}")
+        st.header("Steps")
+        for i, step in enumerate(recipe["steps"]):
+            st.write(f"{i + 1}. {step}")
 
         # Tiempos
-        st.header("Tiempos")
-        preparacion = receta['times'].get('Preparation', 'No Time')
-        cocina = receta['times'].get('Cooking', 'No Time')
-        st.write(f"**Preparación:** {preparacion}")
-        st.write(f"**Cocción:** {cocina}")
+        st.header("Times")
+        preparation = recipe['times'].get('Preparation', 'No Time')
+        cooking = recipe['times'].get('Cooking', 'No Time')
+        st.write(f"**Preparation:** {preparation}")
+        st.write(f"**Cooking:** {cooking}")
 
         # Otros detalles
-        st.header("Otros Detalles")
-        st.write(f"**Porciones:** {receta['serves']}")
-        st.write(f"**Dificultad:** {receta['difficult']}")
-        st.write(f"**Conteo de votos:** {receta['vote_count']}")
-        st.write(f"**Subcategoría:** {receta['subcategory']}")
-        st.write(f"**Tipo de platillo:** {receta['dish_type']}")
-        st.write(f"**Categoría principal:** {receta['maincategory']}")
+        st.header("Other Details")
+        st.write(f"**Servings:** {recipe['serves']}")
+        st.write(f"**Difficulty:** {recipe['difficult']}")
+        st.write(f"**Vote Count:** {recipe['vote_count']}")
+        st.write(f"**Subcategory:** {recipe['subcategory']}")
+        st.write(f"**Dish Type:** {recipe['dish_type']}")
+        st.write(f"**Main Category:** {recipe['maincategory']}")
 
 # Segun esta funcion se cambian de vistas
 def vistas(vista):
@@ -153,28 +153,45 @@ def recetas_normales():
     df_recetas_normales = cargar_datos(ruta_normales)
     
     # Leer la lista de ingredientes
-    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/dgarzonac/src/datos/ingredientes.json'
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
     lista_ingredientes = pd.read_json(ruta_ingredientes)
     lista_ingredientes = lista_ingredientes["ingredients"][0]
 
     # Crear una caja de selección para el filtro de dificultad
-    ingredientes_deseados = st.multiselect("Selecciona los ingredientes:", lista_ingredientes)
-    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', "Lunch recipes", "Dinner recipes", "Breakfast recipes",
-                                                               "Storecupboard","Cheese recipes", "Desserts", "Fish and seafood",
-                                                               "Pasta", "Chicken", "Meat", "Vegetarian"])
+    ingredientes_deseados = st.multiselect(
+        "Select ingredients:", lista_ingredientes
+    )
 
-    # Filtrar las recetas basándose en la dificultad,subcategoría y ingredientes
+    difficult = st.selectbox(
+        'Select difficulty level',
+        ['All', 'Easy', 'More effort', 'A challenge']
+    )
+
+    subcategory = st.selectbox(
+        'Select subcategory', 
+        ['All', "Lunch recipes", "Dinner recipes","Breakfast recipes",
+        "Storecupboard","Cheese recipes", "Desserts","Fish and seafood",
+        "Pasta", "Chicken", "Meat", "Vegetarian"]
+    )
+
+
+    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
     if ingredientes_deseados:
-        df_recetas_normales = df_recetas_normales[df_recetas_normales['ingredients'].apply(
-            lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados))]
-        
-    if difficult != 'Todos':
         df_recetas_normales = df_recetas_normales[
-            df_recetas_normales['difficult'] == difficult]
-    if subcategory != 'Todos':
+            df_recetas_normales['ingredients'].apply(
+                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+            )
+        ]
+
+    if difficult != 'All':
         df_recetas_normales = df_recetas_normales[
-            df_recetas_normales['subcategory'] == subcategory]
+            df_recetas_normales['difficult'] == difficult
+        ]
+
+    if subcategory != 'All':
+        df_recetas_normales = df_recetas_normales[
+            df_recetas_normales['subcategory'] == subcategory
+        ]
 
     # Define el número de recetas por página
     recetas_por_pagina = 10
@@ -184,10 +201,11 @@ def recetas_normales():
     if len(df_recetas_normales) % recetas_por_pagina > 0:
         total_paginas += 1
 
+
     # Verifica si hay páginas para mostrar
     if total_paginas > 0:
         # Crea un selector para la página
-        pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+        pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
 
         # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
         inicio = (pagina - 1) * recetas_por_pagina
@@ -207,7 +225,7 @@ def recetas_normales():
             )
             detalles_abiertos(receta)
     else:
-        st.title("No hay recetas para mostrar.")
+        st.title("No recipes to display.")
 
 
 # Se muestran las recetas saludables
@@ -216,23 +234,44 @@ def recetas_saludables():
     ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
     df_recetas_saludables = cargar_datos(ruta_saludable)
 
+    # Leer la lista de ingredientes
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
+    lista_ingredientes = pd.read_json(ruta_ingredientes)
+    lista_ingredientes = lista_ingredientes["ingredients"][0]
+
+    # Aqui se despliegan las recetas saludables
+    st.title("Healthy recipes")
+
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad',
-                              ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría',
-                                ['Todos', 'Smoothies', 'Salads',
+    ingredientes_deseados = st.multiselect(
+        "Select ingredients:", lista_ingredientes
+    )
+
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Select the difficulty level',
+                              ['All', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Select the subcategory',
+                                ['All', 'Smoothies', 'Salads',
                                   'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
+    
+    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    if ingredientes_deseados:
+        df_recetas_saludables = df_recetas_saludables[
+            df_recetas_saludables['ingredients'].apply(
+                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+            )
+        ]
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
-    if difficult != 'Todos':
+    if difficult != 'All':
         df_recetas_saludables = df_recetas_saludables[
             df_recetas_saludables['difficult'] == difficult]
-    if subcategory != 'Todos':
+    if subcategory != 'All':
         df_recetas_saludables = df_recetas_saludables[
             df_recetas_saludables['subcategory'] == subcategory]
 
     if df_recetas_saludables.empty:
-        st.title("No hay recetas saludables disponibles.")
+        st.title("No healthy recipes available.")
         return None
 
     # Define el número de recetas por página
@@ -244,16 +283,13 @@ def recetas_saludables():
         total_paginas += 1
 
     # Crea un selector para la página
-    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+    pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
 
     # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
     if pagina != None:
         inicio = (pagina - 1) * recetas_por_pagina
         fin = inicio + recetas_por_pagina
         df_recetas_pagina = df_recetas_saludables.iloc[inicio:fin]
-
-    # Aqui se despliegan las recetas saludables
-    st.title("Recetas saludables")
 
     for index, receta in df_recetas_pagina.iterrows():
         # Mostrar la imagen previa con borde
@@ -268,27 +304,44 @@ def recetas_saludables():
         )
         detalles_abiertos(receta)
 
-
 # Se muestras las recetas para un corto presupuesto(sencillaes)
 def recetas_presupuesto():
     # Ruta del archivo recetas presupuesto json 
     ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
     df_recetas_presupuesto = cargar_datos(ruta_presupuesto)
 
+    # Leer la lista de ingredientes
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
+    lista_ingredientes = pd.read_json(ruta_ingredientes)
+    lista_ingredientes = lista_ingredientes["ingredients"][0]
+
+    # Aqui se despliegan las recetas sencillas
+    st.title("Simple Recipes")
+    # Crear una caja de selección para el filtro de dificultad
+    ingredientes_deseados = st.multiselect(
+        "Select ingredients:", lista_ingredientes
+    )
+
+    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    if ingredientes_deseados:
+        df_recetas_presupuesto = df_recetas_presupuesto[
+            df_recetas_presupuesto['ingredients'].apply(
+                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+            )
+        ]
+
     if df_recetas_presupuesto.empty:
-        st.title("No hay recetas sencillas disponibles")
+        st.title("No simple recipes available.")
         return None
 
-    st.title("Recetas sencillas")
-
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad', ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría', ['Todos', 'Budget dinners', 'Batch cooking', 'Student meals', 'Freezable meals', 'Slow cooker'])
+    difficult = st.selectbox('Select the difficulty level', ['All', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Select the subcategory', ['All', 'Budget dinners', 'Batch cooking', 'Student meals', 'Freezable meals', 'Slow cooker'])
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
-    if difficult != 'Todos':
+    if difficult != 'All':
         df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['difficult'] == difficult]
-    if subcategory != 'Todos':
+    if subcategory != 'All':
         df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['subcategory'] == subcategory]
 
     # Define el número de recetas por página
@@ -300,7 +353,7 @@ def recetas_presupuesto():
         total_paginas += 1
 
     # Crea un selector para la página
-    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+    pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
 
     # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
     inicio = (pagina - 1) * recetas_por_pagina
@@ -318,31 +371,51 @@ def recetas_presupuesto():
         )
         detalles_abiertos(receta1)
 
-
 # Se muestran las recetas para hornearse
 def recetas_horneados():
     # Ruta del archivo recetas presupuesto json 
     ruta_horneados = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/horneados.json'
     df_recetas_horneados = cargar_datos(ruta_horneados)
 
+    # Leer la lista de ingredientes
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
+    lista_ingredientes = pd.read_json(ruta_ingredientes)
+    lista_ingredientes = lista_ingredientes["ingredients"][0]
+    
+    # Display baked recipes here
+    st.title("Baked Recipes")
+
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad',
-                              ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría',
-                                ['Todos', 'Bread', 'Cakes', 'Desserts',
+    ingredientes_deseados = st.multiselect(
+        "Select ingredients:", lista_ingredientes
+    )
+
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Select the difficulty level',
+                              ['All', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Select the subcategory',
+                                ['All', 'Bread', 'Cakes', 'Desserts',
                                   "Kids' baking", 'Quick bakes','Savoury pastries',
                                   'Sweet treats','Vegan baking','Biscuit recipes'])
-
+    
+    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    if ingredientes_deseados:
+        df_recetas_horneados = df_recetas_horneados[
+            df_recetas_horneados['ingredients'].apply(
+                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+            )
+        ]
+    
     # Filtrar las recetas basándose en la dificultad y subcategoría
-    if difficult != 'Todos':
+    if difficult != 'All':
         df_recetas_horneados = df_recetas_horneados[
             df_recetas_horneados['difficult'] == difficult]
-    if subcategory != 'Todos':
+    if subcategory != 'All':
         df_recetas_horneados = df_recetas_horneados[
             df_recetas_horneados['subcategory'] == subcategory]
 
     if df_recetas_horneados.empty:
-        st.title("No hay recetas horneadas disponibles.")
+        st.title("No baked recipes available.")
         return None
 
     # Define el número de recetas por página
@@ -354,15 +427,12 @@ def recetas_horneados():
         total_paginas += 1
 
     # Crea un selector para la página
-    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+    pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
 
     # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
     inicio = (pagina - 1) * recetas_por_pagina
     fin = inicio + recetas_por_pagina
     df_recetas_pagina = df_recetas_horneados.iloc[inicio:fin]
-
-    # Aqui se despliegan las recetas de presupuesto
-    st.title("Recetas horneadas")
     
     for index, receta2 in df_recetas_pagina.iterrows():
         st.markdown(
@@ -376,32 +446,47 @@ def recetas_horneados():
         )
         detalles_abiertos(receta2)
 
-
 # Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
     # Ruta del archivo recetas presupuesto json 
     ruta_especiales = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/especiales.json"
     df_recetas_especiales = cargar_datos(ruta_especiales)
 
+    # Leer la lista de ingredientes
+    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
+    lista_ingredientes = pd.read_json(ruta_ingredientes)
+    lista_ingredientes = lista_ingredientes["ingredients"][0]
+
+    st.title("Special Recipes")
+
     if df_recetas_especiales.empty:
-        st.title("No  hay recetas especiales disponibles.")
+        st.title("No special recipes available.")
         return None
 
-    st.title("Recetas especiales")
-
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Selecciona el nivel de dificultad',
-                              ['Todos', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Selecciona la subcategoría',
-                                ['Todos', 'Birthdays', 'Cocktails', 'Hosting',
+    ingredientes_deseados = st.multiselect(
+        "Select ingredients:", lista_ingredientes
+    )
+    # Crear una caja de selección para el filtro de dificultad
+    difficult = st.selectbox('Select difficulty level',
+                              ['All', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Select subcategory',
+                                ['All', 'Birthdays', 'Cocktails', 'Hosting',
                                   'Slow cooker',"Kids' birthdays","Mocktails",
                                   'Picnics','Barbecues','Spring recipes','Special occasions','Teas'])
-
+    
+    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    if ingredientes_deseados:
+        df_recetas_especiales = df_recetas_especiales[
+            df_recetas_especiales['ingredients'].apply(
+                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+            )
+        ]
     # Filtrar las recetas basándose en la dificultad y subcategoría
-    if difficult != 'Todos':
+    if difficult != 'All':
         df_recetas_especiales = df_recetas_especiales[
             df_recetas_especiales['difficult'] == difficult]
-    if subcategory != 'Todos':
+    if subcategory != 'All':
         df_recetas_especiales = df_recetas_especiales[
             df_recetas_especiales['subcategory'] == subcategory]
 
