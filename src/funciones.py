@@ -6,6 +6,8 @@ import requests
 import pandas as pd
 import streamlit as st
 
+import matplotlib.pyplot as plt
+
 import utils
 
 
@@ -38,15 +40,15 @@ def desplegar_form(option):
     # Este es para el registro de la página
     if option == 'registro':
         with st.form(key='registration_form'):
-            st.header("Registro")
-            username = st.text_input('Nombre de usuario')
-            password = st.text_input('Contraseña', type='password')
-            confirm_password = st.text_input('Confirmar contraseña', type='password')
+            st.header("Register")
+            username = st.text_input('Username')
+            password = st.text_input('Password', type='password')
+            confirm_password = st.text_input('Confirm Password', type='password')
             
             # Agregar casilla de verificación para el acuerdo de tratamiento de datos personales
             data_agreement = st.checkbox(
-                f' Acepto el [ tratamiento de mis datos personales]({data_policy_link})')          
-            register_button = st.form_submit_button('Registrarse')
+                f' I agree to the  [ procesing of my personal data]({data_policy_link})')          
+            register_button = st.form_submit_button('Register')
 
             # Para llamar a la función de registro
             if register_button:
@@ -68,15 +70,16 @@ def desplegar_form(option):
 
     # Este es para el login de la página
     elif option == 'ingreso':
-        st.header('Inicio de Sesión')
-        username = st.text_input('Nombre de usuario')
-        password = st.text_input('Contraseña', type='password')
-        login_button = st.button("Iniciar sesión")
+        st.header('Login')
+        username = st.text_input('Username')
+        password = st.text_input('Password', type='password')
+        login_button = st.button("Log in")
 
         # Para llamar a la función de inicio de sesión
         if login_button:
             utils.ingreso(username, password)
 
+ 
 # Visualizacion de cada receta
 def detalles_abiertos(recipe):
     # Verifica si se debe mostrar los detalles de esta receta
@@ -107,6 +110,21 @@ def detalles_abiertos(recipe):
         st.write(f"**Preparation:** {preparation}")
         st.write(f"**Cooking:** {cooking}")
 
+        if recipe['nutrients'] != {}: 
+            # Nutrientes
+            st.header("Nutrients")
+            for nutrient in recipe['nutrients']:
+                cantidad = recipe['nutrients'].get(nutrient, 'No Nutrient')
+                st.write(f"{nutrient}: {cantidad}")
+            names_nurients = list(recipe['nutrients'].keys())
+            values_nutrients = list(recipe['nutrients'].values())
+            values_nutrients = [value[:-1] for value in values_nutrients]
+
+            # Grafica de los nutrientes
+            plt.figure(figsize=(6, 4))
+            plt.pie(values_nutrients, labels=names_nurients, autopct='%1.1f%%')
+            st.pyplot(plt)
+                
         # Otros detalles
         st.header("Other Details")
         st.write(f"**Servings:** {recipe['serves']}")

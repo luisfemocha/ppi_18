@@ -1,5 +1,5 @@
-# Librerias necesarias para el programa
-matplotlib
-numpy
+matplotlib==3.4.3
 pandas
-streamlit
+numpy
+gspread
+deta
