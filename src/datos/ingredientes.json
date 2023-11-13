@@ -1,14 +1,48 @@
-
 [
-    {
+  {
       "ingredients": [
-        "Todos","lemon","dill","quinoa","salmon","breasts",
-        "salt","garlic","paprika","pepper","rice","ham",
-        "olive oil","pesto", "onion", "basil","olives", 
-        "cider vinegar", "chickpeas", "beet", "mint", 
-        "ground", "chicken","avocado","tomatoes","lime",
-        "eggs", "cherry tomatoes", "broccoli"
+          "meat","lemon", "dill", "quinoa", "salmon", "breasts",
+          "salt", "garlic", "paprika", "pepper", "rice", "ham",
+          "olive oil", "onion", "basil", "olives",
+          "cider vinegar", "chickpeas", "beet", "mint",
+          "ground", "chicken", "avocado", "tomatoes", "lime",
+          "eggs", "cherry tomatoes", "broccoli", "asparagus",
+          "cilantro", "ginger", "zucchini", "carrots", "red bell pepper",
+          "green bell pepper", "mushrooms", "spinach", "kale", "cabbage",
+          "sweet potatoes", "corn", "black beans", "red onion", "cucumber",
+          "artichoke hearts", "rosemary", "thyme",
+          "oregano", "dried red chili flakes", "turmeric", "cumin", "mustard",
+          "worcestershire sauce", "balsamic vinegar", "maple syrup",
+          "honey", "brown sugar", "flour", "baking powder", "vanilla extract",
+          "cinnamon", "nutmeg", "cocoa powder", "white wine", "red wine",
+          "beer", "chicken broth", "beef broth", "vegetable broth", "coconut milk",
+          "almond milk", "cashews", "walnuts", "sunflower seeds", "chia seeds",
+          "quinoa", "couscous", "pasta", "rice noodles", "whole wheat bread",
+          "sourdough bread", "tortillas", "tofu", "tempeh", "seitan", "shrimp",
+          "mussels", "clams", "cod", "tuna", "swordfish", "scallops",
+          "lamb", "pork", "ground beef", "ground turkey", "ground pork",
+          "ground chicken", "ground lamb", "bacon", "sausage", "prosciutto", "salami",
+          "parmesan cheese", "cheddar cheese", "mozzarella cheese", "feta cheese",
+          "goat cheese", "blue cheese", "swiss cheese", "gouda cheese", "brie cheese",
+          "ricotta cheese", "cream cheese", "greek yogurt", "sour cream", "mayonnaise",
+          "ketchup", "mustard", "pickles", "hot sauce", "salsa", "guacamole", "hummus",
+          "pesto", "tahini", "soy sauce", "tomato sauce", "barbecue sauce",
+          "sweet chili sauce", "fish sauce", "hoisin sauce", "oyster sauce", "peanut sauce",
+          "spicy tomato sauce", "green olives", "black olives", "garlic powder",
+          "onion powder", "ground cumin", "ground ginger", "cinnamon powder",
+          "nutmeg powder", "sweet paprika", "hot paprika", "tarragon",
+          "worcestershire sauce", "fish sauce", "low-sodium soy sauce",
+          "light soy sauce", "dark soy sauce", "sesame oil", "peanut oil",
+          "canola oil", "coconut oil", "avocado oil", "extra virgin olive oil",
+          "lard", "butter", "margarine", "vegetable oil", "pork fat",
+          "corn oil", "sunflower oil", "nut oil", "safflower oil", "grape seed oil",
+          "almond oil", "macadamia nut oil", "pecan nut oil", "hazelnut oil", "brazil nut oil",
+          "sea salt", "spinach leaves", "pears", "grapes", "garlic cloves",
+           "natural lemon juice", "parsley", "chives",
+          "stuffed olives", "dried fruits", "peanuts", "almonds", "pistachios", 
+          "cheeses", "grated parmesan", "sliced mozzarella", "cubed panela", "ricotta",
+          "cottage cheese", "herbs", "apple", "banana", "orange", "strawberry",
+          "blueberry", "raspberry", "kiwi", "mango", "pineapple", "peach", "plum"
       ]
-    }
+  }
 ]
-
