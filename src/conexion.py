@@ -16,21 +16,24 @@ def get_cuentas() -> object:
         cuentas = {}
 
         for a in lista_cuentas:
-            # bandera primer objeto || llave inicial == username
-            bpo = None
+            usn = ''
+            if 'key' not in a.keys():
+                print('Account without key '+a)
+                continue
+            else:
+                usn = a['key']
+                cuentas[usn] = {'username': usn}
+
             for key in a.keys():
-                if bpo is None:
-                    bpo = a[key]
-                    if bpo in cuentas:
-                        break
-                    else:
-                        cuentas[bpo]= {}
+                if key == 'key':
+                    continue
                 else:
-                    cuentas[bpo][key] = a[key]
+                    cuentas[usn][key] = a[key]
 
         return cuentas
-    except:
-        return "Error en conexion, intente de nuevo."
+
+    except Exception as e:
+        return "Error en conexion, intente de nuevo."+e.__str__()
 
 
 def check_cuenta(usn, pas):

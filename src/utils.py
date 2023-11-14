@@ -13,34 +13,39 @@ import funciones
 
 user = None
 
-def registro(usn, pas, conf):
+def signup(usn, pas, conf):
     if pas == conf:
         # TODO
         #  vista.extras.show_modal("se realiza el registro")
-        st.write("se registra")
+        st.write("Signup successful")
         print("se realiza el registro")
     else:
         # TODO
         #  vista.extras.show_modal("No coinciden las contraseñas")
-        st.write("no se registra")
+        st.write("Signup unsuccessful")
         print("no coinciden las contraseñas")
 
 
 def ingreso(usn, pas):
     accounts: object = conexion.get_cuentas()
-    print("Successful get accounts:\n" + str(accounts))
+    # print("Successful get accounts:\n" + str(accounts))
 
     if type(accounts) is dict:
         if len(accounts) > 0:
-            print('Accounts are found')
+            # print('Accounts are found')
 
             if usn in accounts:
                 if accounts[usn]['password'] == pas:
-                    print('Login successful')
+                    # print('Login successful')
 
-                    user = accounts[usn]
+                    st.session_state.user = {
+                        'username': usn,
+                        'preferences': accounts[usn]['preferences'],
+                        'favorites': accounts[usn]['favorites']
+                    }
 
-                    st.session_state.pagina = 'principal'
+                    st.session_state.page = 'home'
+                    funciones.vistas('home')
                 else:
                     print('Incorrect password')
             else:
@@ -85,7 +90,3 @@ def trigger_recetas(ingredientes_usuario):
         st.write(random.choice(recetas_disponibles))
     else:
         st.warning("Lo siento, no encontré ninguna receta con esos ingredientes.")
-
-
-def get_user():
-    return user
