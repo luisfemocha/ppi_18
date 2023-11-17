@@ -32,13 +32,13 @@ def cargar_datos(ruta):
         st.title("Error al leer el archivo "+ruta)
         return pd.DataFrame()
 
-# Aquí se despliega el login y el registro de la página
+# Aquí se despliega el login y el signup de la página
 def desplegar_form(option):
     # URL del tratamiento de datos personales
     data_policy_link = "https://www.privacypolicies.com/live/510a8632-963e-45eb-b10b-dd5bf94ba46d"
 
     # Este es para el registro de la página
-    if option == 'registro':
+    if option == 'signup':
         with st.form(key='registration_form'):
             st.header("Register")
             username = st.text_input('Username')
@@ -54,7 +54,7 @@ def desplegar_form(option):
             if register_button:
                 if username and password and password == confirm_password and data_agreement:
                     if len(username) >= 8 and len(password) >= 8:
-                        utils.registro(username, password, confirm_password)
+                        utils.signup(username, password, confirm_password)
                     else:
                         st.error('Username and password must be at least 8 characters long.')
                 elif not username:
@@ -69,14 +69,13 @@ def desplegar_form(option):
                     st.error('An error has occurred, please try again.')
 
     # Este es para el login de la página
-    elif option == 'ingreso':
+    elif option == 'login':
         st.header('Login')
         username = st.text_input('Username')
         password = st.text_input('Password', type='password')
-        login_button = st.button("Log in")
 
         # Para llamar a la función de inicio de sesión
-        if login_button:
+        if st.button("Log in"):
             utils.ingreso(username, password)
 
  
@@ -137,11 +136,15 @@ def detalles_abiertos(recipe):
 # Segun esta funcion se cambian de vistas
 def vistas(vista):
     """
-    esta Funcion es para cambiar las vistas de la pagina 
-    segun el sidebar y la opcion que escoga el usario
+    This function changes page views according to the sidebar and the option
+    the user chooses.
     """
-    if vista == 'principal':
-        pagina_principal()
+    from datetime import datetime
+
+    print('vistas '+vista + " " + str(datetime.now().strftime('%M:%S')))
+
+    if vista == 'home':
+        home_page()
     elif vista =='saludable':
         recetas_saludables()
     elif vista == 'presupuesto':
@@ -150,19 +153,33 @@ def vistas(vista):
         recetas_horneados()
     elif vista == 'especiales':
         recetas_especiales() 
-    elif vista == 'registro':
-        desplegar_form('registro')
-    elif vista == 'ingreso':
-        desplegar_form('ingreso')
+    elif vista == 'signup':
+        desplegar_form('signup')
+    elif vista == 'login':
+        desplegar_form('login')
+    elif vista == 'logoff':
+        st.session_state.user = None
+        st.session_state.page = 'home'
+        vistas('home')
+    elif vista == 'settings':
+        print('User settings')
+        st.session_state.page = 'home'
+        vistas('home')
+    elif vista == 'account':
+        print('Account view')
+        st.session_state.page = 'home'
+        vistas('home')
 
-# Aqui se mira la pagina principal
-def pagina_principal():
+# Visualize home page
+def home_page():
     """
-    En esta funcion se define las funciones que se 
-    van a desplegar en la pagina principal
+    This function defines the functions that are to be deployed to ensure the
+    correct viewing of the home page.
     """
-    st.title("Appetito") 
+
+    st.title("Appetito")
     recetas_normales()
+
 
 #Se muestran las erecetas sin clasificacion alguna
 def recetas_normales():
