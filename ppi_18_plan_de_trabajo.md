@@ -36,13 +36,14 @@
 | Tarea                                   | Responsable                                          | Estado       |
 |-----------------------------------------| --------------------------------------------------- | ------------ |
 | Creación de base de datos del proyecto. | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
-| Permitir registro de nuevos usuarios.   | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
-| Reseñas de las recetas.                 | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
-| Registrar recetas para los usuarios.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Permitir registro de nuevos usuarios.   | [Daniel Felipe Garzon](https://github.com/Luisfemocha) | Sin Empezar  |
+| Registrar recetas favoritas para los usuarios.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Permitir login para los usuarios.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
 
 ## 06/11/2023 - 13/11/2023
 | Tarea                                       | Responsable                                          | Estado       |
 |---------------------------------------------| --------------------------------------------------- | ------------ |
+| Modificar login para dividir las funcionalidades, de usuario logeado y sin logearse. | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
 | Mostrar gráficas de detalles nutricionales. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) y [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
 
 ## 13/11/2023 - 20/11/2023

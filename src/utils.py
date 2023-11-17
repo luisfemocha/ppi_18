@@ -13,47 +13,47 @@ import funciones
 
 user = None
 
-def signup(usn, pas, conf):
-    if pas == conf:
-        # TODO
-        #  vista.extras.show_modal("se realiza el registro")
-        st.write("Signup successful")
-        print("se realiza el registro")
-    else:
-        # TODO
-        #  vista.extras.show_modal("No coinciden las contraseñas")
-        st.write("Signup unsuccessful")
-        print("no coinciden las contraseñas")
+# def signup(usn, pas, conf):
+#     if pas == conf:
+#         # TODO
+#         #  vista.extras.show_modal("se realiza el registro")
+#         st.write("Signup successful")
+#         print("se realiza el registro")
+#     else:
+#         # TODO
+#         #  vista.extras.show_modal("No coinciden las contraseñas")
+#         st.write("Signup unsuccessful")
+#         print("no coinciden las contraseñas")
 
 
-def ingreso(usn, pas):
-    accounts: object = conexion.get_cuentas()
-    # print("Successful get accounts:\n" + str(accounts))
+# def ingreso(usn, pas):
+#     accounts: object = conexion.get_cuentas()
+#     # print("Successful get accounts:\n" + str(accounts))
 
-    if type(accounts) is dict:
-        if len(accounts) > 0:
-            # print('Accounts are found')
+#     if type(accounts) is dict:
+#         if len(accounts) > 0:
+#             # print('Accounts are found')
 
-            if usn in accounts:
-                if accounts[usn]['password'] == pas:
-                    # print('Login successful')
+#             if usn in accounts:
+#                 if accounts[usn]['password'] == pas:
+#                     # print('Login successful')
 
-                    st.session_state.user = {
-                        'username': usn,
-                        'preferences': accounts[usn]['preferences'],
-                        'favorites': accounts[usn]['favorites']
-                    }
+#                     st.session_state.user = {
+#                         'username': usn,
+#                         'preferences': accounts[usn]['preferences'],
+#                         'favorites': accounts[usn]['favorites']
+#                     }
 
-                    st.session_state.page = 'home'
-                    funciones.vistas('home')
-                else:
-                    print('Incorrect password')
-            else:
-                print('User not found')
-        else:
-            print("There are not accounts")
-    else:
-        print('Wrong data type of accounts')
+#                     st.session_state.page = 'home'
+#                     funciones.vistas('home')
+#                 else:
+#                     print('Incorrect password')
+#             else:
+#                 print('User not found')
+#         else:
+#             print("There are not accounts")
+#     else:
+#         print('Wrong data type of accounts')
 
 
 def get_ingredientes():
