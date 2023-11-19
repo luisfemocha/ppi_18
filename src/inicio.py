@@ -3,28 +3,40 @@
 # No standard imports
 # 3rd party library imports
 import streamlit as st
-
+from streamlit import session_state
 # local imports from CONTROL tier
 import funciones
+import streamlit_authenticator as stauth
+import conexion
 
 version = "0.20231102L"
 
+st.set_page_config(
+    page_title="Appetito",
+    page_icon="🍔",
+    layout="wide",
+    initial_sidebar_state="expanded")
+
 def sidebar():
     """
-    This is the sidebar function, it creates a sidebar as its name says in it, it creates buttons according to the
-    different views of the webpage.
-    If any button is pressed the session_state changes and then the function functions.vista() is called.
-    """
-    # Get the current page of the session or establish it as 'principal' by default.
-    user = st.session_state.get('user', None)
+    Esta función define y despliega la barra lateral de la aplicación "Appetito". Crea botones,
+    según las diferentes vistas de la página web. Si se presiona algún botón, la sesión cambia
+    y luego se llama a la función funciones.vistas() para mostrar la página correspondiente.
 
-    # Home is the splash page of the webpage, that is to say, the first view the user sees when entering the page either
-    # as unregistered or registered.
+    """
+
+    # Obtener la página actual de la sesión o establecerla como 'principal' por defecto.
+    user = st.session_state.get('user', None)
+    authentication_status = st.session_state.get('loged_in', False)
+    
+    # Home es la página principal de la aplicación, es decir, la primera vista que
+    # Ve el usuario al entrar a la página ya sea como no registrado o registrado.
     if st.sidebar.button("Home", key="home"):
         st.session_state.page = 'home'
 
     if user is not None:
-        print('User from start '+str(user))
+        st.sidebar.title(user['username'])
+        print('User from start ' + str(user))
 
         st.sidebar.title("Recipes")
         # Para desplegar las recetas fit
@@ -37,13 +49,13 @@ def sidebar():
 
         # Para desplegar las recetas especiales
         if st.sidebar.button("Special Recipes", key="recetas_especiales"):
-                st.session_state.page = 'especiales'
+            st.session_state.page = 'especiales'
 
         # Para desplegar las recetas horneadas
         if st.sidebar.button("Baked Recipes", key="recetas_horneadas"):
             st.session_state.page = 'horneado'
 
-        # Aqui es la parte de cuenta de la apliacion
+        # Aquí es la parte de cuenta de la aplicación
         st.sidebar.title(user['username'])
         if st.sidebar.button("Account view", key="account"):
             st.session_state.page = 'account'
@@ -51,24 +63,29 @@ def sidebar():
         if st.sidebar.button("Settings", key="settings"):
             st.session_state.page = 'settings'
 
-        # To login signin - access existing account
+        # Para cerrar sesión - salir
         if st.sidebar.button("Log off", key="logoff"):
-            st.session_state.page = 'logoff'
+            # Aquí puedes agregar la lógica para cerrar la sesión
+            # Y reiniciar las variables de estado
+            st.session_state.user = None
+            st.session_state.authentication_status = False
+            st.session_state.page = 'home'
 
     else:
-        # Aqui es la parte de cuenta de la apliacion
+        # Aquí es la parte de cuenta de la aplicación
         st.sidebar.title("Account")
-        # To signup - create account
+        # Para registrarse - crear cuenta
         if st.sidebar.button("Sign up", key="signup"):
             st.session_state.page = 'signup'
 
-        # To login signin - access existing account
+        # Para iniciar sesión - acceder a una cuenta existente
         if st.sidebar.button("Log In", key="login"):
             st.session_state.page = 'login'
 
     # Llamar a la función para mostrar la página correspondiente
     page = st.session_state.get('page', 'home')
     funciones.vistas(page)
+
 
 def footer():
     """
@@ -99,5 +116,8 @@ def footer():
     """,unsafe_allow_html=True)
 
 # sidebar and footer functions are always called to be always visible
+
+
+
 sidebar()
 footer()

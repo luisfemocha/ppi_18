@@ -8,6 +8,8 @@ import streamlit as st
 
 import matplotlib.pyplot as plt
 
+import conexion
+
 import utils
 
 
@@ -39,44 +41,11 @@ def desplegar_form(option):
 
     # Este es para el registro de la página
     if option == 'signup':
-        with st.form(key='registration_form'):
-            st.header("Register")
-            username = st.text_input('Username')
-            password = st.text_input('Password', type='password')
-            confirm_password = st.text_input('Confirm Password', type='password')
-            
-            # Agregar casilla de verificación para el acuerdo de tratamiento de datos personales
-            data_agreement = st.checkbox(
-                f' I agree to the  [ procesing of my personal data]({data_policy_link})')          
-            register_button = st.form_submit_button('Register')
-
-            # Para llamar a la función de registro
-            if register_button:
-                if username and password and password == confirm_password and data_agreement:
-                    if len(username) >= 8 and len(password) >= 8:
-                        utils.signup(username, password, confirm_password)
-                    else:
-                        st.error('Username and password must be at least 8 characters long.')
-                elif not username:
-                    st.error('You must specify a username.')
-                elif not password:
-                    st.error('You must specify a password.')
-                elif password != confirm_password:
-                    st.error('Passwords don\'t match.')
-                elif not data_agreement:
-                    st.error('In order to signup you must accept the personal data agreement')
-                else:
-                    st.error('An error has occurred, please try again.')
+        conexion.sign_up()
 
     # Este es para el login de la página
     elif option == 'login':
-        st.header('Login')
-        username = st.text_input('Username')
-        password = st.text_input('Password', type='password')
-
-        # Para llamar a la función de inicio de sesión
-        if st.button("Log in"):
-            utils.ingreso(username, password)
+        conexion.log_in()
 
  
 # Visualizacion de cada receta
@@ -170,13 +139,14 @@ def vistas(vista):
         st.session_state.page = 'home'
         vistas('home')
 
-# Visualize home page
 def home_page():
     """
-    This function defines the functions that are to be deployed to ensure the
-    correct viewing of the home page.
-    """
+    Despliega la página principal de la aplicación "Appetito".
 
+    Esta función establece las funciones que deben implementarse para garantizar la correcta 
+    visualización de la página principal. Muestra el título "Appetito" y llama a la función
+    'recetas_normales()' para mostrar las recetas normales en la página principal.
+    """
     st.title("Appetito")
     recetas_normales()
 
