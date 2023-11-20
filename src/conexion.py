@@ -184,6 +184,7 @@ def log_in():
                 st.write("Logged in as: " + username)
                 st.session_state.nombre = username
                 st.session_state.cuenta = cuenta
+                st.session_state['favoritas']={}
                 st.experimental_rerun()
         else:
             st.error("Incorrect Username/Password")
