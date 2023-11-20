@@ -173,7 +173,8 @@ def log_in():
 
     # Botón para iniciar sesión
     if st.button("Log in"):
-        if validar_credenciales(username, password):
+        cuenta = validar_credenciales(username, password)
+        if cuenta:
             # Establecer el estado de inicio de sesión y el nombre de
             # Usuario en la variable de estado de Streamlit
             st.session_state['logged_in'] = True
@@ -181,6 +182,7 @@ def log_in():
             if st.session_state['logged_in']:
                 st.write("Logged in as: " + username)
                 st.session_state.nombre = username
+                st.session_state.cuenta = cuenta
                 st.experimental_rerun()
         else:
             st.error("Incorrect Username/Password")
@@ -201,11 +203,50 @@ def recetas_favoritas():
     """
     Muestra las recetas favoritas del usuario.
     """
-    st.title("Favorite Recipes")
-    id_recetas =  []
-    if st.session_state['logged_in']:
-        recetas_favoritas = db.get(st.session_state.nombre)['favorites']
 
+    if not st.session_state['logged_in']:
+        st.title("USER NOT LOGGED IN")
+        return False
+    else:
+        st.title("Favorite Recipes")
+        if 'favoritas' in session_state:
+            recetas_favoritas = session_state.favoritas
+        else:
+            ids_favoritas = session_state.cuenta['favorites']
+
+            if 'recetas' not in st.session_state:
+                if 'recetas_normales' not in st.session_state:
+                    rutas = get_rutas()
+                    ruta_normales = rutas['normales']
+                    json_recetas_normales = cargar_datos(ruta_normales)
+
+                    if 'recetas_normales' not in st.session_state:
+                        # Se crea un objeto para almacenar las recetas
+                        print("no estaba la receta")
+                        obj_recetas_normales = {}
+                        for receta_normal in json_recetas_normales:
+                            if receta_normal["id"] not in obj_recetas_normales:
+                                obj_recetas_normales[receta_normal["id"]] = receta_normal
+                            else:
+                                print("Ya estaba la receta con id",receta_normal["id"])
+                        st.session_state['recetas_normales'] = obj_recetas_normales
+
+                        if 'recetas' not in st.session_state:
+                            st.session_state['recetas'] = obj_recetas_normales
+                        else:
+                            st.session_state['recetas'].update(obj_recetas_normales)
+            else:
+                recetas = session_state.recetas
+
+            recetas_favoritas = {}
+            for receta in ids_favoritas:
+
+                if
+                recetas_favoritas[receta]
+
+        if (recetas_favoritas is None or recetas_favoritas == [] or
+            len(recetas_favoritas)<1):
+            st.title("User doesn't have any favorite recipes yet.")
 
 def validar_credenciales(username, password):
     """
@@ -223,5 +264,5 @@ def validar_credenciales(username, password):
     usuarios = db.fetch()
     for usuario in usuarios.items:
         if usuario['username'] == username and usuario['password'] == password:
-            return True
+            return usuario
     return False

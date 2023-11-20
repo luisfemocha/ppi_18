@@ -10,21 +10,42 @@ import matplotlib.pyplot as plt
 
 import conexion
 
+# variables globales
+ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+                    'main/src/datos/ingredientes.json'
+ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+                'dgarzonac/src/datos/recetas.json'
+ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+                 'main/src/datos/saludables.json'
+ruta_presupuesto = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+                   'main/src/datos/presupuesto.json'
+ruta_horneados = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/'\
+                 'src/datos/horneados.json'
+ruta_especiales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/'\
+                  'src/datos/especiales.json'
 
+# Para exportar las rutas / variables globales anteriores
+def get_rutas():
+    return {
+        'ingredientes': ruta_ingredientes,
+        'normales': ruta_normales,
+        'saludable': ruta_saludable,
+        'presupuesto': ruta_presupuesto,
+        'horneados': ruta_horneados,
+        'especiales': ruta_especiales
+    }
 
-# Para menor uso de memoria se limita la app en la fase de desarrollo
-limite_recetas = 10
 
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_datos(ruta):
     try:
         if ruta.find("raw") > -1:
             response = requests.get(ruta)
-        # Confirmar que el request de un resultado exitoso.
+            # Confirmar que el request de un resultado exitoso.
             if response.status_code == 200:
-        # Usa .json() para archivos JSON, .text para
-        # Archivos de texto, etc.
-                return pd.DataFrame(response.json()) 
+                # Usa .json() para archivos JSON, .text para
+                # Archivos de texto, etc.
+                return response.json()
             else:
                 st.title("Error al leer la url.")
         else:
@@ -34,17 +55,6 @@ def cargar_datos(ruta):
         st.title("Error al leer el archivo "+ruta)
         return pd.DataFrame()
 
-# Aquí se despliega el login y el signup de la página
-def desplegar_form(option):
-
-    # Este es para el registro de la página
-    if option == 'signup':
-        conexion.sign_up()
-
-    # Este es para el login de la página
-    elif option == 'login':
-        conexion.log_in()
-
  
 # Visualizacion de cada receta
 def detalles_abiertos(recipe):
@@ -52,6 +62,19 @@ def detalles_abiertos(recipe):
     # if receta['id'] in detalles_abiertos and detalles_abiertos[receta['id']]:
     with st.expander(f"View Details of {recipe['name']}"):
         st.subheader(recipe["name"])
+
+        if 'logged_in' in st.session_state and st.session_state['logged_in']:
+            if st.button("Add recipe to favorites", key="fav-"+recipe["id"]):
+                print('Se agrega a favoritas la receta')
+                # print(recipe)
+                print(recipe["id"])
+
+                try:
+                    print("se intenta encontrar la receta con el id")
+
+                    print(st.session_state['recetas_normales'][recipe["id"]])
+                except:
+                    print("paila")
 
         # Detalles de la receta (puedes usar un bucle para iterar sobre los datos)
         st.header("Recipe Details")
@@ -100,6 +123,7 @@ def detalles_abiertos(recipe):
         st.write(f"**Dish Type:** {recipe['dish_type']}")
         st.write(f"**Main Category:** {recipe['maincategory']}")
 
+
 # Segun esta funcion se cambian de vistas
 def vistas(vista):
     """
@@ -118,37 +142,68 @@ def vistas(vista):
     elif vista == 'especiales':
         recetas_especiales() 
     elif vista == 'signup':
-        desplegar_form('signup')
+        conexion.sign_up()
     elif vista == 'login':
-        desplegar_form('login')
+        conexion.log_in()
+
 
 def home_page():
     """
     Despliega la página principal de la aplicación "Appetito".
 
-    Esta función establece las funciones que deben implementarse para garantizar la correcta 
-    visualización de la página principal. Muestra el título "Appetito" y llama a la función
-    'recetas_normales()' para mostrar las recetas normales en la página principal.
+    Esta función establece las funciones que deben implementarse para
+    garantizar la correcta visualización de la página principal. Muestra el
+    título "Appetito" y llama a la función 'recetas_normales()' para mostrar
+    las recetas normales en la página principal.
     """
+
     st.title("Appetito")
     recetas_normales()
 
 
 #Se muestran las erecetas sin clasificacion alguna
 def recetas_normales():
-
-    if st.session_state['logged_in'] == False or st.session_state['logged_in'] == None:
+    if (st.session_state['logged_in'] == False or
+            st.session_state['logged_in'] == None):
         # Para motivar a el usuario a registrarse o iniciar sesión
-        st.title("Welcome to Appetito To know many more recipes, log in or sign up!")
+        st.title("Welcome to Appetito To know many more recipes, "+
+                 "log in or sign up!")
 
-    # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/dgarzonac/src/datos/recetas.json'
-    df_recetas_normales = cargar_datos(ruta_normales)
-    
-    # Leer la lista de ingredientes
-    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
-    lista_ingredientes = pd.read_json(ruta_ingredientes)
-    lista_ingredientes = lista_ingredientes["ingredients"][0]
+    if 'recetas_normales_json' not in st.session_state:
+        # Ruta del archivo recetas saludables json
+        json_recetas_normales = cargar_datos(ruta_normales)
+        st.session_state['recetas_normales_json'] = json_recetas_normales
+        df_recetas_normales = pd.DataFrame(json_recetas_normales)
+
+        # Desde este punto se puede revisar si existe 'recetas_normales' en la
+        # session_state, pero para evitar problemas se crea el objeto.
+
+        # Se crea un objeto para almacenar las recetas
+        print("no estaba la receta")
+        obj_recetas_normales = {}
+        for receta_n in json_recetas_normales:
+            if receta_n["id"] not in obj_recetas_normales:
+                obj_recetas_normales[receta_n["id"]] = receta_n
+            else:
+                print("Ya estaba la receta con id",receta_n["id"])
+        st.session_state['recetas_normales'] = obj_recetas_normales
+
+        if 'recetas' not in st.session_state:
+            st.session_state['recetas'] = obj_recetas_normales
+        else:
+            st.session_state['recetas'].update(obj_recetas_normales)
+    else:
+        df_recetas_normales = pd.DataFrame(
+            st.session_state['recetas_normales_json']
+        )
+
+    if 'ingredientes' not in st.session_state:
+        # Leer la lista de ingredientes
+        lista_ingredientes = pd.read_json(ruta_ingredientes)
+        lista_ingredientes = lista_ingredientes["ingredients"][0]
+        st.session_state['ingredientes'] = lista_ingredientes
+    else:
+        lista_ingredientes = st.session_state['ingredientes']
 
     # Crear una caja de selección para el filtro de dificultad
     ingredientes_deseados = st.multiselect(
@@ -223,14 +278,39 @@ def recetas_normales():
 
 # Se muestran las recetas saludables
 def recetas_saludables():
-    # Ruta del archivo recetas saludables json temporal para usar en consola local
-    ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/saludables.json'
-    df_recetas_saludables = cargar_datos(ruta_saludable)
+    # Se revisa si la respuesta del json esta en la sesion para ahorrar memoria
+    if 'recetas_saludables_json' not in st.session_state:
+        # Ruta del archivo recetas saludables json
+        json_recetas_saludables = cargar_datos(ruta_saludable)
+        st.session_state['recetas_saludables_json'] = json_recetas_saludables
+        df_recetas_saludables = pd.DataFrame(json_recetas_saludables)
 
-    # Leer la lista de ingredientes
-    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
-    lista_ingredientes = pd.read_json(ruta_ingredientes)
-    lista_ingredientes = lista_ingredientes["ingredients"][0]
+        # Se crea un objeto para almacenar las recetas
+        print("no estaban las recetas saludables")
+        obj_recetas_saludables = {}
+        for receta_s in json_recetas_saludables:
+            if receta_s["id"] not in obj_recetas_saludables:
+                obj_recetas_saludables[receta_s["id"]] = receta_s
+            else:
+                print("Ya estaba la receta con id",receta_s["id"])
+        st.session_state['recetas_saludables'] = obj_recetas_saludables
+
+        if 'recetas' not in st.session_state:
+            st.session_state['recetas'] = obj_recetas_saludables
+        else:
+            st.session_state['recetas'].update(obj_recetas_saludables)
+    else:
+        df_recetas_saludables = pd.DataFrame(
+            st.session_state['recetas_saludables_json']
+        )
+
+    if 'ingredientes' not in st.session_state:
+        # Leer la lista de ingredientes
+        lista_ingredientes = pd.read_json(ruta_ingredientes)
+        lista_ingredientes = lista_ingredientes["ingredients"][0]
+        st.session_state['ingredientes'] = lista_ingredientes
+    else:
+        lista_ingredientes = st.session_state['ingredientes']
 
     # Aqui se despliegan las recetas saludables
     st.title("Healthy recipes")
@@ -300,14 +380,39 @@ def recetas_saludables():
 
 # Se muestras las recetas para un corto presupuesto(sencillaes)
 def recetas_presupuesto():
-    # Ruta del archivo recetas presupuesto json 
-    ruta_presupuesto = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/presupuesto.json"
-    df_recetas_presupuesto = cargar_datos(ruta_presupuesto)
+    if 'recetas_presupuesto_json' not in st.session_state:
+        # Ruta del archivo recetas presupuesto json
+        json_recetas_presupuesto = cargar_datos(ruta_presupuesto)
+        st.session_state['recetas_presupuesto_json'] = json_recetas_presupuesto
+        df_recetas_presupuesto = pd.DataFrame(json_recetas_presupuesto)
 
-    # Leer la lista de ingredientes
-    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
-    lista_ingredientes = pd.read_json(ruta_ingredientes)
-    lista_ingredientes = lista_ingredientes["ingredients"][0]
+        # Se crea un objeto para almacenar las recetas
+        print("no estaban las recetas presupuesto")
+        obj_recetas_presupuesto = {}
+        for receta_p in json_recetas_presupuesto:
+            if receta_p["id"] not in obj_recetas_presupuesto:
+                obj_recetas_presupuesto[receta_p["id"]] = receta_p
+            else:
+                print("Ya estaba la receta con id",receta_p["id"])
+        st.session_state['recetas_presupuesto'] = obj_recetas_presupuesto
+
+        if 'recetas' not in st.session_state:
+            st.session_state['recetas'] = obj_recetas_presupuesto
+        else:
+            st.session_state['recetas'].update(obj_recetas_presupuesto)
+    else:
+        df_recetas_presupuesto = pd.DataFrame(
+            st.session_state['recetas_presupuesto_json']
+        )
+
+
+    if 'ingredientes' not in st.session_state:
+        # Leer la lista de ingredientes
+        lista_ingredientes = pd.read_json(ruta_ingredientes)
+        lista_ingredientes = lista_ingredientes["ingredients"][0]
+        st.session_state['ingredientes'] = lista_ingredientes
+    else:
+        lista_ingredientes = st.session_state['ingredientes']
 
     # Aqui se despliegan las recetas sencillas
     st.title("Simple Recipes")
@@ -367,14 +472,38 @@ def recetas_presupuesto():
 
 # Se muestran las recetas para hornearse
 def recetas_horneados():
-    # Ruta del archivo recetas presupuesto json 
-    ruta_horneados = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/horneados.json'
-    df_recetas_horneados = cargar_datos(ruta_horneados)
+    if 'recetas_horneados_json' not in st.session_state:
+        # Ruta del archivo recetas presupuesto json
+        json_recetas_horneados = cargar_datos(ruta_horneados)
+        st.session_state['recetas_horneados_json'] = json_recetas_horneados
+        df_recetas_horneados = pd.DataFrame(json_recetas_horneados)
 
-    # Leer la lista de ingredientes
-    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
-    lista_ingredientes = pd.read_json(ruta_ingredientes)
-    lista_ingredientes = lista_ingredientes["ingredients"][0]
+        # Se crea un objeto para almacenar las recetas
+        print("no estaban las recetas horneadas")
+        obj_recetas_horneados = {}
+        for receta_horneado in json_recetas_horneados:
+            if receta_horneado["id"] not in obj_recetas_horneados:
+                obj_recetas_horneados[receta_horneado["id"]] = receta_horneado
+            else:
+                print("Ya estaba la receta con id",receta_horneado["id"])
+        st.session_state['recetas_horneados'] = obj_recetas_horneados
+
+        if 'recetas' not in st.session_state:
+            st.session_state['recetas'] = obj_recetas_horneados
+        else:
+            st.session_state['recetas'].update(obj_recetas_horneados)
+    else:
+        df_recetas_horneados = pd.DataFrame(
+            st.session_state['recetas_horneados_json']
+        )
+
+    if 'ingredientes' not in st.session_state:
+        # Leer la lista de ingredientes
+        lista_ingredientes = pd.read_json(ruta_ingredientes)
+        lista_ingredientes = lista_ingredientes["ingredients"][0]
+        st.session_state['ingredientes'] = lista_ingredientes
+    else:
+        lista_ingredientes = st.session_state['ingredientes']
     
     # Display baked recipes here
     st.title("Baked Recipes")
@@ -442,14 +571,37 @@ def recetas_horneados():
 
 # Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
-    # Ruta del archivo recetas presupuesto json 
-    ruta_especiales = f"https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/especiales.json"
-    df_recetas_especiales = cargar_datos(ruta_especiales)
+    if 'recetas_especiales_json' not in st.session_state:
+        # Ruta del archivo recetas presupuesto json
+        json_recetas_especiales = cargar_datos(ruta_especiales)
+        st.session_state['recetas_especiales_json'] = json_recetas_especiales
+        df_recetas_especiales = pd.DataFrame(json_recetas_especiales)
+        # Se crea un objeto para almacenar las recetas
+        print("no estaban las recetas especiales")
+        obj_recetas_especiales = {}
+        for receta_e in json_recetas_especiales:
+            if receta_e["id"] not in obj_recetas_especiales:
+                obj_recetas_especiales[receta_e["id"]] = receta_e
+            else:
+                print("Ya estaba la receta con id",receta_e["id"])
+        st.session_state['recetas_horneados'] = obj_recetas_especiales
 
-    # Leer la lista de ingredientes
-    ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/ingredientes.json'
-    lista_ingredientes = pd.read_json(ruta_ingredientes)
-    lista_ingredientes = lista_ingredientes["ingredients"][0]
+        if 'recetas' not in st.session_state:
+            st.session_state['recetas'] = obj_recetas_especiales
+        else:
+            st.session_state['recetas'].update(obj_recetas_especiales)
+    else:
+        df_recetas_especiales = pd.DataFrame(
+            st.session_state['recetas_especiales_json']
+        )
+
+    if 'ingredientes' not in st.session_state:
+        # Leer la lista de ingredientes
+        lista_ingredientes = pd.read_json(ruta_ingredientes)
+        lista_ingredientes = lista_ingredientes["ingredients"][0]
+        st.session_state['ingredientes'] = lista_ingredientes
+    else:
+        lista_ingredientes = st.session_state['ingredientes']
 
     st.title("Special Recipes")
 
