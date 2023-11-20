@@ -5,8 +5,6 @@
 import streamlit as st
 # local imports from CONTROL tier
 import funciones
-import streamlit_authenticator as stauth
-import conexion
 
 version = "0.20231102L"
 
