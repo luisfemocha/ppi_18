@@ -35,21 +35,22 @@
 ## 30/10/2023 - 06/11/2023
 | Tarea                                   | Responsable                                          | Estado       |
 |-----------------------------------------| --------------------------------------------------- | ------------ |
-| Creación de base de datos del proyecto. | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
-| Permitir registro de nuevos usuarios.   | [Daniel Felipe Garzon](https://github.com/Luisfemocha) | Sin Empezar  |
-| Registrar recetas favoritas para los usuarios.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
-| Permitir login para los usuarios.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Creación de base de datos del proyecto. | [Luis Chamorro](https://github.com/Luisfemocha) | Listo  |
+| visual registro de nuevos usuarios.   | [Luis Chamorro](https://github.com/Luisfemocha) | Listo  |
+| visual login para los usuarios.    | [Luis Chamorro](https://github.com/Luisfemocha) | Listo  |
+| Mostrar gráficas de detalles nutricionales. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
 
 ## 06/11/2023 - 13/11/2023
 | Tarea                                       | Responsable                                          | Estado       |
 |---------------------------------------------| --------------------------------------------------- | ------------ |
-| Modificar login para dividir las funcionalidades, de usuario logeado y sin logearse. | [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
-| Mostrar gráficas de detalles nutricionales. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) y [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar  |
+| Permitir registro de nuevos usuarios.   | [Daniel Felipe Garzon](https://github.com/Luisfemocha) | Listo  |
+| Permitir login para los usuarios.    | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
 
 ## 13/11/2023 - 20/11/2023
 | Tarea                  | Responsable                                           | Estado       |
 |------------------------| ---------------------------------------------------- | ------------ |
-| Pruebas e integración. | [Luis Chamorro](https://github.com/Luisfemocha) y [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Documentacion del codigo y cumplimiento con las pep8. | [Luis Chamorro](https://github.com/Luisfemocha) | Listo  |
+| Pruebas e integración. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
 
 ## 20/11/2023 - 27/11/2023
 | Tarea                           | Responsable                                           | Estado       |

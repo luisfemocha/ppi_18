@@ -19,7 +19,9 @@ deta = Deta(DETA_KEY)
 # Inicializar Base de Datos de Deta para usuarios
 db = deta.Base('Appetito_usuarios')
 
-
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+    
 def insert_user(username, password):
     """
     Inserta un nuevo usuario en la base de datos.
@@ -165,7 +167,7 @@ def log_in():
     Se proporciona la opción de cerrar sesión si el usuario está autenticado.
     """
     st.title("Log in")
-    
+
     username = st.text_input('Username')
     password = st.text_input('Password', type='password')
 
@@ -178,6 +180,8 @@ def log_in():
             st.session_state.nombre = username
             if st.session_state['logged_in']:
                 st.write("Logged in as: " + username)
+                st.session_state.nombre = username
+                st.experimental_rerun()
         else:
             st.error("Incorrect Username/Password")
             st.session_state['logged_in'] = False
@@ -189,6 +193,18 @@ def log_in():
             st.session_state['logged_in'] = False
             st.session_state.nombre = None
             st.write("Logged out")
+            st.experimental_rerun()
+
+
+
+def recetas_favoritas():
+    """
+    Muestra las recetas favoritas del usuario.
+    """
+    st.title("Favorite Recipes")
+    id_recetas =  []
+    if st.session_state['logged_in']:
+        recetas_favoritas = db.get(st.session_state.nombre)['favorites']
 
 
 def validar_credenciales(username, password):
@@ -209,44 +225,3 @@ def validar_credenciales(username, password):
         if usuario['username'] == username and usuario['password'] == password:
             return True
     return False
-    
-#token = st.secrets["token"]
-# # open(".streamlit/token.txt", "r").read()
-
-# espacio = Deta(token)
-# base = espacio.Base("ppi18_usuarios")
-
-# def get_cuentas() -> object:
-#     try:
-#         lista_cuentas = base.fetch().items
-#         cuentas = {}
-
-#         for a in lista_cuentas:
-#             usn = ''
-#             if 'key' not in a.keys():
-#                 print('Account without key '+a)
-#                 continue
-#             else:
-#                 usn = a['key']
-#                 cuentas[usn] = {'username': usn}
-
-#             for key in a.keys():
-#                 if key == 'key':
-#                     continue
-#                 else:
-#                     cuentas[usn][key] = a[key]
-
-#         return cuentas
-
-#     except Exception as e:
-#         return "Error en conexion, intente de nuevo."+e.__str__()
-
-
-# def check_cuenta(usn, pas):
-#     # TODO
-#     print('se revisa si existe y coincide')
-
-
-# def registrar_cuenta(usn, pas):
-#     # TODO
-#     print('se guarda la nueva cuenta')

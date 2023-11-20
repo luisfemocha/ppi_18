@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 
 import conexion
 
-import utils
 
 
 # Para menor uso de memoria se limita la app en la fase de desarrollo
@@ -23,7 +22,8 @@ def cargar_datos(ruta):
             response = requests.get(ruta)
         # Confirmar que el request de un resultado exitoso.
             if response.status_code == 200:
-        # Usa .json() para archivos JSON, .text para archivos de texto, etc.
+        # Usa .json() para archivos JSON, .text para
+        # Archivos de texto, etc.
                 return pd.DataFrame(response.json()) 
             else:
                 st.title("Error al leer la url.")
@@ -36,8 +36,6 @@ def cargar_datos(ruta):
 
 # Aquí se despliega el login y el signup de la página
 def desplegar_form(option):
-    # URL del tratamiento de datos personales
-    data_policy_link = "https://www.privacypolicies.com/live/510a8632-963e-45eb-b10b-dd5bf94ba46d"
 
     # Este es para el registro de la página
     if option == 'signup':
@@ -108,9 +106,6 @@ def vistas(vista):
     This function changes page views according to the sidebar and the option
     the user chooses.
     """
-    from datetime import datetime
-
-    print('vistas '+vista + " " + str(datetime.now().strftime('%M:%S')))
 
     if vista == 'home':
         home_page()
@@ -126,18 +121,6 @@ def vistas(vista):
         desplegar_form('signup')
     elif vista == 'login':
         desplegar_form('login')
-    elif vista == 'logoff':
-        st.session_state.user = None
-        st.session_state.page = 'home'
-        vistas('home')
-    elif vista == 'settings':
-        print('User settings')
-        st.session_state.page = 'home'
-        vistas('home')
-    elif vista == 'account':
-        print('Account view')
-        st.session_state.page = 'home'
-        vistas('home')
 
 def home_page():
     """
@@ -153,6 +136,11 @@ def home_page():
 
 #Se muestran las erecetas sin clasificacion alguna
 def recetas_normales():
+
+    if st.session_state['logged_in'] == False or st.session_state['logged_in'] == None:
+        # Para motivar a el usuario a registrarse o iniciar sesión
+        st.title("Welcome to Appetito To know many more recipes, log in or sign up!")
+
     # Ruta del archivo recetas saludables json temporal para usar en consola local
     ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/dgarzonac/src/datos/recetas.json'
     df_recetas_normales = cargar_datos(ruta_normales)
@@ -252,6 +240,7 @@ def recetas_saludables():
         "Select ingredients:", lista_ingredientes
     )
 
+    
     # Crear una caja de selección para el filtro de dificultad
     difficult = st.selectbox('Select the difficulty level',
                               ['All', 'Easy', 'More effort', 'A challenge'])
@@ -454,7 +443,7 @@ def recetas_horneados():
 # Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
     # Ruta del archivo recetas presupuesto json 
-    ruta_especiales = "https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/especiales.json"
+    ruta_especiales = f"https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/src/datos/especiales.json"
     df_recetas_especiales = cargar_datos(ruta_especiales)
 
     # Leer la lista de ingredientes
