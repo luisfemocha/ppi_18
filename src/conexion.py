@@ -7,11 +7,11 @@ import re
 import streamlit as st
 from streamlit import session_state
 
-from funciones import *
+import funciones
 from deta import Deta
 
 # Clave para Deta Base
-DETA_KEY = "e0m3ypPCenY_6yhHxaZYb4LDBhYTD3DKPsnd9ABPk5gN"
+DETA_KEY = st.secrets["token"]
 
 # Inicializar conexión a Deta Base
 deta = Deta(DETA_KEY)
@@ -43,15 +43,16 @@ def insert_user(username, password):
     return db.put(user_data)
 
 
-def actualizar_usuarios():
+def actualizar_usuario(user):
     """
-    Obtiene la lista de usuarios almacenados en la base de datos.
+    Actualiza un usuario
 
     Returns:
     - list: Lista de usuarios.
     """
-    usuarios = db.fetch()
-    return usuarios.items
+    dict = {k: v for k, v in user.items() if k != 'key'}
+
+    return db.update(dict,user['key'])
 
 
 def get_usernames():
@@ -173,7 +174,8 @@ def log_in():
 
     # Botón para iniciar sesión
     if st.button("Log in"):
-        if validar_credenciales(username, password):
+        cuenta = validar_credenciales(username, password)
+        if cuenta:
             # Establecer el estado de inicio de sesión y el nombre de
             # Usuario en la variable de estado de Streamlit
             st.session_state['logged_in'] = True
@@ -181,6 +183,7 @@ def log_in():
             if st.session_state['logged_in']:
                 st.write("Logged in as: " + username)
                 st.session_state.nombre = username
+                st.session_state.cuenta = cuenta
                 st.experimental_rerun()
         else:
             st.error("Incorrect Username/Password")
@@ -201,10 +204,61 @@ def recetas_favoritas():
     """
     Muestra las recetas favoritas del usuario.
     """
+
+    if not st.session_state['logged_in']:
+        st.title("USER NOT LOGGED IN")
+        return False
+
     st.title("Favorite Recipes")
-    id_recetas =  []
-    if st.session_state['logged_in']:
-        recetas_favoritas = db.get(st.session_state.nombre)['favorites']
+    # Se revisa si hay una lista de recetas favoritas en el estado y si estas
+    # son las mismas que las favoritas del usuario actual
+    if ('favoritas' not in st.session_state or list(
+        session_state.favoritas.keys()) != session_state.cuenta['favorites']
+        ) and len(session_state.cuenta['favorites'])>0:
+
+        ids_favoritas = session_state.cuenta['favorites']
+
+        """
+        TODO IMPLEMENTAR funciones.set_recetas('*', True)
+        if 'recetas' not in st.session_state:
+        elif 'recetas_normales' not in st.session_state:
+        elif 'recetas_normales' not in st.session_state: SALUDABLE
+        elif 'recetas_normales' not in st.session_state: PRESUPUESTO
+        elif 'recetas_normales' not in st.session_state: HORNEADO
+        elif 'recetas_normales' not in st.session_state: ESPECIALES
+        else:
+        """
+
+        recetas = session_state.recetas
+
+        recetas_favoritas = {}
+        for id in ids_favoritas:
+            if id in recetas:
+                recetas_favoritas[id] = recetas[id]
+
+        session_state['favoritas'] = recetas_favoritas
+    else:
+        recetas_favoritas = session_state.favoritas
+
+    if (recetas_favoritas is None or recetas_favoritas == [] or
+        len(recetas_favoritas)<1):
+        st.title("User doesn't have any favorite recipes yet.")
+    else:
+        """
+        TODO reconfigurar final funciones.recetas_normales() por pep8
+        """
+        for id in recetas_favoritas:
+            receta = recetas_favoritas[id]
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                    <img src="{receta['image']}" alt="Imagen de la receta" 
+                    style="max-width: 100%; border-radius: 5px;">
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            funciones.detalles_abiertos(receta)
 
 
 def validar_credenciales(username, password):
@@ -223,5 +277,5 @@ def validar_credenciales(username, password):
     usuarios = db.fetch()
     for usuario in usuarios.items:
         if usuario['username'] == username and usuario['password'] == password:
-            return True
+            return usuario
     return False

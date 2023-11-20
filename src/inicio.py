@@ -35,6 +35,7 @@ def sidebar():
 
     if st.session_state['logged_in']:
         st.sidebar.title("Welcome " + st.session_state.nombre + "!")
+        print(st.session_state.cuenta)
 
         if st.sidebar.button("Home", key="home"):
             st.session_state.page = 'home'
@@ -57,6 +58,9 @@ def sidebar():
             st.session_state.page = 'horneado'
         
         st.sidebar.title("Account")
+
+        if st.sidebar.button('Favorites', key="favorites"):
+            st.session_state.page = 'favorites'
 
         if st.sidebar.button("Logout", key="logout"):
             st.session_state['logged_in'] = False
