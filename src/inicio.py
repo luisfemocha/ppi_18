@@ -3,7 +3,6 @@
 # No standard imports
 # 3rd party library imports
 import streamlit as st
-from streamlit import session_state
 # local imports from CONTROL tier
 import funciones
 import streamlit_authenticator as stauth
@@ -17,26 +16,30 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded")
 
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+
 def sidebar():
     """
-    Esta función define y despliega la barra lateral de la aplicación "Appetito". Crea botones,
-    según las diferentes vistas de la página web. Si se presiona algún botón, la sesión cambia
-    y luego se llama a la función funciones.vistas() para mostrar la página correspondiente.
-
+    Esta función define y despliega la barra lateral de la
+    aplicación "Appetito". Crea botones, según las diferentes
+    vistas de la página web. Si se presiona algún botón, la sesión
+    cambia y luego se llama a la función funciones.vistas() para
+    mostrar la página correspondiente.
     """
 
-    # Obtener la página actual de la sesión o establecerla como 'principal' por defecto.
-    user = st.session_state.get('user', None)
-    authentication_status = st.session_state.get('loged_in', False)
-    
-    # Home es la página principal de la aplicación, es decir, la primera vista que
-    # Ve el usuario al entrar a la página ya sea como no registrado o registrado.
-    if st.sidebar.button("Home", key="home"):
-        st.session_state.page = 'home'
+    # Obtener la página actual de la sesión o establecerla como
+    # 'principal' por defecto.
 
-    if user is not None:
-        st.sidebar.title(user['username'])
-        print('User from start ' + str(user))
+    # Home es la página principal de la aplicación, es decir,
+    # la primera vista que ve el usuario al entrar a la página
+    # ya sea como no registrado o registrado.
+
+    if st.session_state['logged_in']:
+        st.sidebar.title("Welcome " + st.session_state.nombre + "!")
+
+        if st.sidebar.button("Home", key="home"):
+            st.session_state.page = 'home'
 
         st.sidebar.title("Recipes")
         # Para desplegar las recetas fit
@@ -54,24 +57,21 @@ def sidebar():
         # Para desplegar las recetas horneadas
         if st.sidebar.button("Baked Recipes", key="recetas_horneadas"):
             st.session_state.page = 'horneado'
+        
+        st.sidebar.title("Account")
 
-        # Aquí es la parte de cuenta de la aplicación
-        st.sidebar.title(user['username'])
-        if st.sidebar.button("Account view", key="account"):
-            st.session_state.page = 'account'
-
-        if st.sidebar.button("Settings", key="settings"):
-            st.session_state.page = 'settings'
-
-        # Para cerrar sesión - salir
-        if st.sidebar.button("Log off", key="logoff"):
-            # Aquí puedes agregar la lógica para cerrar la sesión
-            # Y reiniciar las variables de estado
-            st.session_state.user = None
-            st.session_state.authentication_status = False
+        if st.sidebar.button("Logout", key="logout"):
+            st.session_state['logged_in'] = False
+            st.session_state.nombre = None
             st.session_state.page = 'home'
+            st.experimental_rerun()
+
 
     else:
+
+        if st.sidebar.button("Home", key="home"):
+            st.session_state.page = 'home'
+
         # Aquí es la parte de cuenta de la aplicación
         st.sidebar.title("Account")
         # Para registrarse - crear cuenta
@@ -87,6 +87,8 @@ def sidebar():
     funciones.vistas(page)
 
 
+
+
 def footer():
     """
     This function creates the footer in order to view developers info.
@@ -95,14 +97,14 @@ def footer():
     <style>
         .ezrtsby2, .ea3mdgi1 { visibility: hidden; }
         .footer: {
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            height: 50px; 
-            background-color: #00000; 
-            color: #ffffff; 
-            text-align: left; 
-            padding-top: 15px; 
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #00000;
+            color: #ffffff;
+            text-align: left;
+            padding-top: 15px;
             padding-left: 10px;
         }
     </style>
@@ -110,14 +112,12 @@ def footer():
 
     st.markdown("""
     <footer class='footer'>
-        Developed by: Daniel Garzon and Luis Moreno | 
+        Developed by: Daniel Garzon and Luis Moreno |
         Contact: dgarzonac@unal.edu.co</a> and lumorenoc@unal.edu.co</a>
     </footer>
     """,unsafe_allow_html=True)
 
-# sidebar and footer functions are always called to be always visible
-
-
+# sidebar y footer de llaman para que sean siempre visibles
 
 sidebar()
 footer()
