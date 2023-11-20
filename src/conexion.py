@@ -7,11 +7,11 @@ import re
 import streamlit as st
 from streamlit import session_state
 
-from funciones import *
+import funciones
 from deta import Deta
 
 # Clave para Deta Base
-DETA_KEY = "e0m3ypPCenY_6yhHxaZYb4LDBhYTD3DKPsnd9ABPk5gN"
+DETA_KEY = st.secrets["token"]
 
 # Inicializar conexión a Deta Base
 deta = Deta(DETA_KEY)
@@ -43,15 +43,16 @@ def insert_user(username, password):
     return db.put(user_data)
 
 
-def actualizar_usuarios():
+def actualizar_usuario(user):
     """
-    Obtiene la lista de usuarios almacenados en la base de datos.
+    Actualiza un usuario
 
     Returns:
     - list: Lista de usuarios.
     """
-    usuarios = db.fetch()
-    return usuarios.items
+    dict = {k: v for k, v in user.items() if k != 'key'}
+
+    return db.update(dict,user['key'])
 
 
 def get_usernames():
@@ -207,46 +208,58 @@ def recetas_favoritas():
     if not st.session_state['logged_in']:
         st.title("USER NOT LOGGED IN")
         return False
-    else:
-        st.title("Favorite Recipes")
-        if 'favoritas' in session_state:
-            recetas_favoritas = session_state.favoritas
+
+    st.title("Favorite Recipes")
+    # Se revisa si hay una lista de recetas favoritas en el estado y si estas
+    # son las mismas que las favoritas del usuario actual
+    if ('favoritas' not in st.session_state or list(
+        session_state.favoritas.keys()) != session_state.cuenta['favorites']
+        ) and len(session_state.cuenta['favorites'])>0:
+
+        ids_favoritas = session_state.cuenta['favorites']
+
+        """
+        TODO IMPLEMENTAR funciones.set_recetas('*', True)
+        if 'recetas' not in st.session_state:
+        elif 'recetas_normales' not in st.session_state:
+        elif 'recetas_normales' not in st.session_state: SALUDABLE
+        elif 'recetas_normales' not in st.session_state: PRESUPUESTO
+        elif 'recetas_normales' not in st.session_state: HORNEADO
+        elif 'recetas_normales' not in st.session_state: ESPECIALES
         else:
-            ids_favoritas = session_state.cuenta['favorites']
+        """
 
-            if 'recetas' not in st.session_state:
-                if 'recetas_normales' not in st.session_state:
-                    rutas = get_rutas()
-                    ruta_normales = rutas['normales']
-                    json_recetas_normales = cargar_datos(ruta_normales)
+        recetas = session_state.recetas
 
-                    if 'recetas_normales' not in st.session_state:
-                        # Se crea un objeto para almacenar las recetas
-                        print("no estaba la receta")
-                        obj_recetas_normales = {}
-                        for receta_normal in json_recetas_normales:
-                            if receta_normal["id"] not in obj_recetas_normales:
-                                obj_recetas_normales[receta_normal["id"]] = receta_normal
-                            else:
-                                print("Ya estaba la receta con id",receta_normal["id"])
-                        st.session_state['recetas_normales'] = obj_recetas_normales
+        recetas_favoritas = {}
+        for id in ids_favoritas:
+            if id in recetas:
+                recetas_favoritas[id] = recetas[id]
 
-                        if 'recetas' not in st.session_state:
-                            st.session_state['recetas'] = obj_recetas_normales
-                        else:
-                            st.session_state['recetas'].update(obj_recetas_normales)
-            else:
-                recetas = session_state.recetas
+        session_state['favoritas'] = recetas_favoritas
+    else:
+        recetas_favoritas = session_state.favoritas
 
-            recetas_favoritas = {}
-            for receta in ids_favoritas:
+    if (recetas_favoritas is None or recetas_favoritas == [] or
+        len(recetas_favoritas)<1):
+        st.title("User doesn't have any favorite recipes yet.")
+    else:
+        """
+        TODO reconfigurar final funciones.recetas_normales() por pep8
+        """
+        for id in recetas_favoritas:
+            receta = recetas_favoritas[id]
+            st.markdown(
+                f"""
+                <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                    <img src="{receta['image']}" alt="Imagen de la receta" 
+                    style="max-width: 100%; border-radius: 5px;">
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            funciones.detalles_abiertos(receta)
 
-                if
-                recetas_favoritas[receta]
-
-        if (recetas_favoritas is None or recetas_favoritas == [] or
-            len(recetas_favoritas)<1):
-            st.title("User doesn't have any favorite recipes yet.")
 
 def validar_credenciales(username, password):
     """

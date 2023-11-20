@@ -59,6 +59,9 @@ def sidebar():
         
         st.sidebar.title("Account")
 
+        if st.sidebar.button('Favorites', key="favorites"):
+            st.session_state.page = 'favorites'
+
         if st.sidebar.button("Logout", key="logout"):
             st.session_state['logged_in'] = False
             st.session_state.nombre = None

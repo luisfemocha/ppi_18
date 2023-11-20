@@ -11,30 +11,102 @@ import matplotlib.pyplot as plt
 import conexion
 
 # variables globales
-ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/' \
                     'main/src/datos/ingredientes.json'
-ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+ruta_normales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/' \
                 'dgarzonac/src/datos/recetas.json'
-ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+ruta_saludable = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/' \
                  'main/src/datos/saludables.json'
-ruta_presupuesto = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/'\
+ruta_presupuesto = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/' \
                    'main/src/datos/presupuesto.json'
-ruta_horneados = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/'\
+ruta_horneados = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/' \
                  'src/datos/horneados.json'
-ruta_especiales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/main/'\
-                  'src/datos/especiales.json'
+ruta_especiales = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/' \
+                  'main/src/datos/especiales.json'
+id_rutas = {
+    0: 'ingredientes',
+    1: 'normales',
+    2: 'saludable',
+    3: 'presupuesto',
+    4: 'horneados',
+    5: 'especiales'
+}
 
 # Para exportar las rutas / variables globales anteriores
 def get_rutas():
     return {
-        'ingredientes': ruta_ingredientes,
-        'normales': ruta_normales,
-        'saludable': ruta_saludable,
-        'presupuesto': ruta_presupuesto,
-        'horneados': ruta_horneados,
-        'especiales': ruta_especiales
+        id_rutas[0]: ruta_ingredientes,
+        id_rutas[1]: ruta_normales,
+        id_rutas[2]: ruta_saludable,
+        id_rutas[3]: ruta_presupuesto,
+        id_rutas[4]: ruta_horneados,
+        id_rutas[5]: ruta_especiales
     }
 
+
+# Para almacenar las recetas en el estado de la sesion
+
+def set_recetas(categoria="*", forzar=False):
+    print('entra a set_recetas()', categoria, forzar)
+    rutas = get_rutas()
+
+    def set_receta(categoria, forzar):
+        nom_cat = 'recetas_' + categoria
+        if nom_cat not in st.session_state or \
+                nom_cat + "_json" not in st.session_state or forzar:
+            print('se actualiza', cat)
+            ruta = rutas[cat]
+            json_recetas = cargar_datos(ruta)
+
+            st.session_state[nom_cat + '_json'] = json_recetas
+
+            obj_recetas = {}
+            for receta in json_recetas:
+                if receta["id"] not in obj_recetas:
+                    obj_recetas[receta["id"]] = receta
+                else:
+                    print("Ya estaba la receta con id", receta["id"])
+
+            st.session_state[nom_cat] = obj_recetas
+
+        else:
+            print('no se actualiza', cat)
+            obj_recetas = st.session_state[nom_cat]
+
+        return obj_recetas
+
+    if categoria == "*" or categoria == None:
+        st.session_state["recetas"] = {}
+
+        # se itera por las categorias guardadas
+        for cat in rutas:
+            if cat == 'ingredientes':
+                if 'ingredientes' not in st.session_state or forzar:
+                    lista_ingredientes = pd.read_json(ruta_ingredientes)
+                    lista_ingredientes = lista_ingredientes["ingredients"][0]
+                    st.session_state['ingredientes'] = lista_ingredientes
+                    print('se actualiza ingredientes')
+
+                else:
+                    print('no se actualiza ingredientes')
+
+                continue
+
+            else:
+                st.session_state["recetas"].update(set_receta(cat,forzar))
+
+    else:
+        if categoria in id_rutas:
+            categoria = id_rutas[categoria]
+        else:
+            print('categoria no esta en id_rutas:', categoria)
+
+        if categoria in rutas:
+            if 'recetas' not in st.session_state:
+                st.session_state['recetas'] = {}
+        else:
+            print('categoria no esta en rutas:', categoria)
+            return False
 
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_datos(ruta):
@@ -52,10 +124,10 @@ def cargar_datos(ruta):
             with open(ruta, encoding='utf8') as contenido:
                 return pd.DataFrame(json.load(contenido))
     except:
-        st.title("Error al leer el archivo "+ruta)
+        st.title("Error al leer el archivo " + ruta)
         return pd.DataFrame()
 
- 
+
 # Visualizacion de cada receta
 def detalles_abiertos(recipe):
     # Verifica si se debe mostrar los detalles de esta receta
@@ -64,17 +136,33 @@ def detalles_abiertos(recipe):
         st.subheader(recipe["name"])
 
         if 'logged_in' in st.session_state and st.session_state['logged_in']:
-            if st.button("Add recipe to favorites", key="fav-"+recipe["id"]):
-                print('Se agrega a favoritas la receta')
-                # print(recipe)
-                print(recipe["id"])
+            if recipe["id"] in st.session_state.cuenta['favorites']:
+                if st.button("Remove recipe from favorites", key="unfav-" + recipe["id"]):
+                    print('se elimina la receta de favoritas')
+                    st.session_state.cuenta['favorites'].remove(recipe["id"])
+                    del st.session_state.favoritas[recipe["id"]]
+                    conexion.actualizar_usuario(st.session_state.cuenta)
+                    # vistas("home")
+            else:
+                if st.button("Add recipe to favorites", key="fav-" + recipe["id"]):
+                    print('Se agrega a favoritas la receta')
+                    # print(recipe)
+                    print(recipe["id"])
 
-                try:
-                    print("se intenta encontrar la receta con el id")
+                    try:
+                        print("se intenta encontrar la receta con el id")
 
-                    print(st.session_state['recetas_normales'][recipe["id"]])
-                except:
-                    print("paila")
+                        print(st.session_state['recetas_normales'][recipe["id"]])
+
+                        if 'favoritas' not in st.session_state:
+                            st.session_state['favoritas']={}
+                        st.session_state.favoritas[recipe["id"]] = recipe
+                        st.session_state.cuenta['favorites'].append(recipe["id"])
+
+                        conexion.actualizar_usuario(st.session_state.cuenta)
+                        # vistas("home")
+                    except Exception as e:
+                        print("error a la hora de agregar favorita", e)
 
         # Detalles de la receta (puedes usar un bucle para iterar sobre los datos)
         st.header("Recipe Details")
@@ -99,7 +187,7 @@ def detalles_abiertos(recipe):
         st.write(f"**Preparation:** {preparation}")
         st.write(f"**Cooking:** {cooking}")
 
-        if recipe['nutrients'] != {}: 
+        if recipe['nutrients'] != {}:
             # Nutrientes
             st.header("Nutrients")
             for nutrient in recipe['nutrients']:
@@ -113,7 +201,7 @@ def detalles_abiertos(recipe):
             plt.figure(figsize=(6, 4))
             plt.pie(values_nutrients, labels=names_nurients, autopct='%1.1f%%')
             st.pyplot(plt)
-                
+
         # Otros detalles
         st.header("Other Details")
         st.write(f"**Servings:** {recipe['serves']}")
@@ -133,18 +221,20 @@ def vistas(vista):
 
     if vista == 'home':
         home_page()
-    elif vista =='saludable':
+    elif vista == 'saludable':
         recetas_saludables()
     elif vista == 'presupuesto':
         recetas_presupuesto()
     elif vista == 'horneado':
         recetas_horneados()
     elif vista == 'especiales':
-        recetas_especiales() 
+        recetas_especiales()
     elif vista == 'signup':
         conexion.sign_up()
     elif vista == 'login':
         conexion.log_in()
+    elif vista == 'favorites':
+        conexion.recetas_favoritas()
 
 
 def home_page():
@@ -161,12 +251,12 @@ def home_page():
     recetas_normales()
 
 
-#Se muestran las erecetas sin clasificacion alguna
+# Se muestran las erecetas sin clasificacion alguna
 def recetas_normales():
     if (st.session_state['logged_in'] == False or
             st.session_state['logged_in'] == None):
         # Para motivar a el usuario a registrarse o iniciar sesión
-        st.title("Welcome to Appetito To know many more recipes, "+
+        st.title("Welcome to Appetito To know many more recipes, " +
                  "log in or sign up!")
 
     if 'recetas_normales_json' not in st.session_state:
@@ -185,13 +275,12 @@ def recetas_normales():
             if receta_n["id"] not in obj_recetas_normales:
                 obj_recetas_normales[receta_n["id"]] = receta_n
             else:
-                print("Ya estaba la receta con id",receta_n["id"])
+                print("Ya estaba la receta con id", receta_n["id"])
         st.session_state['recetas_normales'] = obj_recetas_normales
 
         if 'recetas' not in st.session_state:
-            st.session_state['recetas'] = obj_recetas_normales
-        else:
-            st.session_state['recetas'].update(obj_recetas_normales)
+            st.session_state['recetas'] = {}
+        st.session_state['recetas'].update(obj_recetas_normales)
     else:
         df_recetas_normales = pd.DataFrame(
             st.session_state['recetas_normales_json']
@@ -216,30 +305,31 @@ def recetas_normales():
     )
 
     subcategory = st.selectbox(
-        'Select subcategory', 
-        ['All', "Lunch recipes", "Dinner recipes","Breakfast recipes",
-        "Storecupboard","Cheese recipes", "Desserts","Fish and seafood",
-        "Pasta", "Chicken", "Meat", "Vegetarian"]
+        'Select subcategory',
+        ['All', "Lunch recipes", "Dinner recipes", "Breakfast recipes",
+         "Storecupboard", "Cheese recipes", "Desserts", "Fish and seafood",
+         "Pasta", "Chicken", "Meat", "Vegetarian"]
     )
-
 
     # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
     if ingredientes_deseados:
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['ingredients'].apply(
-                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+                lambda x: any(
+                    ingrediente in ing for ing in x for ingrediente in
+                    ingredientes_deseados)
             )
         ]
 
     if difficult != 'All':
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['difficult'] == difficult
-        ]
+            ]
 
     if subcategory != 'All':
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['subcategory'] == subcategory
-        ]
+            ]
 
     # Define el número de recetas por página
     recetas_por_pagina = 10
@@ -249,11 +339,11 @@ def recetas_normales():
     if len(df_recetas_normales) % recetas_por_pagina > 0:
         total_paginas += 1
 
-
     # Verifica si hay páginas para mostrar
     if total_paginas > 0:
         # Crea un selector para la página
-        pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
+        pagina = st.selectbox('Select a page',
+                              options=range(1, total_paginas + 1))
 
         # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
         inicio = (pagina - 1) * recetas_por_pagina
@@ -292,13 +382,12 @@ def recetas_saludables():
             if receta_s["id"] not in obj_recetas_saludables:
                 obj_recetas_saludables[receta_s["id"]] = receta_s
             else:
-                print("Ya estaba la receta con id",receta_s["id"])
+                print("Ya estaba la receta con id", receta_s["id"])
         st.session_state['recetas_saludables'] = obj_recetas_saludables
 
         if 'recetas' not in st.session_state:
-            st.session_state['recetas'] = obj_recetas_saludables
-        else:
-            st.session_state['recetas'].update(obj_recetas_saludables)
+            st.session_state['recetas'] = {}
+        st.session_state['recetas'].update(obj_recetas_saludables)
     else:
         df_recetas_saludables = pd.DataFrame(
             st.session_state['recetas_saludables_json']
@@ -320,19 +409,21 @@ def recetas_saludables():
         "Select ingredients:", lista_ingredientes
     )
 
-    
     # Crear una caja de selección para el filtro de dificultad
     difficult = st.selectbox('Select the difficulty level',
-                              ['All', 'Easy', 'More effort', 'A challenge'])
+                             ['All', 'Easy', 'More effort', 'A challenge'])
     subcategory = st.selectbox('Select the subcategory',
-                                ['All', 'Smoothies', 'Salads',
-                                  'Dinner', 'Fitness & lifestyle', 'High protein', 'Keto'])
-    
+                               ['All', 'Smoothies', 'Salads',
+                                'Dinner', 'Fitness & lifestyle',
+                                'High protein', 'Keto'])
+
     # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
     if ingredientes_deseados:
         df_recetas_saludables = df_recetas_saludables[
             df_recetas_saludables['ingredients'].apply(
-                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+                lambda x: any(
+                    ingrediente in ing for ing in x for ingrediente in
+                    ingredientes_deseados)
             )
         ]
 
@@ -378,6 +469,7 @@ def recetas_saludables():
         )
         detalles_abiertos(receta)
 
+
 # Se muestras las recetas para un corto presupuesto(sencillaes)
 def recetas_presupuesto():
     if 'recetas_presupuesto_json' not in st.session_state:
@@ -393,18 +485,17 @@ def recetas_presupuesto():
             if receta_p["id"] not in obj_recetas_presupuesto:
                 obj_recetas_presupuesto[receta_p["id"]] = receta_p
             else:
-                print("Ya estaba la receta con id",receta_p["id"])
+                print("Ya estaba la receta con id", receta_p["id"])
         st.session_state['recetas_presupuesto'] = obj_recetas_presupuesto
 
         if 'recetas' not in st.session_state:
-            st.session_state['recetas'] = obj_recetas_presupuesto
-        else:
-            st.session_state['recetas'].update(obj_recetas_presupuesto)
+            st.session_state['recetas'] = {}
+        st.session_state['recetas'].update(obj_recetas_presupuesto)
+
     else:
         df_recetas_presupuesto = pd.DataFrame(
             st.session_state['recetas_presupuesto_json']
         )
-
 
     if 'ingredientes' not in st.session_state:
         # Leer la lista de ingredientes
@@ -425,7 +516,9 @@ def recetas_presupuesto():
     if ingredientes_deseados:
         df_recetas_presupuesto = df_recetas_presupuesto[
             df_recetas_presupuesto['ingredients'].apply(
-                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+                lambda x: any(
+                    ingrediente in ing for ing in x for ingrediente in
+                    ingredientes_deseados)
             )
         ]
 
@@ -434,14 +527,20 @@ def recetas_presupuesto():
         return None
 
     # Crear una caja de selección para el filtro de dificultad
-    difficult = st.selectbox('Select the difficulty level', ['All', 'Easy', 'More effort', 'A challenge'])
-    subcategory = st.selectbox('Select the subcategory', ['All', 'Budget dinners', 'Batch cooking', 'Student meals', 'Freezable meals', 'Slow cooker'])
+    difficult = st.selectbox('Select the difficulty level',
+                             ['All', 'Easy', 'More effort', 'A challenge'])
+    subcategory = st.selectbox('Select the subcategory',
+                               ['All', 'Budget dinners', 'Batch cooking',
+                                'Student meals', 'Freezable meals',
+                                'Slow cooker'])
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
     if difficult != 'All':
-        df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['difficult'] == difficult]
+        df_recetas_presupuesto = df_recetas_presupuesto[
+            df_recetas_presupuesto['difficult'] == difficult]
     if subcategory != 'All':
-        df_recetas_presupuesto = df_recetas_presupuesto[df_recetas_presupuesto['subcategory'] == subcategory]
+        df_recetas_presupuesto = df_recetas_presupuesto[
+            df_recetas_presupuesto['subcategory'] == subcategory]
 
     # Define el número de recetas por página
     recetas_por_pagina = 10
@@ -470,6 +569,7 @@ def recetas_presupuesto():
         )
         detalles_abiertos(receta1)
 
+
 # Se muestran las recetas para hornearse
 def recetas_horneados():
     if 'recetas_horneados_json' not in st.session_state:
@@ -485,13 +585,12 @@ def recetas_horneados():
             if receta_horneado["id"] not in obj_recetas_horneados:
                 obj_recetas_horneados[receta_horneado["id"]] = receta_horneado
             else:
-                print("Ya estaba la receta con id",receta_horneado["id"])
+                print("Ya estaba la receta con id", receta_horneado["id"])
         st.session_state['recetas_horneados'] = obj_recetas_horneados
 
         if 'recetas' not in st.session_state:
-            st.session_state['recetas'] = obj_recetas_horneados
-        else:
-            st.session_state['recetas'].update(obj_recetas_horneados)
+            st.session_state['recetas'] = {}
+        st.session_state['recetas'].update(obj_recetas_horneados)
     else:
         df_recetas_horneados = pd.DataFrame(
             st.session_state['recetas_horneados_json']
@@ -504,7 +603,7 @@ def recetas_horneados():
         st.session_state['ingredientes'] = lista_ingredientes
     else:
         lista_ingredientes = st.session_state['ingredientes']
-    
+
     # Display baked recipes here
     st.title("Baked Recipes")
 
@@ -515,20 +614,24 @@ def recetas_horneados():
 
     # Crear una caja de selección para el filtro de dificultad
     difficult = st.selectbox('Select the difficulty level',
-                              ['All', 'Easy', 'More effort', 'A challenge'])
+                             ['All', 'Easy', 'More effort', 'A challenge'])
     subcategory = st.selectbox('Select the subcategory',
-                                ['All', 'Bread', 'Cakes', 'Desserts',
-                                  "Kids' baking", 'Quick bakes','Savoury pastries',
-                                  'Sweet treats','Vegan baking','Biscuit recipes'])
-    
+                               ['All', 'Bread', 'Cakes', 'Desserts',
+                                "Kids' baking", 'Quick bakes',
+                                'Savoury pastries',
+                                'Sweet treats', 'Vegan baking',
+                                'Biscuit recipes'])
+
     # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
     if ingredientes_deseados:
         df_recetas_horneados = df_recetas_horneados[
             df_recetas_horneados['ingredients'].apply(
-                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+                lambda x: any(
+                    ingrediente in ing for ing in x for ingrediente in
+                    ingredientes_deseados)
             )
         ]
-    
+
     # Filtrar las recetas basándose en la dificultad y subcategoría
     if difficult != 'All':
         df_recetas_horneados = df_recetas_horneados[
@@ -556,7 +659,7 @@ def recetas_horneados():
     inicio = (pagina - 1) * recetas_por_pagina
     fin = inicio + recetas_por_pagina
     df_recetas_pagina = df_recetas_horneados.iloc[inicio:fin]
-    
+
     for index, receta2 in df_recetas_pagina.iterrows():
         st.markdown(
             f"""
@@ -568,6 +671,7 @@ def recetas_horneados():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta2)
+
 
 # Se muestran las recetas para ocasiones especiales
 def recetas_especiales():
@@ -583,13 +687,13 @@ def recetas_especiales():
             if receta_e["id"] not in obj_recetas_especiales:
                 obj_recetas_especiales[receta_e["id"]] = receta_e
             else:
-                print("Ya estaba la receta con id",receta_e["id"])
+                print("Ya estaba la receta con id", receta_e["id"])
         st.session_state['recetas_horneados'] = obj_recetas_especiales
 
         if 'recetas' not in st.session_state:
-            st.session_state['recetas'] = obj_recetas_especiales
-        else:
-            st.session_state['recetas'].update(obj_recetas_especiales)
+            st.session_state['recetas'] = {}
+        st.session_state['recetas'].update(obj_recetas_especiales)
+
     else:
         df_recetas_especiales = pd.DataFrame(
             st.session_state['recetas_especiales_json']
@@ -615,17 +719,20 @@ def recetas_especiales():
     )
     # Crear una caja de selección para el filtro de dificultad
     difficult = st.selectbox('Select difficulty level',
-                              ['All', 'Easy', 'More effort', 'A challenge'])
+                             ['All', 'Easy', 'More effort', 'A challenge'])
     subcategory = st.selectbox('Select subcategory',
-                                ['All', 'Birthdays', 'Cocktails', 'Hosting',
-                                  'Slow cooker',"Kids' birthdays","Mocktails",
-                                  'Picnics','Barbecues','Spring recipes','Special occasions','Teas'])
-    
+                               ['All', 'Birthdays', 'Cocktails', 'Hosting',
+                                'Slow cooker', "Kids' birthdays", "Mocktails",
+                                'Picnics', 'Barbecues', 'Spring recipes',
+                                'Special occasions', 'Teas'])
+
     # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
     if ingredientes_deseados:
         df_recetas_especiales = df_recetas_especiales[
             df_recetas_especiales['ingredients'].apply(
-                lambda x: any(ingrediente in ing for ing in x for ingrediente in ingredientes_deseados)
+                lambda x: any(
+                    ingrediente in ing for ing in x for ingrediente in
+                    ingredientes_deseados)
             )
         ]
     # Filtrar las recetas basándose en la dificultad y subcategoría
@@ -645,7 +752,8 @@ def recetas_especiales():
         total_paginas += 1
 
     # Crea un selector para la página
-    pagina = st.selectbox('Selecciona una página', options=range(1, total_paginas + 1))
+    pagina = st.selectbox('Selecciona una página',
+                          options=range(1, total_paginas + 1))
 
     # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
     inicio = (pagina - 1) * recetas_por_pagina
