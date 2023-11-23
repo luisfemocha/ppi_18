@@ -21,7 +21,8 @@ db = deta.Base('Appetito_usuarios')
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
-    
+
+
 def insert_user(username, password):
     """
     Inserta un nuevo usuario en la base de datos.
@@ -51,8 +52,7 @@ def actualizar_usuario(user):
     - list: Lista de usuarios.
     """
     dict = {k: v for k, v in user.items() if k != 'key'}
-
-    return db.update(dict,user['key'])
+    return db.update(dict, user['key'])
 
 
 def get_usernames():
@@ -184,7 +184,7 @@ def log_in():
                 st.write("Logged in as: " + username)
                 st.session_state.nombre = username
                 st.session_state.cuenta = cuenta
-                st.session_state['favoritas']={}
+                st.session_state['favoritas'] = {}
                 st.experimental_rerun()
         else:
             st.error("Incorrect Username/Password")
@@ -200,10 +200,14 @@ def log_in():
             st.experimental_rerun()
 
 
-
 def recetas_favoritas():
     """
     Muestra las recetas favoritas del usuario.
+
+    Verifica si el usuario está autenticado y, si es así, muestra las
+    recetas favoritas. Si las recetas favoritas han cambiado desde la
+    última vez que se cargaron, actualiza la lista de recetas favoritas
+    en el estado de la sesión.
     """
 
     if not st.session_state['logged_in']:
@@ -215,7 +219,7 @@ def recetas_favoritas():
     # son las mismas que las favoritas del usuario actual
     if ('favoritas' not in st.session_state or list(
         session_state.favoritas.keys()) != session_state.cuenta['favorites']
-        ) and len(session_state.cuenta['favorites'])>0:
+            )and len(session_state.cuenta['favorites']) > 0:
 
         ids_favoritas = session_state.cuenta['favorites']
 
@@ -241,20 +245,23 @@ def recetas_favoritas():
     else:
         recetas_favoritas = session_state.favoritas
 
-    if (recetas_favoritas is None or recetas_favoritas == [] or
-        len(recetas_favoritas)<1):
+    if (recetas_favoritas is None or
+    recetas_favoritas == [] or
+    len(recetas_favoritas) < 1):
         st.title("User doesn't have any favorite recipes yet.")
+
     else:
-        """
-        TODO reconfigurar final funciones.recetas_normales() por pep8
-        """
+    #TODO reconfigurar final funciones.recetas_normales() por pep8
         for id in recetas_favoritas:
             receta = recetas_favoritas[id]
             st.markdown(
                 f"""
-                <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
-                    <img src="{receta['image']}" alt="Imagen de la receta" 
-                    style="max-width: 100%; border-radius: 5px;">
+                <div style="border: 2px solid #ccc;
+                padding: 5px; text-align: center;">
+                    <img src="{receta['image']}"
+                    alt="Imagen de la receta"
+                    style="max-width: 100%;
+                    border-radius: 5px;">
                 </div>
                 """,
                 unsafe_allow_html=True,
