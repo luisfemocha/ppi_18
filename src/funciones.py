@@ -1,19 +1,18 @@
 # Aqui estan funciones de la pagina para cambio de recetas
 
+# Bibliotecas estándar
+from datetime import datetime
 import json
-import requests
-import pandas as pd
-import streamlit as st
+
+# Bibliotecas de terceros
 import matplotlib.pyplot as plt
-
-import conexion
-
 import numpy as np
-
-# Se ajustan los datos para utilizarlos en las funciones
-import requests
 import pandas as pd
-import json
+import requests
+import streamlit as st
+
+# Tus propios módulos
+import conexion
 
 # variables globales
 ruta_ingredientes = 'https://raw.githubusercontent.com/Luisfemocha/ppi_18/' \
@@ -299,6 +298,44 @@ def detalles_abiertos(recipe):
         st.write(f"**Subcategory:** {recipe['subcategory']}")
         st.write(f"**Dish Type:** {recipe['dish_type']}")
         st.write(f"**Main Category:** {recipe['maincategory']}")
+
+        # Buscar comentarios de una receta
+        st.header("Comments")
+        id_receta = recipe["id"]
+
+        try:
+            comentarios = conexion.get_comentarios(id_receta)
+        except Exception as e:
+            comentarios = None
+
+        # Muestra los comentarios existentes
+        if comentarios:
+            for comentario in comentarios:
+                # Convierte la fecha del comentario a un objeto datetime
+                date_coment = datetime.strptime(comentario['date_coment'], "%Y-%m-%d %H:%M:%S.%f")
+                # Formatea la fecha para mostrar solo el día y la hora hasta los minutos en formato de 12 horas
+                formatted_date = date_coment.strftime("%Y-%m-%d %I:%M %p")
+                st.write(f"{comentario['username']} said on {formatted_date}: {comentario['comentario']}")
+        else:
+            st.write("No comments yet.")
+
+        if st.session_state['logged_in']:
+            # Formulario para agregar comentarios
+            st.subheader("Add Comment")
+            usuario = st.session_state.nombre
+            nuevo_comentario = st.text_area("Add your comment:", key=f'comentario_unico_{recipe["id"]}')
+            if st.button("Add Comment", key=f'añadir_comentario_unico_{recipe["id"]}'):
+                if nuevo_comentario:  # Verifica si el comentario no está vacío
+                    try:
+                        # Agregar lógica para guardar el nuevo comentario en tu base de datos
+                        conexion.insertar_comentario(usuario, id_receta, nuevo_comentario)
+                    except Exception as e:
+                        st.write(f"Error al insertar comentario: {e}")
+                else:
+                    st.write("Por favor, escribe un comentario antes de enviar.")
+
+
+
 
 
 # Segun esta funcion se cambian de vistas

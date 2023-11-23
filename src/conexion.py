@@ -17,7 +17,9 @@ DETA_KEY = st.secrets["token"]
 deta = Deta(DETA_KEY)
 
 # Inicializar Base de Datos de Deta para usuarios
-db = deta.Base('Appetito_usuarios')
+db_usuarios = deta.Base('Appetito_usuarios')
+
+db_comentarios  = deta.Base('Appetito_comentarios')
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
@@ -41,7 +43,29 @@ def insert_user(username, password):
         'date_joined': date_joined,
         'favorites': []
     }
-    return db.put(user_data)
+    return db_usuarios.put(user_data)
+
+
+def insertar_comentario(username, id, comentario):
+    """
+    Inserta un nuevo comentario en la base de datos.
+
+    Parameters:
+    - username (str): Nombre de usuario.
+    - id (str): ID de la receta.
+    - comentario (str): Comentario del usuario.
+
+    Returns:
+    - dict: Información del usuario insertado.
+    """
+    date_coment = str(datetime.now())
+    user_coment = {
+        'username': username,
+        'id': id,
+        'comentario': comentario,
+        'date_coment': date_coment,
+    }
+    return db_comentarios.put(user_coment)
 
 
 def actualizar_usuario(user):
@@ -52,7 +76,27 @@ def actualizar_usuario(user):
     - list: Lista de usuarios.
     """
     dict = {k: v for k, v in user.items() if k != 'key'}
-    return db.update(dict, user['key'])
+    return db_usuarios.update(dict, user['key'])
+
+
+def get_comentarios(id):
+    """
+    Obtiene la lista de comentarios de una receta.
+
+    Parameters:
+    - id (str): ID de la receta.
+
+    Returns:
+    - list: Lista de comentarios.
+    """
+    
+    comentarios = db_comentarios.fetch()
+    comentarios_receta = []
+    if comentarios:
+        for comentario in comentarios.items:
+            if comentario['id'] == id:
+                comentarios_receta.append(comentario)
+    return comentarios_receta
 
 
 def get_usernames():
@@ -62,7 +106,7 @@ def get_usernames():
     Returns:
     - list: Lista de nombres de usuario.
     """
-    usuarios = db.fetch()
+    usuarios = db_usuarios.fetch()
     usernames = []
     for usuario in usuarios.items:
         usernames.append(usuario['username'])
@@ -282,7 +326,7 @@ def validar_credenciales(username, password):
     - bool: True si las credenciales son válidas,
       False de lo contrario.
     """
-    usuarios = db.fetch()
+    usuarios = db_usuarios.fetch()
     for usuario in usuarios.items:
         if usuario['username'] == username and usuario['password'] == password:
             return usuario
