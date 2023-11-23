@@ -6,32 +6,51 @@ import streamlit as st
 # local imports from CONTROL tier
 import funciones
 
-version = "0.20231102L"
+# Version de la aplicación
+version = "0.20231123L"
 
+# Configuración de la página
 st.set_page_config(
     page_title="Appetito",
     page_icon="🍔",
     layout="wide",
     initial_sidebar_state="expanded")
 
+# Establecer login como falso
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
 def sidebar():
     """
     Esta función define y despliega la barra lateral de la
-    aplicación "Appetito". Crea botones, según las diferentes
+    aplicación "Appetito". Crea botones según las diferentes
     vistas de la página web. Si se presiona algún botón, la sesión
     cambia y luego se llama a la función funciones.vistas() para
     mostrar la página correspondiente.
+
+    Detalles de la función:
+
+    - Si el usuario está loggeado, muestra un saludo personalizado
+      en la barra lateral.
+
+    - Crea botones en la barra lateral para navegar entre las
+      diferentes secciones de la aplicación, como la página principal
+      ("Home"), recetas saludables ("Healthy recipes"), recetas sencillas
+      ("Simple Recipes"), recetas especiales ("Special Recipes"),
+      recetas horneadas ("Baked Recipes"), favoritos ("Favorites"),
+      y cerrar sesión ("Logout").
+
+    - Si el usuario no está loggeado, muestra opciones para registrarse
+      ("Sign up") o iniciar sesión ("Log In").
+
+    - La función utiliza el estado de la sesión de Streamlit para
+      gestionar la página actual y redirigir a la función
+      funciones.vistas() para mostrar el contenido correspondiente
+      a la página seleccionada.
+
+    Ejemplo de uso:
+    >>> sidebar()
     """
-
-    # Obtener la página actual de la sesión o establecerla como
-    # 'principal' por defecto.
-
-    # Home es la página principal de la aplicación, es decir,
-    # la primera vista que ve el usuario al entrar a la página
-    # ya sea como no registrado o registrado.
 
     if st.session_state['logged_in']:
         st.sidebar.title("Welcome " + st.session_state.nombre + "!")
@@ -39,6 +58,9 @@ def sidebar():
 
         if st.sidebar.button("Home", key="home"):
             st.session_state.page = 'home'
+        
+        if st.sidebar.button("contact us", key="contact_us"):
+            st.session_state.page = 'contact us'
 
         st.sidebar.title("Recipes")
         # Para desplegar las recetas fit
@@ -59,6 +81,9 @@ def sidebar():
         
         st.sidebar.title("Account")
 
+        if st.sidebar.button("Account", key="account"):
+            st.session_state.page = 'account'
+
         if st.sidebar.button('Favorites', key="favorites"):
             st.session_state.page = 'favorites'
 
@@ -73,7 +98,10 @@ def sidebar():
 
         if st.sidebar.button("Home", key="home"):
             st.session_state.page = 'home'
-
+        
+        if st.sidebar.button("contact us", key="contact_us"):
+            st.session_state.page = 'contact us'
+            
         # Aquí es la parte de cuenta de la aplicación
         st.sidebar.title("Account")
         # Para registrarse - crear cuenta
@@ -93,31 +121,41 @@ def sidebar():
 
 def footer():
     """
-    This function creates the footer in order to view developers info.
+    This function creates the footer to display developer information.
+
+    Detalles de la función:
+
+    - Crea un pie de página para mostrar información sobre los desarrolladores
+      y la forma de contacto.
+
+    - Utiliza el módulo `streamlit` para mostrar HTML con estilos CSS.
+
+    Ejemplo de uso:
+    >>> footer()
     """
     st.markdown("""
-    <style>
-        .ezrtsby2, .ea3mdgi1 { visibility: hidden; }
-        .footer: {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 50px;
-            background-color: #00000;
-            color: #ffffff;
-            text-align: left;
-            padding-top: 15px;
-            padding-left: 10px;
-        }
-    </style>
+        <style>
+            .ezrtsby2, .ea3mdgi1 { visibility: hidden; }
+            .footer: {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                height: 50px;
+                background-color: #00000;
+                color: #ffffff;
+                text-align: left;
+                padding-top: 15px;
+                padding-left: 10px;
+            }
+        </style>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <footer class='footer'>
-        Developed by: Daniel Garzon and Luis Moreno |
-        Contact: dgarzonac@unal.edu.co</a> and lumorenoc@unal.edu.co</a>
-    </footer>
-    """,unsafe_allow_html=True)
+        <footer class='footer'>
+            Developed by: Daniel Garzon and Luis Moreno |
+            Contact: dgarzonac@unal.edu.co</a> and lumorenoc@unal.edu.co</a>
+        </footer>
+    """, unsafe_allow_html=True)
 
 # sidebar y footer de llaman para que sean siempre visibles
 
