@@ -11,8 +11,7 @@ import funciones
 from deta import Deta
 
 # Clave para Deta Base
-#  DETA_KEY = st.secrets["token"]
-DETA_KEY = "e0m3ypPCenY_fP2W6yRXxqv8EkjFRdto2wR51zJRZgs1"
+DETA_KEY = st.secrets["token"]
 
 # Inicializar conexión a Deta Base
 deta = Deta(DETA_KEY)
