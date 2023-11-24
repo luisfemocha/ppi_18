@@ -93,7 +93,6 @@ def sidebar():
             st.session_state.page = 'home'
             st.experimental_rerun()
 
-
     else:
 
         if st.sidebar.button("Home", key="home"):
@@ -115,8 +114,6 @@ def sidebar():
     # Llamar a la función para mostrar la página correspondiente
     page = st.session_state.get('page', 'home')
     funciones.vistas(page)
-
-
 
 
 def footer():

@@ -374,6 +374,10 @@ def vistas(vista):
         conexion.log_in()
     elif vista == 'favorites':
         conexion.recetas_favoritas()
+    elif vista == 'account':
+        detalles_cuenta()
+    else:
+        print("Error en funcion vistas. Caso no apreciado "+vista)
 
 
 def filtrar_ingredientes(ingredientes_deseados,
@@ -1152,3 +1156,70 @@ def recetas_especiales():
             unsafe_allow_html=True,
         )
         detalles_abiertos(receta1)
+
+
+def detalles_cuenta():
+    st.title('Account details')
+
+    # se intenta con st.data_edit pero se prefiere el html markdown
+    cuenta_aux = st.session_state.cuenta
+
+    try:
+        st.markdown('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/'
+                    'dist/css/bootstrap.min.css" rel="stylesheet" integrity="s'
+                    'ha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dw'
+                    'wykc2MPK8M2HN" crossorigin="anonymous">'
+                    '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2'
+                    '/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6Rzs'
+                    'ynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cD'
+                    'fL" crossorigin="anonymous"></script>',
+                    unsafe_allow_html=True
+        )
+    except Exception as e:
+        print("Error installing Bootstrap." + e)
+
+
+    tabla_html = """       
+        <table class="table table-dark table-striped-columns">
+            <tbody>
+                <tr>
+                    <th scope="row">username</th>
+                    <td id='username' class='editable'>
+                        """ + cuenta_aux['username'] + """
+                    </th>
+                </tr>
+    """
+
+    for atributo_cuenta in cuenta_aux:
+        if atributo_cuenta == 'username':
+            continue
+        tabla_html += """<tr>
+                <th scope='row'>""" + atributo_cuenta + """</th>
+                <td id='""" + atributo_cuenta + """' class='editable'>
+                """ + str(cuenta_aux[atributo_cuenta]) + """
+                </td>
+            </tr>
+        """
+        # tabla_html += linea_html
+
+    tabla_html += """</tbody></table>
+    
+    <script>
+        function editable(elemento){
+            console.log("se hizo click en " + elemento)
+        }
+        
+        var editables = document.querySelectorAll('.editable');
+        
+        editables.forEach(function(elemento) {
+            console.log("elementos: " + elemento);
+            console.log("Streamlit no deja pasar los mensajes :c");
+            elemento.addEventListener('dblclick', function() {
+                console.log("Se hizo click en un elemento");
+            })
+        }
+    </script>
+    """
+
+    st.markdown(tabla_html, unsafe_allow_html=True)
+
