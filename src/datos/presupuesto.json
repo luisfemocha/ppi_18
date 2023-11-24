@@ -2445,52 +2445,6 @@
     "maincategory": "budget"
   },
   {
-    "id": "2ca43333-fd12-4f83-a154-3532f89b0fdb",
-    "url": "https://www.bbcgoodfood.com/recipes/basic-lentils",
-    "image": "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/basic-lentils-d2b0d86.jpg",
-    "name": "Basic lentils",
-    "description": "Make our tasty lentil recipe and use it as a base to make three more fabulous dishes. By itself it's a tasty vegan, low-fat and gluten-free meal",
-    "author": "Sophie Godwin \u2013 Cookery writer",
-    "rattings": 5,
-    "ingredients": [
-      "2 tbsp coconut oil",
-      "2 onions, chopped",
-      "4 garlic cloves, chopped",
-      "large piece of ginger, chopped",
-      "300g red split lentils",
-      "1 tsp turmeric",
-      "2 tomatoes, roughly chopped",
-      "1 tsp coriander seeds",
-      "1 tsp cumin seeds",
-      "1 tsp black mustard seeds",
-      "1 lemon, juiced"
-    ],
-    "steps": [
-      "Melt 1 tbsp coconut oil in a large saucepan. Add the onion and a pinch of salt, and cook for 8 mins. Stir in the garlic and ginger and cook for a few mins more. Add the lentils, turmeric and tomatoes, stir to combine, then pour in 1 litre of water. Bring to the boil, then turn down and simmer for 25-30 mins, stirring occasionally, until the lentils are tender.",
-      "Heat the rest of the oil in a frying pan. When it\u2019s very hot, add the spices and fry for a min or so until fragrant, then stir them through. Add the lemon juice and season to taste. Will keep for four days in the fridge, or freeze it in batches and use to make our lentil kedgeree, lentil fritters, or spinach dhal with harissa yogurt."
-    ],
-    "nutrients": {
-      "kcal": "230",
-      "fat": "5g",
-      "saturates": "3g",
-      "carbs": "31g",
-      "sugars": "4g",
-      "fibre": "5g",
-      "protein": "13g",
-      "salt": "0.1g"
-    },
-    "times": {
-      "Preparation": "10 mins",
-      "Cooking": "45 mins"
-    },
-    "serves": 6,
-    "difficult": "Easy",
-    "vote_count": 17,
-    "subcategory": "Batch cooking",
-    "dish_type": "Healthy batch cooking",
-    "maincategory": "budget"
-  },
-  {
     "id": "df2a9edc-49e0-49d7-b1c9-2d25b66390bf",
     "url": "https://www.bbcgoodfood.com/recipes/slow-cooker-child-friendly-chilli",
     "image": "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/gfkids_tacos-442f38f.jpg",

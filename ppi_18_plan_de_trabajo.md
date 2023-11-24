@@ -50,7 +50,7 @@
 | Tarea                  | Responsable                                           | Estado       |
 |------------------------| ---------------------------------------------------- | ------------ |
 | Documentacion del codigo y cumplimiento con las pep8. | [Luis Chamorro](https://github.com/Luisfemocha) | Listo  |
-| Pruebas e integración. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Sin Empezar  |
+| Mostrar gráficas de detalles nutricionales. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
 
 ## 20/11/2023 - 27/11/2023
 | Tarea                           | Responsable                                           | Estado       |
