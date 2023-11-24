@@ -7,7 +7,7 @@ import streamlit as st
 import funciones
 
 # Version de la aplicación
-version = "0.20231123L"
+version = "0.20231124L"
 
 # Configuración de la página
 st.set_page_config(
@@ -94,7 +94,6 @@ def sidebar():
             st.experimental_rerun()
 
     else:
-
         if st.sidebar.button("Home", key="home"):
             st.session_state.page = 'home'
         

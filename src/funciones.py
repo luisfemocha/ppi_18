@@ -1176,15 +1176,14 @@ def detalles_cuenta():
                     unsafe_allow_html=True
         )
     except Exception as e:
-        print("Error installing Bootstrap." + e)
+        print("Error installing Bootstrap." + str(e))
 
-
-    tabla_html = """       
+    tabla_html = """
         <table class="table table-dark table-striped-columns">
             <tbody>
                 <tr>
                     <th scope="row">username</th>
-                    <td id='username' class='editable'>
+                    <td id='username'>
                         """ + cuenta_aux['username'] + """
                     </th>
                 </tr>
@@ -1195,31 +1194,19 @@ def detalles_cuenta():
             continue
         tabla_html += """<tr>
                 <th scope='row'>""" + atributo_cuenta + """</th>
-                <td id='""" + atributo_cuenta + """' class='editable'>
-                """ + str(cuenta_aux[atributo_cuenta]) + """
-                </td>
+                <td>""" + str(cuenta_aux[atributo_cuenta]) + """</td>
             </tr>
         """
         # tabla_html += linea_html
 
-    tabla_html += """</tbody></table>
-    
-    <script>
-        function editable(elemento){
-            console.log("se hizo click en " + elemento)
-        }
-        
-        var editables = document.querySelectorAll('.editable');
-        
-        editables.forEach(function(elemento) {
-            console.log("elementos: " + elemento);
-            console.log("Streamlit no deja pasar los mensajes :c");
-            elemento.addEventListener('dblclick', function() {
-                console.log("Se hizo click en un elemento");
-            })
-        }
-    </script>
-    """
+    tabla_html += "</tbody></table>"
 
     st.markdown(tabla_html, unsafe_allow_html=True)
+
+    if st.button(
+            'Edit account',
+            type='primary',
+            disabled=True,
+            help='Not ready yet'):
+        print('edit')
 

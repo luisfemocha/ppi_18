@@ -90,7 +90,12 @@ def get_comentarios(id):
     - list: Lista de comentarios.
     """
     
-    comentarios = db_comentarios.fetch()
+    try:
+        comentarios = db_comentarios.fetch()
+    except Exception as e:
+        print('Error en el fetch 94 de comentarios: '+str(e))
+        return False
+
     comentarios_receta = []
     if comentarios:
         for comentario in comentarios.items:
@@ -106,7 +111,12 @@ def get_usernames():
     Returns:
     - list: Lista de nombres de usuario.
     """
-    usuarios = db_usuarios.fetch()
+    try:
+        usuarios = db_usuarios.fetch()
+    except Exception as e:
+        print("Error en el fetch 115 de usuarios: "+str(e))
+        return False
+
     usernames = []
     for usuario in usuarios.items:
         usernames.append(usuario['username'])
@@ -176,11 +186,23 @@ def sign_up():
             # Imprimir resultado de la validación del nombre de usuario
             print(validate_username(username))
             # Validaciones del formulario
-            if username in get_usernames():
+            usernames = get_usernames()
+
+            # contador de intentos para los usernames
+            i = 5
+            while (not usernames):
+                if i <= 0:
+                    st.error('Database error')
+                    break
+                usernames = get_usernames()
+                i -= 1
+
+
+            if username in usernames:
                 st.error('The user already exists, please enter another')
-            if len(username) < 4:
+            elif len(username) < 4:
                 st.error('Username must be at least 4 characters long.')
-            if not validate_username(username):
+            elif not validate_username(username):
                 st.error('Username can only contain alphanumeric characters'
                          'and underscores.')
             elif not password:
@@ -220,6 +242,11 @@ def log_in():
     if st.button("Log in"):
         cuenta = validar_credenciales(username, password)
         if cuenta:
+            try:
+                if str(cuenta) == 'database error':
+                    st.error('Database error')
+            except:
+                print('Usuario no str')
             # Establecer el estado de inicio de sesión y el nombre de
             # Usuario en la variable de estado de Streamlit
             st.session_state['logged_in'] = True
@@ -326,7 +353,12 @@ def validar_credenciales(username, password):
     - bool: True si las credenciales son válidas,
       False de lo contrario.
     """
-    usuarios = db_usuarios.fetch()
+    try:
+        usuarios = db_usuarios.fetch()
+    except Exception as e:
+        print("Error en el fetch 340 de usuarios: "+str(e))
+        return 'database error'
+
     for usuario in usuarios.items:
         if usuario['username'] == username and usuario['password'] == password:
             return usuario
