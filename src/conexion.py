@@ -38,20 +38,17 @@ def insert_user(username, correo, password, fecha_nacimiento):
     """
     # Reemplaza esto con tu lógica real de inserción de usuario en la base de datos
     date_joined = str(datetime.now())
+    fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d') 
     user_data = {
         'username': username,
         'correo': correo,
         'password': password,
-        'fecha_nacimiento': fecha_nacimiento,
+        'fecha_nacimiento': fecha_nacimiento_str,
         'date_joined': date_joined,
         'favorites': []
     }
-    db_usuarios.append(user_data)
-    return user_data
-
-usuario_insertado = insert_user("usuario1", "correo@ejemplo.com", "contraseña123", datetime(1990, 1, 1))
-print("Usuario insertado:", usuario_insertado)
-print("Base de datos de usuarios:", db_usuarios)
+    return db_usuarios.put(user_data)
+     
 
 def insertar_comentario(username, id, comentario):
     """
