@@ -25,7 +25,7 @@ if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
 
-def insert_user(username, password):
+def insert_user(username, correo, password, fecha_nacimiento):
     """
     Inserta un nuevo usuario en la base de datos.
 
@@ -36,15 +36,22 @@ def insert_user(username, password):
     Returns:
     - dict: Información del usuario insertado.
     """
+    # Reemplaza esto con tu lógica real de inserción de usuario en la base de datos
     date_joined = str(datetime.now())
     user_data = {
         'username': username,
+        'correo': correo,
         'password': password,
+        'fecha_nacimiento': fecha_nacimiento,
         'date_joined': date_joined,
         'favorites': []
     }
-    return db_usuarios.put(user_data)
+    db_usuarios.append(user_data)
+    return user_data
 
+usuario_insertado = insert_user("usuario1", "correo@ejemplo.com", "contraseña123", datetime(1990, 1, 1))
+print("Usuario insertado:", usuario_insertado)
+print("Base de datos de usuarios:", db_usuarios)
 
 def insertar_comentario(username, id, comentario):
     """
@@ -125,24 +132,32 @@ def validate_username(username):
     pattern = r"^[a-zA-Z0-9_]*$"
     return bool(re.match(pattern, username))
 
+def es_correo_valido(correo):
+    # Expresión regular para verificar el formato básico de un correo electrónico
+    patron = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+    
+    # Verificar si el correo coincide con el patrón
+    return bool(re.match(patron, correo))
+
 
 def sign_up():
     """
     Muestra un formulario de registro y realiza la validación y
     registro del usuario.
 
-    Este formulario incluye campos para el nombre de usuario, contraseña,
-    confirmación de contraseña y una casilla de verificación para aceptar
-    el acuerdo de tratamiento de datos personales.
+    Este formulario incluye campos para el nombre de usuario, correo electrónico,
+    contraseña, confirmación de contraseña, y la fecha de nacimiento.
+    Además, se incluye una casilla de verificación para aceptar el acuerdo
+    de tratamiento de datos personales.
 
     Una vez que el usuario completa el formulario y hace clic en el botón
-    de registro, se realizan las siguientes
-    validaciones:
+    de registro, se realizan las siguientes validaciones:
     - Verifica que el nombre de usuario no exista previamente en la base
       de datos.
     - Verifica que el nombre de usuario tenga al menos 4 caracteres.
     - Verifica que el nombre de usuario solo contenga caracteres
       alfanuméricos y guiones bajos.
+    - Verifica que el correo electrónico sea válido.
     - Verifica que se haya proporcionado una contraseña.
     - Verifica que las contraseñas coincidan.
     - Verifica que el usuario haya aceptado el acuerdo de tratamiento de
@@ -161,11 +176,10 @@ def sign_up():
     with st.form(key='registration_form'):
         st.header("Register")
         username = st.text_input('Username')
+        correo = st.text_input('Correo electrónico')
         password = st.text_input('Password', type='password')
         confirm_password = st.text_input('Confirm Password', type='password')
-
-        # Agregar casilla de verificación para el acuerdo de tratamiento
-        # De datos personales
+        fecha_nacimiento = st.date_input('Fecha de Nacimiento', min_value=datetime(1900, 1, 1), max_value=datetime.today())
         data_agreement = st.checkbox(
             f'I agree to the [processing of my personal data]'
             f'({data_policy_link})')
@@ -173,14 +187,12 @@ def sign_up():
 
         # Para llamar a la función de registro
         if register_button:
-            # Imprimir resultado de la validación del nombre de usuario
-            print(validate_username(username))
             # Validaciones del formulario
             if username in get_usernames():
                 st.error('The user already exists, please enter another')
-            if len(username) < 4:
-                st.error('Username must be at least 4 characters long.')
-            if not validate_username(username):
+            if not es_correo_valido(correo):
+                st.error('Correo electrónico no válido')
+            elif not validate_username(username):
                 st.error('Username can only contain alphanumeric characters'
                          'and underscores.')
             elif not password:
@@ -193,7 +205,7 @@ def sign_up():
             else:
                 # Registrar nuevo usuario si todas las validaciones son
                 # exitosas y informarle que se ha registrado correctamente
-                insert_user(username, password)
+                insert_user(username, correo, password, fecha_nacimiento)
                 st.write('You have successfully registered!')
 
 
