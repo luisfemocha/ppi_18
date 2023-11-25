@@ -1,7 +1,7 @@
 # CAPA DATOS
 
 # En este archivo se manejara el inicio de sesion y registro
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 
 import streamlit as st
@@ -192,11 +192,11 @@ def sign_up():
     with st.form(key='registration_form'):
         st.header("Register")
         username = st.text_input('Username')
-        correo = st.text_input('Correo electrónico')
+        correo = st.text_input('Email')
         password = st.text_input('Password', type='password')
         confirm_password = st.text_input('Confirm Password', type='password')
         fecha_nacimiento = st.date_input(
-            'Fecha de Nacimiento',
+            'Birthdate',
             min_value=datetime(1900, 1, 1),
             max_value=datetime.today()
         )
