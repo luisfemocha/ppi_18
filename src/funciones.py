@@ -36,6 +36,7 @@ id_rutas = {
     5: 'especiales'
 }
 
+
 # Para exportar las rutas / variables globales anteriores
 def get_rutas():
     """
@@ -59,10 +60,6 @@ def get_rutas():
         id_rutas[4]: ruta_horneados,
         id_rutas[5]: ruta_especiales
     }
-
-
-def get_tipos():
-    return
 
 
 def contact_us():
@@ -165,6 +162,7 @@ def set_recetas(categoria="*", forzar=False):
             else:
                 print('categoria no esta en rutas:', categoria)
                 return False
+
 
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_datos(ruta):
@@ -324,6 +322,7 @@ def detalles_abiertos(recipe):
             comentarios = conexion.get_comentarios(id_receta)
         except Exception as e:
             comentarios = None
+            print('Error al conseguir comentarios', e)
 
         # Muestra los comentarios existentes
         if comentarios:
@@ -1239,14 +1238,20 @@ def detalles_cuenta():
     """
 
     for atributo_cuenta in cuenta_aux:
-        if atributo_cuenta == 'username':
+        if atributo_cuenta in ['username', 'key']:
             continue
-        tabla_html += """<tr>
+        elif atributo_cuenta == 'password':
+            tabla_html += """<tr>
+                <th scope='row'>""" + atributo_cuenta + """</th>
+                <td> ***** </td>
+            </tr>
+            """
+        else:
+            tabla_html += """<tr>
                 <th scope='row'>""" + atributo_cuenta + """</th>
                 <td>""" + str(cuenta_aux[atributo_cuenta]) + """</td>
             </tr>
-        """
-        # tabla_html += linea_html
+            """
 
     tabla_html += "</tbody></table>"
 
