@@ -61,20 +61,96 @@ def get_rutas():
         id_rutas[5]: ruta_especiales
     }
 
-
-def contact_us():
+def obtener_datos_github(usuario):
     """
-    Muestra la página de contacto en la interfaz de Streamlit.
+    Obtiene datos del perfil de GitHub de un usuario dado.
 
-    No retorna ningún valor. Muestra la página de contacto en la interfaz de
-    Streamlit.
+    Parámetros:
+    - usuario (str): Nombre de usuario de GitHub.
+
+    Retorna:
+    - dict: Un diccionario que contiene datos del perfil de GitHub del usuario, incluyendo detalles como la URL del perfil,
+            el nombre, la biografía y la URL del avatar.
+    - None: Si no se puede obtener la información del perfil de GitHub.
+
+    Dependencias:
+    - La función utiliza la biblioteca 'requests' para realizar solicitudes HTTP a la API de GitHub.
 
     Ejemplo de uso:
-    >>> contact_us()
+    ```
+    usuario = "ejemplo_usuario"
+    datos_usuario = obtener_datos_github(usuario)
+    if datos_usuario:
+        print(f"Nombre: {datos_usuario['name']}")
+        print(f"Bio: {datos_usuario['bio']}")
+    else:
+        print("No se pudo obtener la información del perfil de GitHub.")
+    ```
+    """
+    url = f"https://api.github.com/users/{usuario}"
+    response = requests.get(url)
+
+    # Verifica si la solicitud fue exitosa (código 200)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        # En caso de error en la solicitud, retorna None
+        return None
+
+def contact_us():
+# Verifica si la solicitud fue exitosa (código 200) antes de intentar obtener los datos
+    """
+    Renderiza una sección de Contacto en una aplicación web utilizando Streamlit.
+
+    Esta función muestra información de contacto y perfiles de GitHub de
+    dos desarrolladores.
+
+    Componentes:
+    - Título: Muestra el título de la sección como "Contáctanos".
+    - Información de Contacto: Informa a los usuarios que pueden contactar al
+    equipo mediante direcciones de correo electrónico especificadas.
+    - Información del Desarrollador:
+        - Obtiene y muestra la información del perfil de GitHub del primer
+        desarrollador (Dgarzonac9).
+        - Obtiene y muestra la información del perfil de GitHub del segundo
+        desarrollador (Luisfemocha).
+
+    Dependencias:
+    - La función depende de la función externa `obtener_datos_github` para obtener
+    datos del perfil de GitHub.
+
+    Uso:
+    - Integra esta función en una aplicación web de Streamlit para mostrar detalles de
+    contacto y perfiles de desarrolladores.
+
+    Retorna:
+    - La sección de la aplicación web de Streamlit con la información
+    de contacto y desarrolladores.
     """
     st.title("Contact us")
     st.write("You can contact us at the following email addresses:")
+   
     st.write()
+
+    # Datos para primer desarrollador
+    user1 = "Dgarzonac9"
+    user1_data = obtener_datos_github(user1)
+    st.write(f"GitHub Profile 1: {user1_data['html_url']}")
+    st.write(f"Name: {user1_data['name']}")
+    st.write(f"Bio: {user1_data['bio']}")
+    st.image(user1_data['avatar_url'],
+             caption=f"{user1_data['name']}'s Avatar",
+             width=300)
+   
+    # Datos para segundo desarrollador
+    user2 = "Luisfemocha"
+    user2_data = obtener_datos_github(user2)
+    st.write(f"GitHub Profile 2: {user2_data['html_url']}")
+    st.write(f"Name: {user2_data['name']}")
+    st.write(f"Bio: {user2_data['bio']}")
+    st.image(user2_data['avatar_url'],
+             caption=f"{user2_data['name']}'s Avatar",
+             width=300)
 
 
 # Para almacenar las recetas en el estado de la sesion
@@ -317,12 +393,8 @@ def detalles_abiertos(recipe):
         # Buscar comentarios de una receta
         st.header("Comments")
         id_receta = recipe["id"]
-
-        try:
-            comentarios = conexion.get_comentarios(id_receta)
-        except Exception as e:
-            comentarios = None
-            print('Error al conseguir comentarios', e)
+        
+        comentarios = conexion.get_comentarios(id_receta)
 
         # Muestra los comentarios existentes
         if comentarios:
@@ -359,6 +431,8 @@ def detalles_abiertos(recipe):
                         conexion.insertar_comentario(
                             usuario, id_receta, nuevo_comentario
                         )
+                        st.experimental_rerun()
+
                     except Exception as e:
                         st.write(f"Error al insertar comentario: {e}")
                 else:
