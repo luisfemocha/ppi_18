@@ -37,7 +37,7 @@ def insert_user(username, correo, password, fecha_nacimiento):
     - dict: Información del usuario insertado.
     """
     date_joined = str(datetime.now())
-    fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d')
+    fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d') 
     user_data = {
         'username': username,
         'correo': correo,
@@ -47,7 +47,7 @@ def insert_user(username, correo, password, fecha_nacimiento):
         'favorites': []
     }
     return db_usuarios.put(user_data)
-
+     
 
 def insertar_comentario(username, id, comentario):
     """
@@ -138,6 +138,13 @@ def validate_username(username):
     pattern = r"^[a-zA-Z0-9_]*$"
     return bool(re.match(pattern, username))
 
+def es_correo_valido(correo):
+    # Expresión regular para verificar el formato básico de un correo electrónico
+    patron = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+    
+    # Verificar si el correo coincide con el patrón
+    return bool(re.match(patron, correo))
+
 
 def es_correo_valido(correo):
     # RegEx para verificar el formato básico de un correo electrónico
@@ -160,7 +167,7 @@ def sign_up():
 
     Una vez que el usuario completa el formulario y hace clic en el botón
     de registro, se realizan las siguientes validaciones:
-
+    
     - Verifica que el nombre de usuario no exista previamente en la base
       de datos.
     - Verifica que el nombre de usuario tenga al menos 4 caracteres.
@@ -203,8 +210,6 @@ def sign_up():
 
         # Para llamar a la función de registro
         if register_button:
-            # Imprimir resultado de la validación del nombre de usuario
-            print(validate_username(username))
             # Validaciones del formulario
             usernames = get_usernames()
 
