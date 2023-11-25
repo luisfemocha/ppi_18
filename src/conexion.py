@@ -19,13 +19,13 @@ deta = Deta(DETA_KEY)
 # Inicializar Base de Datos de Deta para usuarios
 db_usuarios = deta.Base('Appetito_usuarios')
 
-db_comentarios  = deta.Base('Appetito_comentarios')
+db_comentarios = deta.Base('Appetito_comentarios')
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
 
-def insert_user(username, password):
+def insert_user(username, correo, password, fecha_nacimiento):
     """
     Inserta un nuevo usuario en la base de datos.
 
@@ -37,9 +37,11 @@ def insert_user(username, password):
     - dict: Información del usuario insertado.
     """
     date_joined = str(datetime.now())
+    fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d')
     user_data = {
         'username': username,
         'password': password,
+        'fecha_nacimiento': fecha_nacimiento_str,
         'date_joined': date_joined,
         'favorites': []
     }
@@ -89,11 +91,11 @@ def get_comentarios(id):
     Returns:
     - list: Lista de comentarios.
     """
-    
+
     try:
         comentarios = db_comentarios.fetch()
     except Exception as e:
-        print('Error en el fetch 94 de comentarios: '+str(e))
+        print('Error en el fetch 94 de comentarios: ' + str(e))
         return False
 
     comentarios_receta = []
@@ -114,7 +116,7 @@ def get_usernames():
     try:
         usuarios = db_usuarios.fetch()
     except Exception as e:
-        print("Error en el fetch 115 de usuarios: "+str(e))
+        print("Error en el fetch 115 de usuarios: " + str(e))
         return False
 
     usernames = []
@@ -136,23 +138,34 @@ def validate_username(username):
     return bool(re.match(pattern, username))
 
 
+def es_correo_valido(correo):
+    # RegEx para verificar el formato básico de un correo electrónico
+    patron = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+
+    # Verificar si el correo coincide con el patrón
+    return bool(re.match(patron, correo))
+
+
 def sign_up():
     """
     Muestra un formulario de registro y realiza la validación y
     registro del usuario.
 
-    Este formulario incluye campos para el nombre de usuario, contraseña,
-    confirmación de contraseña y una casilla de verificación para aceptar
-    el acuerdo de tratamiento de datos personales.
+    Este formulario incluye campos para el nombre de usuario, correo
+    electrónico, contraseña, confirmación de contraseña, y la fecha de
+    nacimiento.
+    Además, se incluye una casilla de verificación para aceptar el acuerdo
+    de tratamiento de datos personales.
 
     Una vez que el usuario completa el formulario y hace clic en el botón
-    de registro, se realizan las siguientes
-    validaciones:
+    de registro, se realizan las siguientes validaciones:
+
     - Verifica que el nombre de usuario no exista previamente en la base
       de datos.
     - Verifica que el nombre de usuario tenga al menos 4 caracteres.
     - Verifica que el nombre de usuario solo contenga caracteres
       alfanuméricos y guiones bajos.
+    - Verifica que el correo electrónico sea válido.
     - Verifica que se haya proporcionado una contraseña.
     - Verifica que las contraseñas coincidan.
     - Verifica que el usuario haya aceptado el acuerdo de tratamiento de
@@ -171,8 +184,14 @@ def sign_up():
     with st.form(key='registration_form'):
         st.header("Register")
         username = st.text_input('Username')
+        correo = st.text_input('Correo electrónico')
         password = st.text_input('Password', type='password')
         confirm_password = st.text_input('Confirm Password', type='password')
+        fecha_nacimiento = st.date_input(
+            'Fecha de Nacimiento',
+            min_value=datetime(1900, 1, 1),
+            max_value=datetime.today()
+        )
 
         # Agregar casilla de verificación para el acuerdo de tratamiento
         # De datos personales
@@ -190,18 +209,19 @@ def sign_up():
 
             # contador de intentos para los usernames
             i = 5
-            while (not usernames):
+            while not usernames:
                 if i <= 0:
                     st.error('Database error')
                     break
                 usernames = get_usernames()
                 i -= 1
 
-
             if username in usernames:
                 st.error('The user already exists, please enter another')
             elif len(username) < 4:
                 st.error('Username must be at least 4 characters long.')
+            elif not es_correo_valido(correo):
+                st.error('Correo electrónico no válido')
             elif not validate_username(username):
                 st.error('Username can only contain alphanumeric characters'
                          'and underscores.')
@@ -215,7 +235,7 @@ def sign_up():
             else:
                 # Registrar nuevo usuario si todas las validaciones son
                 # exitosas y informarle que se ha registrado correctamente
-                insert_user(username, password)
+                insert_user(username, correo, password, fecha_nacimiento)
                 st.write('You have successfully registered!')
 
 
@@ -245,8 +265,9 @@ def log_in():
             try:
                 if str(cuenta) == 'database error':
                     st.error('Database error')
-            except:
-                print('Usuario no str')
+            except Exception as e:
+                print('Usuario no str', e)
+
             # Establecer el estado de inicio de sesión y el nombre de
             # Usuario en la variable de estado de Streamlit
             st.session_state['logged_in'] = True
@@ -288,9 +309,10 @@ def recetas_favoritas():
     st.title("Favorite Recipes")
     # Se revisa si hay una lista de recetas favoritas en el estado y si estas
     # son las mismas que las favoritas del usuario actual
-    if ('favoritas' not in st.session_state or list(
-        session_state.favoritas.keys()) != session_state.cuenta['favorites']
-            )and len(session_state.cuenta['favorites']) > 0:
+    if (
+        'favoritas' not in st.session_state or
+        session_state.favoritas.keys() != session_state.cuenta['favorites']
+    ) and len(session_state.cuenta['favorites']) > 0:
 
         ids_favoritas = session_state.cuenta['favorites']
 
@@ -317,12 +339,12 @@ def recetas_favoritas():
         recetas_favoritas = session_state.favoritas
 
     if (recetas_favoritas is None or
-    recetas_favoritas == [] or
-    len(recetas_favoritas) < 1):
+            recetas_favoritas == [] or
+            len(recetas_favoritas) < 1):
         st.title("User doesn't have any favorite recipes yet.")
 
     else:
-    #TODO reconfigurar final funciones.recetas_normales() por pep8
+        # TODO reconfigurar final funciones.recetas_normales() por pep8
         for id in recetas_favoritas:
             receta = recetas_favoritas[id]
             st.markdown(
@@ -356,7 +378,7 @@ def validar_credenciales(username, password):
     try:
         usuarios = db_usuarios.fetch()
     except Exception as e:
-        print("Error en el fetch 340 de usuarios: "+str(e))
+        print("Error en el fetch 340 de usuarios: " + str(e))
         return 'database error'
 
     for usuario in usuarios.items:

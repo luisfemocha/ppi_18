@@ -75,6 +75,8 @@ def contact_us():
     st.title("Contact us")
     st.write("You can contact us at the following email addresses:")
     st.write()
+
+
 # Para almacenar las recetas en el estado de la sesion
 def set_recetas(categoria="*", forzar=False):
     """
@@ -143,16 +145,20 @@ def set_recetas(categoria="*", forzar=False):
                 st.session_state["recetas"].update(set_receta(cat, forzar))
 
     else:
-        if categoria in id_rutas:
-            categoria = id_rutas[categoria]
-        else:
-            print('categoria no esta en id_rutas:', categoria)
+        try:
+            if int(categoria) in id_rutas:
+                categoria = id_rutas[int(categoria)]
+            else:
+                print('categoria no esta en id_rutas:', categoria)
 
-        if categoria in rutas:
-            if 'recetas' not in st.session_state:
-                st.session_state['recetas'] = {}
-        else:
-            print('categoria no esta en rutas:', categoria)
+            if categoria in rutas:
+                if 'recetas' not in st.session_state:
+                    st.session_state['recetas'] = {}
+            else:
+                print('categoria no esta en rutas:', categoria)
+                return False
+        except Exception as e:
+            print("Error al castear categoria en set_receta", e)
             return False
 
 
@@ -190,8 +196,8 @@ def cargar_datos(ruta):
         else:
             with open(ruta, encoding='utf8') as contenido:
                 return pd.DataFrame(json.load(contenido))
-    except:
-        st.title("Error al leer el archivo " + ruta)
+    except Exception as e:
+        st.title("Error al leer el archivo " + ruta, e)
         return pd.DataFrame()
 
 
@@ -221,14 +227,19 @@ def detalles_abiertos(recipe):
 
         if 'logged_in' in st.session_state and st.session_state['logged_in']:
             if recipe["id"] in st.session_state.cuenta['favorites']:
-                if st.button("Remove recipe from favorites", key="unfav-" + recipe["id"]):
+                if st.button(
+                        "Remove recipe from favorites",
+                        key="unfav-" + recipe["id"]
+                ):
                     print('se elimina la receta de favoritas')
                     st.session_state.cuenta['favorites'].remove(recipe["id"])
                     del st.session_state.favoritas[recipe["id"]]
                     conexion.actualizar_usuario(st.session_state.cuenta)
                     # vistas("home")
             else:
-                if st.button("Add recipe to favorites", key="fav-" + recipe["id"]):
+                if st.button(
+                        "Add recipe to favorites", key="fav-" + recipe["id"]
+                ):
                     print('Se agrega a favoritas la receta')
                     # print(recipe)
                     print(recipe["id"])
@@ -276,14 +287,16 @@ def detalles_abiertos(recipe):
         if recipe['nutrients']:
             # Nutrientes
             st.header("Nutrients")
-            
+
             for nutrient, cantidad in recipe['nutrients'].items():
                 st.write(f"{nutrient}: {cantidad}")
-            
+
             names_nurients = list(recipe['nutrients'].keys())
-            
+
             # Convierte los valores a números usando NumPy
-            values_nutrients = np.array([float(value[:-1]) for value in recipe['nutrients'].values()])
+            values_nutrients = np.array(
+                [float(value[:-1]) for value in recipe['nutrients'].values()]
+            )
 
             # Grafica de los nutrientes
             plt.figure(figsize=(6, 4))
@@ -312,10 +325,16 @@ def detalles_abiertos(recipe):
         if comentarios:
             for comentario in comentarios:
                 # Convierte la fecha del comentario a un objeto datetime
-                date_coment = datetime.strptime(comentario['date_coment'], "%Y-%m-%d %H:%M:%S.%f")
-                # Formatea la fecha para mostrar solo el día y la hora hasta los minutos en formato de 12 horas
+                date_coment = datetime.strptime(
+                    comentario['date_coment'], "%Y-%m-%d %H:%M:%S.%f"
+                )
+                # Formatea la fecha para mostrar solo el día y la hora hasta
+                # los minutos en formato de 12 horas
                 formatted_date = date_coment.strftime("%Y-%m-%d %I:%M %p")
-                st.write(f"{comentario['username']} said on {formatted_date}: {comentario['comentario']}")
+                st.write(
+                    f"{comentario['username']} said on {formatted_date}: "
+                    f"{comentario['comentario']}"
+                )
         else:
             st.write("No comments yet.")
 
@@ -323,19 +342,26 @@ def detalles_abiertos(recipe):
             # Formulario para agregar comentarios
             st.subheader("Add Comment")
             usuario = st.session_state.nombre
-            nuevo_comentario = st.text_area("Add your comment:", key=f'comentario_unico_{recipe["id"]}')
-            if st.button("Add Comment", key=f'añadir_comentario_unico_{recipe["id"]}'):
+            nuevo_comentario = st.text_area(
+                "Add your comment:", key=f'comentario_unico_{recipe["id"]}'
+            )
+            if st.button(
+                    "Add Comment",
+                    key=f'anadir_comentario_unico_{recipe["id"]}'
+            ):
                 if nuevo_comentario:  # Verifica si el comentario no está vacío
                     try:
-                        # Agregar lógica para guardar el nuevo comentario en tu base de datos
-                        conexion.insertar_comentario(usuario, id_receta, nuevo_comentario)
+                        # Agregar lógica para guardar el nuevo comentario en tu
+                        # base de datos
+                        conexion.insertar_comentario(
+                            usuario, id_receta, nuevo_comentario
+                        )
                     except Exception as e:
                         st.write(f"Error al insertar comentario: {e}")
                 else:
-                    st.write("Por favor, escribe un comentario antes de enviar.")
-
-
-
+                    st.write(
+                        "Por favor, escriba un comentario antes de enviar."
+                    )
 
 
 # Segun esta funcion se cambian de vistas
@@ -377,7 +403,7 @@ def vistas(vista):
     elif vista == 'account':
         detalles_cuenta()
     else:
-        print("Error en funcion vistas. Caso no apreciado "+vista)
+        print("Error en funcion vistas. Caso no apreciado " + vista)
 
 
 def filtrar_ingredientes(ingredientes_deseados,
@@ -481,7 +507,7 @@ def recetas_normales():
     >>> recetas_normales()
     """
     # Verifica si el usuario está loggeado
-    if (st.session_state['logged_in'] == False or
+    if (st.session_state['logged_in'] is False or
             st.session_state['logged_in'] is None):
         # Para motivar a el usuario a registrarse o iniciar sesión
         st.title("Welcome to Appetito To know many more recipes, " +
@@ -521,7 +547,7 @@ def recetas_normales():
         st.session_state['ingredientes'] = lista_ingredientes
     else:
         lista_ingredientes = st.session_state['ingredientes']
-    
+
     # Buscador de recetas
     buscador = st.text_input("Search for a recipe", "")
 
@@ -546,8 +572,9 @@ def recetas_normales():
         subcategory = st.selectbox(
             'Select subcategory',
             ['All', "Lunch recipes", "Dinner recipes", "Breakfast recipes",
-            "Storecupboard", "Cheese recipes", "Desserts",
-            "Fish and seafood", "Pasta", "Chicken", "Meat", "Vegetarian"]
+             "Storecupboard", "Cheese recipes", "Desserts",
+             "Fish and seafood", "Pasta", "Chicken", "Meat", "Vegetarian"
+             ]
         )
 
     if buscador:
@@ -555,7 +582,7 @@ def recetas_normales():
             df_recetas_normales['name'].str.contains(buscador, case=False)
         ]
 
-    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    # Filtrar las recetas basándose en dificultad, subcategoría e ingredientes
     if ingredientes_deseados or ingredientes_excluir:
         df_recetas_normales = filtrar_ingredientes(
             ingredientes_deseados, ingredientes_excluir, df_recetas_normales
@@ -565,13 +592,13 @@ def recetas_normales():
     if difficult != 'All':
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['difficult'] == difficult
-        ]
-    
+            ]
+
     # Filtrar las recetas basándose en la subcategoría
     if subcategory != 'All':
         df_recetas_normales = df_recetas_normales[
             df_recetas_normales['subcategory'] == subcategory
-        ]
+            ]
 
     # Define el número de recetas por página
     recetas_por_pagina = 10
@@ -587,7 +614,7 @@ def recetas_normales():
         pagina = st.selectbox('Select a page',
                               options=range(1, total_paginas + 1))
 
-        # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+        # Filtra el DataFrame para obtener solo recetas de página seleccionada
         inicio = (pagina - 1) * recetas_por_pagina
         fin = inicio + recetas_por_pagina
         df_recetas_pagina = df_recetas_normales.iloc[inicio:fin]
@@ -596,7 +623,9 @@ def recetas_normales():
         for _, receta in df_recetas_pagina.iterrows():
             st.markdown(
                 f"""
-                <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+                <div style="
+                    border: 2px solid #ccc; padding: 5px; text-align: center;
+                ">
                     <img src="{receta['image']}" alt="Imagen de la receta" 
                     style="max-width: 100%; border-radius: 5px;">
                 </div>
@@ -681,19 +710,24 @@ def recetas_saludables():
         )
 
         # Crear una caja de selección para el filtro de dificultad
-        difficult = st.selectbox('Select the difficulty level',
-                                ['All', 'Easy', 'More effort', 'A challenge'])
-        subcategory = st.selectbox('Select the subcategory',
-                                ['All', 'Smoothies', 'Salads',
-                                    'Dinner', 'Fitness & lifestyle',
-                                    'High protein', 'Keto'])
+        difficult = st.selectbox(
+            'Select the difficulty level',
+            ['All', 'Easy', 'More effort', 'A challenge']
+        )
+        subcategory = st.selectbox(
+            'Select the subcategory',
+            ['All', 'Smoothies', 'Salads',
+             'Dinner', 'Fitness & lifestyle',
+             'High protein', 'Keto'
+             ]
+        )
     # Buscador de recetas
     if buscador:
         df_recetas_saludables = df_recetas_saludables[
             df_recetas_saludables['name'].str.contains(buscador, case=False)
         ]
 
-    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    # Filtrar las recetas basándose en dificultad, subcategoría e ingredientes
     if ingredientes_deseados or ingredientes_excluir:
         df_recetas_saludables = filtrar_ingredientes(
             ingredientes_deseados, ingredientes_excluir, df_recetas_saludables
@@ -722,8 +756,8 @@ def recetas_saludables():
     # Crea un selector para la página
     pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
 
-    # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
-    if pagina != None:
+    # Filtra el DataFrame para obtener solo recetas de página seleccionada
+    if pagina is not None:
         inicio = (pagina - 1) * recetas_por_pagina
         fin = inicio + recetas_por_pagina
         df_recetas_pagina = df_recetas_saludables.iloc[inicio:fin]
@@ -732,7 +766,9 @@ def recetas_saludables():
         # Mostrar la imagen previa con borde
         st.markdown(
             f"""
-            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+            <div style="
+                border: 2px solid #ccc; padding: 5px; text-align: center;
+            ">
                 <img src="{receta['image']}" alt="Imagen de la receta"
                   style="max-width: 100%; border-radius: 5px;">
             </div>
@@ -818,20 +854,24 @@ def recetas_presupuesto():
         )
 
         # Crear una caja de selección para el filtro de dificultad
-        difficult = st.selectbox('Select the difficulty level',
-                                ['All', 'Easy', 'More effort', 'A challenge'])
-        subcategory = st.selectbox('Select the subcategory',
-                                ['All', 'Budget dinners', 'Batch cooking',
-                                    'Student meals', 'Freezable meals',
-                                    'Slow cooker'])
-        
+        difficult = st.selectbox(
+            'Select the difficulty level',
+            ['All', 'Easy', 'More effort', 'A challenge']
+        )
+        subcategory = st.selectbox(
+            'Select the subcategory',
+            ['All', 'Budget dinners', 'Batch cooking',
+             'Student meals', 'Freezable meals',
+             'Slow cooker']
+        )
+
     # Buscador de recetas
     if buscador:
         df_recetas_presupuesto = df_recetas_presupuesto[
             df_recetas_presupuesto['name'].str.contains(buscador, case=False)
         ]
 
-    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    # Filtrar las recetas basándose en dificultad, subcategoría e ingredientes
     if ingredientes_deseados or ingredientes_excluir:
         df_recetas_presupuesto = filtrar_ingredientes(
             ingredientes_deseados, ingredientes_excluir, df_recetas_presupuesto
@@ -840,8 +880,6 @@ def recetas_presupuesto():
     if df_recetas_presupuesto.empty:
         st.title("No simple recipes available.")
         return None
-
-    
 
     # Filtrar las recetas basándose en la dificultad y subcategoría
     if difficult != 'All':
@@ -862,7 +900,7 @@ def recetas_presupuesto():
     # Crea un selector para la página
     pagina = st.selectbox('Select a page', options=range(1, total_paginas + 1))
 
-    # Filtra el DataFrame para obtener solo las recetas de la página seleccionada
+    # Filtra el DataFrame para obtener solo recetas de la página seleccionada
     inicio = (pagina - 1) * recetas_por_pagina
     fin = inicio + recetas_por_pagina
     df_recetas_pagina = df_recetas_presupuesto.iloc[inicio:fin]
@@ -870,7 +908,9 @@ def recetas_presupuesto():
     for index, receta1 in df_recetas_pagina.iterrows():
         st.markdown(
             f"""
-            <div style="border: 2px solid #ccc; padding: 5px; text-align: center;">
+            <div style="
+                border: 2px solid #ccc; padding: 5px; text-align: center;
+            ">
                 <img src="{receta1['image']}" alt="Imagen de la receta"
                 style="max-width: 100%; border-radius: 5px;">
             </div>
@@ -948,28 +988,30 @@ def recetas_horneados():
             "Select ingredients:", lista_ingredientes
         )
 
-        # Crear una caja de selección para seleccionar los ingredientes a excluir
+        # Crear una caja de selección para seleccionar ingredientes a excluir
         ingredientes_excluir = st.multiselect(
             "Select ingredients to exclude:", lista_ingredientes
         )
 
         # Crear una caja de selección para el filtro de dificultad
-        difficult = st.selectbox('Select the difficulty level',
-                                ['All', 'Easy', 'More effort', 'A challenge'])
-        subcategory = st.selectbox('Select the subcategory',
-                                ['All', 'Bread', 'Cakes', 'Desserts',
-                                    "Kids' baking", 'Quick bakes',
-                                    'Savoury pastries',
-                                    'Sweet treats', 'Vegan baking',
-                                    'Biscuit recipes'])
-    
+        difficult = st.selectbox(
+            'Select the difficulty level',
+            ['All', 'Easy', 'More effort', 'A challenge']
+        )
+        subcategory = st.selectbox(
+            'Select the subcategory',
+            ['All', 'Bread', 'Cakes', 'Desserts', "Kids' baking",
+             'Quick bakes', 'Savoury pastries', 'Sweet treats', 'Vegan baking',
+             'Biscuit recipes']
+        )
+
     # Buscador de recetas
     if buscador:
         df_recetas_horneados = df_recetas_horneados[
             df_recetas_horneados['name'].str.contains(buscador, case=False)
         ]
 
-    # Filtrar las recetas basándose en la dificultad, subcategoría e ingredientes
+    # Filtrar las recetas basándose en dificultad, subcategoría e ingredientes
     if ingredientes_deseados or ingredientes_excluir:
         df_recetas_horneados = df_recetas_horneados[
             df_recetas_horneados['ingredients'].apply(
@@ -1086,27 +1128,30 @@ def recetas_especiales():
     if df_recetas_especiales.empty:
         st.title("No special recipes available.")
         return None
-    
+
     with st.expander("Filters"):
         # Crear una caja de selección para el filtro de ingredientes deseados
         ingredientes_deseados = st.multiselect(
             "Select ingredients:", lista_ingredientes
         )
 
-        # Crear una caja de selección para seleccionar los ingredientes a excluir
+        # Crear una caja de selección para seleccionar ingredientes a excluir
         ingredientes_excluir = st.multiselect(
             "Select ingredients to exclude:", lista_ingredientes
         )
 
         # Crear una caja de selección para el filtro de dificultad
-        difficult = st.selectbox('Select difficulty level',
-                                ['All', 'Easy', 'More effort', 'A challenge'])
-        subcategory = st.selectbox('Select subcategory',
-                                ['All', 'Birthdays', 'Cocktails', 'Hosting',
-                                    'Slow cooker', "Kids' birthdays", "Mocktails",
-                                    'Picnics', 'Barbecues', 'Spring recipes',
-                                    'Special occasions', 'Teas'])
-        
+        difficult = st.selectbox(
+            'Select difficulty level',
+            ['All', 'Easy', 'More effort', 'A challenge']
+        )
+        subcategory = st.selectbox(
+            'Select subcategory',
+            ['All', 'Birthdays', 'Cocktails', 'Hosting', 'Slow cooker',
+             "Kids' birthdays", "Mocktails", 'Picnics', 'Barbecues',
+             'Spring recipes', 'Special occasions', 'Teas']
+        )
+
     # Buscador de recetas
     if buscador:
         df_recetas_especiales = df_recetas_especiales[
@@ -1174,7 +1219,7 @@ def detalles_cuenta():
                     'ynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cD'
                     'fL" crossorigin="anonymous"></script>',
                     unsafe_allow_html=True
-        )
+                    )
     except Exception as e:
         print("Error installing Bootstrap." + str(e))
 
@@ -1209,4 +1254,3 @@ def detalles_cuenta():
             disabled=True,
             help='Not ready yet'):
         print('edit')
-

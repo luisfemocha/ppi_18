@@ -20,6 +20,7 @@ st.set_page_config(
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
+
 def sidebar():
     """
     Esta función define y despliega la barra lateral de la
@@ -153,7 +154,7 @@ def footer():
         </footer>
     """, unsafe_allow_html=True)
 
-# sidebar y footer de llaman para que sean siempre visibles
 
+# sidebar y footer de llaman para que sean siempre visibles
 sidebar()
 footer()
