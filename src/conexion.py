@@ -40,6 +40,7 @@ def insert_user(username, correo, password, fecha_nacimiento):
     fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d')
     user_data = {
         'username': username,
+        'correo': correo,
         'password': password,
         'fecha_nacimiento': fecha_nacimiento_str,
         'date_joined': date_joined,
@@ -316,16 +317,13 @@ def recetas_favoritas():
 
         ids_favoritas = session_state.cuenta['favorites']
 
-        """
-        TODO IMPLEMENTAR funciones.set_recetas('*', True)
         if 'recetas' not in st.session_state:
-        elif 'recetas_normales' not in st.session_state:
-        elif 'recetas_normales' not in st.session_state: SALUDABLE
-        elif 'recetas_normales' not in st.session_state: PRESUPUESTO
-        elif 'recetas_normales' not in st.session_state: HORNEADO
-        elif 'recetas_normales' not in st.session_state: ESPECIALES
-        else:
-        """
+            funciones.set_recetas('*', True)
+
+        # TODO
+        # elif ['recetas_normales', 'recetas_saludables',
+        # 'recetas_presupuesto', 'recetas_horneados', 'recetas_especiales']
+        # not in st.session_state:
 
         recetas = session_state.recetas
 

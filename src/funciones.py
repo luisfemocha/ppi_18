@@ -36,7 +36,6 @@ id_rutas = {
     5: 'especiales'
 }
 
-
 # Para exportar las rutas / variables globales anteriores
 def get_rutas():
     """
@@ -60,6 +59,10 @@ def get_rutas():
         id_rutas[4]: ruta_horneados,
         id_rutas[5]: ruta_especiales
     }
+
+
+def get_tipos():
+    return
 
 
 def contact_us():
@@ -94,7 +97,7 @@ def set_recetas(categoria="*", forzar=False):
     - bool: True si la carga de recetas fue exitosa, False en caso contrario.
 
     Ejemplo de uso:
-    >>> set_recetas(categoria="italiana", forzar=True)
+    >>> set_recetas(categoria="recetas_normales", forzar=True)
     """
     print('entra a set_recetas()', categoria, forzar)
     rutas = get_rutas()
@@ -151,16 +154,17 @@ def set_recetas(categoria="*", forzar=False):
             else:
                 print('categoria no esta en id_rutas:', categoria)
 
+        except Exception as e:
+            print("Error al castear categoria en set_receta", e)
+
+        finally:
             if categoria in rutas:
                 if 'recetas' not in st.session_state:
                     st.session_state['recetas'] = {}
+                    return set_receta(categoria, forzar)
             else:
                 print('categoria no esta en rutas:', categoria)
                 return False
-        except Exception as e:
-            print("Error al castear categoria en set_receta", e)
-            return False
-
 
 # se ajustan los datos para utilizarlos en las funciones
 def cargar_datos(ruta):
