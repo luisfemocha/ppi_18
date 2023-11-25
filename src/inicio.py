@@ -7,7 +7,7 @@ import streamlit as st
 import funciones
 
 # Version de la aplicación
-version = "0.20231123L"
+version = "0.20231124L"
 
 # Configuración de la página
 st.set_page_config(
@@ -19,6 +19,7 @@ st.set_page_config(
 # Establecer login como falso
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
+
 
 def sidebar():
     """
@@ -93,9 +94,7 @@ def sidebar():
             st.session_state.page = 'home'
             st.experimental_rerun()
 
-
     else:
-
         if st.sidebar.button("Home", key="home"):
             st.session_state.page = 'home'
         
@@ -115,8 +114,6 @@ def sidebar():
     # Llamar a la función para mostrar la página correspondiente
     page = st.session_state.get('page', 'home')
     funciones.vistas(page)
-
-
 
 
 def footer():
@@ -157,7 +154,7 @@ def footer():
         </footer>
     """, unsafe_allow_html=True)
 
-# sidebar y footer de llaman para que sean siempre visibles
 
+# sidebar y footer de llaman para que sean siempre visibles
 sidebar()
 footer()
