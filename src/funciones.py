@@ -70,12 +70,14 @@ def obtener_datos_github(usuario):
     - usuario (str): Nombre de usuario de GitHub.
 
     Retorna:
-    - dict: Un diccionario que contiene datos del perfil de GitHub del usuario, incluyendo detalles como la URL del perfil,
-            el nombre, la biografía y la URL del avatar.
+    - dict: Un diccionario que contiene datos del perfil de GitHub del usuario,
+    incluyendo detalles como la URL del perfil, el nombre, la biografía y la
+    URL del avatar.
     - None: Si no se puede obtener la información del perfil de GitHub.
 
     Dependencias:
-    - La función utiliza la biblioteca 'requests' para realizar solicitudes HTTP a la API de GitHub.
+    - La función utiliza la biblioteca 'requests' para realizar solicitudes
+    HTTP a la API de GitHub.
 
     Ejemplo de uso:
     ```
@@ -350,6 +352,7 @@ def detalles_abiertos(recipe):
                     del st.session_state.favoritas[recipe["id"]]
                     conexion.actualizar_usuario(st.session_state.cuenta)
                     st.write('Receipt removed from favorites.')
+                    st.rerun()
                     # vistas("home")
             else:
                 btn_fvrt = st.button(
@@ -376,7 +379,7 @@ def detalles_abiertos(recipe):
 
                         conexion.actualizar_usuario(st.session_state.cuenta)
                         st.write('Done, receipt added as favorite')
-
+                        st.rerun()
                     except Exception as e:
                         print("error a la hora de agregar favorita", e)
                         st.write('Error, talk to an admin.', datetime.now())
@@ -463,24 +466,25 @@ def detalles_abiertos(recipe):
                 "Add your comment:", key=f'comentario_unico_{recipe["id"]}'
             )
             if st.button(
-                    "Add Comment",
-                    key=f'anadir_comentario_unico_{recipe["id"]}'
+                "Add Comment",
+                key=f'anadir_comentario_unico_{recipe["id"]}'
             ):
-                if nuevo_comentario:  # Verifica si el comentario no está vacío
+                # Verifica si el comentario no está vacío
+                if nuevo_comentario:
                     try:
-                        # Agregar lógica para guardar el nuevo comentario en tu
-                        # base de datos
+                        # Lógica para guardar el nuevo comentario en tu
                         conexion.insertar_comentario(
                             usuario, id_receta, nuevo_comentario
                         )
+                        st.success("Comment added successfully")
                         st.rerun()
-
+                        nuevo_comentario = ""
                     except Exception as e:
-                        st.write(f"Error al insertar comentario: {e}")
+                        st.error(f"Error adding comment: {e}")
                 else:
-                    st.write(
-                        "Por favor, escriba un comentario antes de enviar."
-                    )
+                    st.warning("Please write a comment before submitting.")
+
+
 
 
 # Segun esta funcion se cambian de vistas
