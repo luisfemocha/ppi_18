@@ -227,7 +227,10 @@ def set_recetas(categoria="*", forzar=False):
                 else:
                     print("Ya estaba la receta con id", receta["id"])
 
-            st.session_state[nom_cat] = obj_recetas
+            try:
+                st.session_state[nom_cat] = obj_recetas
+            except Exception as e:
+                print("Error al actualizar recetas", e)
 
         else:
             print('no se actualiza', cat)
