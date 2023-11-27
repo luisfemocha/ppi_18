@@ -51,6 +51,7 @@
 |-------------------------------------------------------|-------------------------------------------------------|--------|
 | Documentacion del codigo y cumplimiento con las pep8. | [Luis Chamorro](https://github.com/Luisfemocha)       | Listo  |
 | Mostrar gráficas de detalles nutricionales.           | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
+| Permitir a los usuarios hacer comentarios.           | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
 
 ## 20/11/2023 - 27/11/2023
 | Tarea                           | Responsable                                                                                             | Estado |
