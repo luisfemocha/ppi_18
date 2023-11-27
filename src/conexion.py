@@ -388,13 +388,10 @@ def recetas_favoritas():
 
         ids_favoritas = session_state.cuenta['favorites']
 
-        if 'recetas' not in st.session_state:
+        if ['recetas', 'recetas_normales', 'recetas_saludables',
+            'recetas_presupuesto', 'recetas_horneados',
+            'recetas_especiales'] not in st.session_state:
             funciones.set_recetas('*', True)
-
-        # TODO
-        # elif ['recetas_normales', 'recetas_saludables',
-        # 'recetas_presupuesto', 'recetas_horneados', 'recetas_especiales']
-        # not in st.session_state:
 
         recetas = session_state.recetas
 
