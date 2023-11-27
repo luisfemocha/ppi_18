@@ -1,7 +1,9 @@
 # CAPA DATOS
 
-# En este archivo se manejara el inicio de sesion y registro
-from datetime import datetime
+# En este archivo se manejara la conexion a la base de datos y las funciones
+# necesarias para manipularla.
+
+from datetime import datetime, timezone
 import re
 
 import streamlit as st
@@ -78,6 +80,9 @@ def actualizar_usuario(user):
     Returns:
     - list: Lista de usuarios.
     """
+
+    print('dentro de actualizar usuario')
+
     dict = {k: v for k, v in user.items() if k != 'key'}
     return db_usuarios.update(dict, user['key'])
 
@@ -138,8 +143,10 @@ def validate_username(username):
     pattern = r"^[a-zA-Z0-9_]*$"
     return bool(re.match(pattern, username))
 
+
 def es_correo_valido(correo):
-    # Expresión regular para verificar el formato básico de un correo electrónico
+    # Expresión regular para verificar el formato básico de un correo
+    # electrónico
     patron = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
     
     # Verificar si el correo coincide con el patrón
@@ -192,11 +199,11 @@ def sign_up():
     with st.form(key='registration_form'):
         st.header("Register")
         username = st.text_input('Username')
-        correo = st.text_input('Correo electrónico')
+        correo = st.text_input('Email')
         password = st.text_input('Password', type='password')
         confirm_password = st.text_input('Confirm Password', type='password')
         fecha_nacimiento = st.date_input(
-            'Fecha de Nacimiento',
+            'Birthdate',
             min_value=datetime(1900, 1, 1),
             max_value=datetime.today()
         )
@@ -283,7 +290,7 @@ def log_in():
                 st.session_state.nombre = username
                 st.session_state.cuenta = cuenta
                 st.session_state['favoritas'] = {}
-                st.experimental_rerun()
+                st.rerun()
         else:
             st.error("Incorrect Username/Password")
             st.session_state['logged_in'] = False
@@ -295,7 +302,7 @@ def log_in():
             st.session_state['logged_in'] = False
             st.session_state.nombre = None
             st.write("Logged out")
-            st.experimental_rerun()
+            st.rerun()
 
 
 def recetas_favoritas():
@@ -381,10 +388,26 @@ def validar_credenciales(username, password):
     try:
         usuarios = db_usuarios.fetch()
     except Exception as e:
-        print("Error en el fetch 340 de usuarios: " + str(e))
+        print("Error en el fetch 387 de usuarios: " + str(e))
         return 'database error'
 
     for usuario in usuarios.items:
         if usuario['username'] == username and usuario['password'] == password:
             return usuario
     return False
+
+
+def refresh_active_user(key):
+    print('entra a refresh')
+    try:
+        usuarios = db_usuarios.fetch()
+    except Exception as e:
+        print("Error en el fetch 402 de usuarios: " + str(e))
+        print('No se actualiza el usuario')
+        return st.session_state.cuenta
+
+    for usuario in usuarios.items:
+        if usuario['key'] == key:
+            st.session_state.cuenta = usuario
+            print('se actualiza usuario', usuario)
+            return usuario

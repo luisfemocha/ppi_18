@@ -2,6 +2,7 @@
 
 # Bibliotecas estándar
 from datetime import datetime
+from time import sleep
 import json
 
 # Bibliotecas de terceros
@@ -62,19 +63,92 @@ def get_rutas():
     }
 
 
-def contact_us():
+def obtener_datos_github(usuario):
     """
-    Muestra la página de contacto en la interfaz de Streamlit.
-
-    No retorna ningún valor. Muestra la página de contacto en la interfaz de
-    Streamlit.
-
+    Obtiene datos del perfil de GitHub de un usuario dado.
+    Parámetros:
+    - usuario (str): Nombre de usuario de GitHub.
+    Retorna:
+    - dict: Un diccionario que contiene datos del perfil de GitHub del usuario,
+     incluyendo detalles como la URL del perfil,
+            el nombre, la biografía y la URL del avatar.
+    - None: Si no se puede obtener la información del perfil de GitHub.
+    Dependencias:
+    - La función utiliza la biblioteca 'requests' para realizar solicitudes
+    HTTP a la API de GitHub.
     Ejemplo de uso:
-    >>> contact_us()
+    ```
+    usuario = "ejemplo_usuario"
+    datos_usuario = obtener_datos_github(usuario)
+    if datos_usuario:
+        print(f"Nombre: {datos_usuario['name']}")
+        print(f"Bio: {datos_usuario['bio']}")
+    else:
+        print("No se pudo obtener la información del perfil de GitHub.")
+    ```
+    """
+    url = f"https://api.github.com/users/{usuario}"
+    response = requests.get(url)
+
+    # Verifica si la solicitud fue exitosa (código 200)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        # En caso de error en la solicitud, retorna None
+        return None
+
+
+def contact_us():
+    # Verifica si la solicitud fue exitosa (código 200) antes de intentar
+    # obtener los datos
+    """
+    Renderiza una sección de Contacto en una aplicación web utilizando
+    Streamlit.
+    Esta función muestra información de contacto y perfiles de GitHub de
+    dos desarrolladores.
+    Componentes:
+    - Título: Muestra el título de la sección como "Contáctanos".
+    - Información de Contacto: Informa a los usuarios que pueden contactar al
+    equipo mediante direcciones de correo electrónico especificadas.
+    - Información del Desarrollador:
+        - Obtiene y muestra la información del perfil de GitHub del primer
+        desarrollador (Dgarzonac9).
+        - Obtiene y muestra la información del perfil de GitHub del segundo
+        desarrollador (Luisfemocha).
+    Dependencias:
+    - La función depende de la función externa `obtener_datos_github` para
+    obtener datos del perfil de GitHub.
+    Uso:
+    - Integra esta función en una aplicación web de Streamlit para mostrar
+    detalles de contacto y perfiles de desarrolladores.
+    Retorna:
+    - La sección de la aplicación web de Streamlit con la información
+    de contacto y desarrolladores.
     """
     st.title("Contact us")
     st.write("You can contact us at the following email addresses:")
+
     st.write()
+
+    # Datos para primer desarrollador
+    user1 = "Dgarzonac9"
+    user1_data = obtener_datos_github(user1)
+    st.write(f"GitHub Profile 1: {user1_data['html_url']}")
+    st.write(f"Name: {user1_data['name']}")
+    st.write(f"Bio: {user1_data['bio']}")
+    st.image(user1_data['avatar_url'],
+             caption=f"{user1_data['name']}'s Avatar",
+             width=300)
+
+    # Datos para segundo desarrollador
+    user2 = "Luisfemocha"
+    user2_data = obtener_datos_github(user2)
+    st.write(f"GitHub Profile 2: {user2_data['html_url']}")
+    st.write(f"Name: {user2_data['name']}")
+    st.write(f"Bio: {user2_data['bio']}")
+    st.image(user2_data['avatar_url'],
+             caption=f"{user2_data['name']}'s Avatar",
+             width=300)
 
 
 # Para almacenar las recetas en el estado de la sesion
@@ -227,41 +301,44 @@ def detalles_abiertos(recipe):
     with st.expander(f"View Details of {recipe['name']}"):
         st.subheader(recipe["name"])
 
-        if 'logged_in' in st.session_state and st.session_state['logged_in']:
-            if recipe["id"] in st.session_state.cuenta['favorites']:
-                if st.button(
-                        "Remove recipe from favorites",
-                        key="unfav-" + recipe["id"]
-                ):
-                    print('se elimina la receta de favoritas')
-                    st.session_state.cuenta['favorites'].remove(recipe["id"])
-                    del st.session_state.favoritas[recipe["id"]]
+        if recipe["id"] in st.session_state.cuenta['favorites']:
+            btn_fvrt = st.button(
+                "Remove recipe from favorites",
+                key="unfav-" + recipe["id"]
+            )
+            if btn_fvrt:
+                print('se elimina la receta de favoritas')
+                st.session_state.cuenta['favorites'].remove(recipe["id"])
+                del st.session_state.favoritas[recipe["id"]]
+                conexion.actualizar_usuario(st.session_state.cuenta)
+                st.write('Receipt removed from favorites.')
+                # vistas("home")
+        else:
+            btn_fvrt = st.button(
+                "Add recipe to favorites", key="fav-" + recipe["id"]
+            )
+            if btn_fvrt:
+                print('Se agrega a favoritas la receta')
+                # print(recipe)
+                print(recipe["id"])
+
+                try:
+                    print("se intenta encontrar la receta con el id")
+
+                    print(
+                        st.session_state['recetas'][recipe["id"]])
+
+                    if 'favoritas' not in st.session_state:
+                        st.session_state['favoritas'] = {}
+                    st.session_state.favoritas[recipe["id"]] = recipe
+                    st.session_state.cuenta['favorites'].append(
+                        recipe["id"])
+
                     conexion.actualizar_usuario(st.session_state.cuenta)
-                    # vistas("home")
-            else:
-                if st.button(
-                        "Add recipe to favorites", key="fav-" + recipe["id"]
-                ):
-                    print('Se agrega a favoritas la receta')
-                    # print(recipe)
-                    print(recipe["id"])
-
-                    try:
-                        print("se intenta encontrar la receta con el id")
-
-                        print(
-                            st.session_state['recetas_normales'][recipe["id"]])
-
-                        if 'favoritas' not in st.session_state:
-                            st.session_state['favoritas'] = {}
-                        st.session_state.favoritas[recipe["id"]] = recipe
-                        st.session_state.cuenta['favorites'].append(
-                            recipe["id"])
-
-                        conexion.actualizar_usuario(st.session_state.cuenta)
-                        # vistas("home")
-                    except Exception as e:
-                        print("error a la hora de agregar favorita", e)
+                    st.write('Done, receipt added as favorite')
+                except Exception as e:
+                    print("error a la hora de agregar favorita", e)
+                    st.write('Error, talk to an admin.', datetime.now())
 
         # Detalles de la receta
         st.header("Recipe Details")
@@ -359,6 +436,8 @@ def detalles_abiertos(recipe):
                         conexion.insertar_comentario(
                             usuario, id_receta, nuevo_comentario
                         )
+                        st.rerun()
+
                     except Exception as e:
                         st.write(f"Error al insertar comentario: {e}")
                 else:
@@ -386,27 +465,30 @@ def vistas(vista):
     """
 
     if vista == 'home':
-        home_page()
+        return home_page()
     elif vista == 'saludable':
-        recetas_saludables()
+        return recetas_saludables()
     elif vista == 'presupuesto':
-        recetas_presupuesto()
+        return recetas_presupuesto()
     elif vista == 'horneado':
-        recetas_horneados()
+        return recetas_horneados()
     elif vista == 'especiales':
-        recetas_especiales()
+        return recetas_especiales()
     elif vista == 'contact_us':
-        contact_us()
+        return contact_us()
     elif vista == 'signup':
-        conexion.sign_up()
+        return conexion.sign_up()
     elif vista == 'login':
-        conexion.log_in()
+        return conexion.log_in()
     elif vista == 'favorites':
-        conexion.recetas_favoritas()
+        return conexion.recetas_favoritas()
     elif vista == 'account':
-        detalles_cuenta()
+        return detalles_cuenta()
+    elif vista == 'edit_account':
+        return detalles_cuenta(True)
     else:
         print("Error en funcion vistas. Caso no apreciado " + vista)
+        return False
 
 
 def filtrar_ingredientes(ingredientes_deseados,
@@ -1206,60 +1288,142 @@ def recetas_especiales():
         detalles_abiertos(receta1)
 
 
-def detalles_cuenta():
-    st.title('Account details')
+def detalles_cuenta(edit=False):
+    cuenta_aux = conexion.refresh_active_user(st.session_state.cuenta['key'])
 
-    # se intenta con st.data_edit pero se prefiere el html markdown
-    cuenta_aux = st.session_state.cuenta
+    print(cuenta_aux)
+    if edit:
+        st.title('Edit account')
+    else:
+        st.title('Account details')
 
     try:
-        st.markdown('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/'
-                    'dist/css/bootstrap.min.css" rel="stylesheet" integrity="s'
-                    'ha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dw'
-                    'wykc2MPK8M2HN" crossorigin="anonymous">'
-                    '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2'
-                    '/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6Rzs'
-                    'ynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cD'
-                    'fL" crossorigin="anonymous"></script>',
-                    unsafe_allow_html=True
-                    )
+        # En el siguiente markdown se importa el css y js de Bootstrap
+        st.markdown(
+            '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css'
+            '/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous"'
+            'integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXE'
+            'V/Dwwykc2MPK8M2HN">'
+            
+            '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js'
+            '/bootstrap.bundle.min.js" crossorigin="anonymous"'
+            'integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/'
+            'o0jlpcV8Qyq46cDfL"></script>',
+            unsafe_allow_html=True
+        )
+
     except Exception as e:
         print("Error installing Bootstrap." + str(e))
 
-    tabla_html = """
-        <table class="table table-dark table-striped-columns">
-            <tbody>
-                <tr>
-                    <th scope="row">username</th>
-                    <td id='username'>
-                        """ + cuenta_aux['username'] + """
-                    </th>
-                </tr>
-    """
+    # se guardan las clases que se le agregaran a cada fila y columna
+    row_class = 'row border border-secondary'
+    col_class = 'col text-end border-end border-secondary'
+
+    if not edit:
+        tabla_html = f"""
+            <div id='account_father' class='container'>
+                <div class='{row_class} rounded-top'>
+                    <div class='{col_class}'>username</div>
+                    <div class='col'>{cuenta_aux['username']}</div>
+                </div>
+        """
+    else:
+        edit_values = {}
+
+        edit_values['username'] = st.text_input(
+            'Username',
+            placeholder=cuenta_aux['username'],
+            disabled=True,
+            help="Can't change your username, only an admin can."
+        )
 
     for atributo_cuenta in cuenta_aux:
+        aux_valor = cuenta_aux[atributo_cuenta]
+        if edit:
+            tipo = 'default'
+            disabled = False
+            help = "Leave it blank if you don't want to change it."
+
         if atributo_cuenta in ['username', 'key']:
             continue
+
         elif atributo_cuenta == 'password':
-            tabla_html += """<tr>
-                <th scope='row'>""" + atributo_cuenta + """</th>
-                <td> ***** </td>
-            </tr>
-            """
+            # si el atributo es la contrasenia la censura
+            aux_valor = "*****"
+            if edit:
+                tipo = 'password'
+
+        elif atributo_cuenta == 'favorites':
+            # si el atributo es favoritos, en la base de datos se guardan los
+            # id de las recetas, pero al usuario se le muestra el nombre
+            aux_favorito = []
+            for a in cuenta_aux[atributo_cuenta]:
+                try:
+                    aux_favorito.append(st.session_state['recetas'][a]['name'])
+                except Exception as e:
+                    print('No se encontro la receta', e)
+                    print(st.session_state['recetas'])
+
+            aux_valor = aux_favorito
+
+            if edit:
+                disabled = True
+                help = "Can't change favorites list from here."
+
+        if edit:
+            edit_values[atributo_cuenta] = st.text_input(
+                atributo_cuenta,
+                type=tipo, placeholder=aux_valor, disabled=disabled, help=help
+            )
         else:
-            tabla_html += """<tr>
-                <th scope='row'>""" + atributo_cuenta + """</th>
-                <td>""" + str(cuenta_aux[atributo_cuenta]) + """</td>
-            </tr>
+            tabla_html += f"""<div class='{row_class}'>
+                    <div class='{col_class}'>{atributo_cuenta}</div>
+                    <div class='col'>{str(aux_valor)}</div>
+                </div>
             """
 
-    tabla_html += "</tbody></table>"
+    if edit:
+        if st.button('Edit'):
+            st.write("You have 5 seconds to regret that.")
+            new_values = {'key': st.session_state.cuenta['key']}
+            for valor in edit_values:
+                if edit_values[valor] is not None and edit_values[valor] != '':
+                    new_values[valor] = edit_values[valor]
+                    st.write(valor + " -> " + edit_values[valor])
 
-    st.markdown(tabla_html, unsafe_allow_html=True)
+            if len(new_values) > 1:
+                if st.button("CANCEL CHANGES"):
+                    st.write('No changes made')
+                    print('Changes canceled.')
+                    st.rerun()
 
-    if st.button(
+                sleep(5)
+
+                print('Se hace el cambio')
+                print(conexion.actualizar_usuario(new_values))
+                st.session_state.page = 'account'
+                st.rerun()
+            else:
+                st.write("No changes made")
+
+        if st.button("Restore changes"):
+            print('b')
+            st.session_state.page = 'account'
+            st.rerun()
+
+    else:
+        tabla_html += "</div><br>"
+
+        try:
+            st.markdown(tabla_html, unsafe_allow_html=True)
+        except Exception as e:
+            st.write("Error while showing attributes")
+            print('No se pudieron mostrar los atributos del usuario', e)
+
+        if st.button(
             'Edit account',
-            type='primary',
-            disabled=True,
-            help='Not ready yet'):
-        print('edit')
+            help='Click to change your attributes'
+        ):
+            st.session_state.page = 'edit_account'
+            st.rerun()
+            return True
