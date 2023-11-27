@@ -339,7 +339,10 @@ def detalles_abiertos(recipe):
 
         if st.session_state['logged_in']:
             if recipe["id"] in st.session_state.cuenta['favorites']:
-                btn_fvrt = st.button("Remove recipe from favorites")
+                btn_fvrt = st.button(
+                    "Remove recipe from favorites",
+                    key='unfav-'+recipe['id']
+                )
 
                 if btn_fvrt:
                     print('se elimina la receta de favoritas', recipe['id'])
@@ -349,7 +352,10 @@ def detalles_abiertos(recipe):
                     st.write('Receipt removed from favorites.')
                     # vistas("home")
             else:
-                btn_fvrt = st.button("Add recipe to favorites")
+                btn_fvrt = st.button(
+                    "Add recipe to favorites",
+                    key='fav-'+recipe['id']
+                )
                 if btn_fvrt:
                     print('Se agrega a favoritas la receta', recipe['id'])
                     # print(recipe)
