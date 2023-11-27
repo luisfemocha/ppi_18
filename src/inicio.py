@@ -7,7 +7,7 @@ import streamlit as st
 import funciones
 
 # Version de la aplicación
-version = "0.20231126L"
+version = "0.20231127"
 
 # Configuración de la página
 st.set_page_config(
@@ -146,10 +146,11 @@ def footer():
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
+    st.markdown(f"""
         <footer class='footer'>
             Developed by: Daniel Garzon and Luis Moreno |
             Contact: dgarzonac@unal.edu.co</a> and lumorenoc@unal.edu.co</a>
+            \n Version {version} Alpha snapshot
         </footer>
     """, unsafe_allow_html=True)
 
