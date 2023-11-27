@@ -60,7 +60,7 @@ def sidebar():
             st.session_state.page = 'home'
         
         if st.sidebar.button("contact us", key="contact_us"):
-            st.session_state.page = 'contact us'
+            st.session_state.page = 'contact_us'
 
         st.sidebar.title("Recipes")
         # Para desplegar las recetas fit

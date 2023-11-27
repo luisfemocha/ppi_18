@@ -88,12 +88,12 @@ def actualizar_usuario(user):
     return db_usuarios.update(dict, user['key'])
 
 
-def get_comentarios(id):
+def get_comentarios(recipe_id):
     """
     Obtiene la lista de comentarios de una receta.
 
     Parameters:
-    - id (str): ID de la receta.
+    - recipe_id (str): ID de la receta.
 
     Returns:
     - list: Lista de comentarios.
@@ -108,8 +108,9 @@ def get_comentarios(id):
     comentarios_receta = []
     if comentarios:
         for comentario in comentarios.items:
-            if comentario['id'] == id:
+            if comentario.get('id') == recipe_id:
                 comentarios_receta.append(comentario)
+
     return comentarios_receta
 
 
@@ -330,7 +331,14 @@ def log_in():
     with st.expander("Forgot my password"):
         st.subheader("Enter your email and birthdate.")
         mail = st.text_input("Email", key='mail331')
-        birth = st.date_input("Birthdate", key='birth332')
+        # Configura el rango de fechas permitido hasta la fecha actual
+        max_date = datetime.today()
+        birth = st.date_input(
+            "Birthdate",
+            key='birth332',
+            min_value=datetime(1900, 1, 1),
+            max_value=max_date
+        )
 
         if not es_correo_valido(mail):
             st.error("Please enter a valid email")
