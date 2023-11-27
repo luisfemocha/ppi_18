@@ -216,6 +216,7 @@ def sign_up():
     # Iniciar un formulario en Streamlit
     with st.form(key='registration_form'):
         st.header("Register")
+        
         username = st.text_input('Username', key='username219')
         correo = st.text_input('Email', key='mail220')
         password = st.text_input('Password', type='password', key='pass221')

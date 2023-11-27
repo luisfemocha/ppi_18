@@ -62,7 +62,43 @@ def get_rutas():
         id_rutas[5]: ruta_especiales
     }
 
+def obtener_datos_github(usuario):
+    """
+    Obtiene datos del perfil de GitHub de un usuario dado.
 
+    Parámetros:
+    - usuario (str): Nombre de usuario de GitHub.
+
+    Retorna:
+    - dict: Un diccionario que contiene datos del perfil de GitHub del usuario, incluyendo detalles como la URL del perfil,
+            el nombre, la biografía y la URL del avatar.
+    - None: Si no se puede obtener la información del perfil de GitHub.
+
+    Dependencias:
+    - La función utiliza la biblioteca 'requests' para realizar solicitudes HTTP a la API de GitHub.
+
+    Ejemplo de uso:
+    ```
+    usuario = "ejemplo_usuario"
+    datos_usuario = obtener_datos_github(usuario)
+    if datos_usuario:
+        print(f"Nombre: {datos_usuario['name']}")
+        print(f"Bio: {datos_usuario['bio']}")
+    else:
+        print("No se pudo obtener la información del perfil de GitHub.")
+    ```
+    """
+    url = f"https://api.github.com/users/{usuario}"
+    response = requests.get(url)
+
+    # Verifica si la solicitud fue exitosa (código 200)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        # En caso de error en la solicitud, retorna None
+        return None
+
+      
 def obtener_datos_github(usuario):
     """
     Obtiene datos del perfil de GitHub de un usuario dado.
@@ -393,12 +429,8 @@ def detalles_abiertos(recipe):
         # Buscar comentarios de una receta
         st.header("Comments")
         id_receta = recipe["id"]
-
-        try:
-            comentarios = conexion.get_comentarios(id_receta)
-        except Exception as e:
-            comentarios = None
-            print('Error al conseguir comentarios', e)
+        
+        comentarios = conexion.get_comentarios(id_receta)
 
         # Muestra los comentarios existentes
         if comentarios:
