@@ -7,7 +7,7 @@ import streamlit as st
 import funciones
 
 # Version de la aplicación
-version = "0.20231124L"
+version = "0.20231126L"
 
 # Configuración de la página
 st.set_page_config(
@@ -55,7 +55,6 @@ def sidebar():
 
     if st.session_state['logged_in']:
         st.sidebar.title("Welcome " + st.session_state.nombre + "!")
-        print(st.session_state.cuenta)
 
         if st.sidebar.button("Home", key="home"):
             st.session_state.page = 'home'
@@ -92,7 +91,7 @@ def sidebar():
             st.session_state['logged_in'] = False
             st.session_state.nombre = None
             st.session_state.page = 'home'
-            st.experimental_rerun()
+            st.rerun()
 
     else:
         if st.sidebar.button("Home", key="home"):
@@ -100,7 +99,7 @@ def sidebar():
         
         if st.sidebar.button("contact us", key="contact_us"):
             st.session_state.page = 'contact_us'
-            
+
         # Aquí es la parte de cuenta de la aplicación
         st.sidebar.title("Account")
         # Para registrarse - crear cuenta
@@ -113,7 +112,7 @@ def sidebar():
 
     # Llamar a la función para mostrar la página correspondiente
     page = st.session_state.get('page', 'home')
-    funciones.vistas(page)
+    return funciones.vistas(page)
 
 
 def footer():

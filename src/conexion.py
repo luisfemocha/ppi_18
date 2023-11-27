@@ -1,6 +1,8 @@
 # CAPA DATOS
 
-# En este archivo se manejara el inicio de sesion y registro
+# En este archivo se manejara la conexion a la base de datos y las funciones
+# necesarias para manipularla.
+
 from datetime import datetime, timezone
 import re
 
@@ -37,12 +39,12 @@ def insert_user(username, correo, password, fecha_nacimiento):
     - dict: Información del usuario insertado.
     """
     date_joined = str(datetime.now())
-    fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d') 
+    fecha_nacimiento_str = fecha_nacimiento.strftime('%Y-%m-%d')
     user_data = {
         'username': username,
-        'correo': correo,
+        'email': correo,
         'password': password,
-        'fecha_nacimiento': fecha_nacimiento_str,
+        'birthdate': fecha_nacimiento_str,
         'date_joined': date_joined,
         'favorites': []
     }
@@ -73,11 +75,15 @@ def insertar_comentario(username, id, comentario):
 
 def actualizar_usuario(user):
     """
-    Actualiza un usuario
+    Actualiza un usuario, recibe un objeto que debe tener el atributo 'key' y
+    los valores que se deseen modificar.
 
     Returns:
     - list: Lista de usuarios.
     """
+
+    # print('dentro de actualizar usuario')
+
     dict = {k: v for k, v in user.items() if k != 'key'}
     return db_usuarios.update(dict, user['key'])
 
@@ -107,6 +113,24 @@ def get_comentarios(id):
     return comentarios_receta
 
 
+def get_usuarios():
+    """
+    Hace una llamada a la base de datos para devolver los datos de
+    todos los usuarios.
+    Devuelve False e imprime el error si no se logra realizar la consulta.
+
+    uso: usuarios = get_usuarios()
+    for usuario in usuarios.items
+    """
+    try:
+        usuarios = db_usuarios.fetch()
+    except Exception as e:
+        print("Error en el fetch 119 de usuarios: " + str(e))
+        return False
+
+    return usuarios
+
+
 def get_usernames():
     """
     Obtiene la lista de nombres de usuario almacenados en la base de datos.
@@ -114,10 +138,9 @@ def get_usernames():
     Returns:
     - list: Lista de nombres de usuario.
     """
-    try:
-        usuarios = db_usuarios.fetch()
-    except Exception as e:
-        print("Error en el fetch 115 de usuarios: " + str(e))
+    usuarios = get_usuarios()
+    if not usuarios:
+        print("Error at get_usernames()")
         return False
 
     usernames = []
@@ -138,8 +161,10 @@ def validate_username(username):
     pattern = r"^[a-zA-Z0-9_]*$"
     return bool(re.match(pattern, username))
 
+
 def es_correo_valido(correo):
-    # Expresión regular para verificar el formato básico de un correo electrónico
+    # Expresión regular para verificar el formato básico de un correo
+    # electrónico
     patron = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
     
     # Verificar si el correo coincide con el patrón
@@ -191,10 +216,15 @@ def sign_up():
     # Iniciar un formulario en Streamlit
     with st.form(key='registration_form'):
         st.header("Register")
-        username = st.text_input('Username')
-        correo = st.text_input('Email')
-        password = st.text_input('Password', type='password')
-        confirm_password = st.text_input('Confirm Password', type='password')
+        
+        username = st.text_input('Username', key='username219')
+        correo = st.text_input('Email', key='mail220')
+        password = st.text_input('Password', type='password', key='pass221')
+        confirm_password = st.text_input(
+            'Confirm Password',
+            type='password',
+            key='conf_pass225'
+        )
         fecha_nacimiento = st.date_input(
             'Birthdate',
             min_value=datetime(1900, 1, 1),
@@ -227,7 +257,7 @@ def sign_up():
             elif len(username) < 4:
                 st.error('Username must be at least 4 characters long.')
             elif not es_correo_valido(correo):
-                st.error('Correo electrónico no válido')
+                st.error('Email not valid')
             elif not validate_username(username):
                 st.error('Username can only contain alphanumeric characters'
                          'and underscores.')
@@ -261,8 +291,8 @@ def log_in():
     """
     st.title("Log in")
 
-    username = st.text_input('Username')
-    password = st.text_input('Password', type='password')
+    username = st.text_input('Username', key='username293')
+    password = st.text_input('Password', type='password', key='pass294')
 
     # Botón para iniciar sesión
     if st.button("Log in"):
@@ -283,7 +313,7 @@ def log_in():
                 st.session_state.nombre = username
                 st.session_state.cuenta = cuenta
                 st.session_state['favoritas'] = {}
-                st.experimental_rerun()
+                st.rerun()
         else:
             st.error("Incorrect Username/Password")
             st.session_state['logged_in'] = False
@@ -295,7 +325,43 @@ def log_in():
             st.session_state['logged_in'] = False
             st.session_state.nombre = None
             st.write("Logged out")
-            st.experimental_rerun()
+            st.rerun()
+
+    with st.expander("Forgot my password"):
+        st.subheader("Enter your email and birthdate.")
+        mail = st.text_input("Email", key='mail331')
+        birth = st.date_input("Birthdate", key='birth332')
+
+        if not es_correo_valido(mail):
+            st.error("Please enter a valid email")
+        else:
+            if st.button("Change my password"):
+                usuarios = get_usuarios()
+                # print(usuarios)
+
+                if not usuarios:
+                    print("Error al obtener los usuarios en el olvide "
+                          "contrasenia de log_in()")
+                    st.error("DATABASE CONNECTION ERROR")
+
+                else:
+                    found = False
+
+                    # print(usuarios.items)
+                    for user in usuarios.items:
+                        # print(user)
+                        if user['email'] == mail:
+                            found = True
+                            if user['birthdate'] == birth.strftime('%Y-%m-%d'):
+                                st.session_state.page = 'change_password'
+                                st.session_state['user_change_pass'] = user
+
+                                st.rerun()
+                            else:
+                                st.error("Wrong birthdate.")
+
+                    if not found:
+                        st.error("User not found with that email.")
 
 
 def recetas_favoritas():
@@ -347,7 +413,6 @@ def recetas_favoritas():
         st.title("User doesn't have any favorite recipes yet.")
 
     else:
-        # TODO reconfigurar final funciones.recetas_normales() por pep8
         for id in recetas_favoritas:
             receta = recetas_favoritas[id]
             st.markdown(
@@ -378,13 +443,40 @@ def validar_credenciales(username, password):
     - bool: True si las credenciales son válidas,
       False de lo contrario.
     """
-    try:
-        usuarios = db_usuarios.fetch()
-    except Exception as e:
-        print("Error en el fetch 340 de usuarios: " + str(e))
-        return 'database error'
+
+    usuarios = get_usuarios()
+    if not usuarios:
+        print("Error at validar_credenciales()")
+        return False
 
     for usuario in usuarios.items:
         if usuario['username'] == username and usuario['password'] == password:
             return usuario
     return False
+
+
+def refresh_active_user(key):
+    """
+    Esta funcion es llamada cuando algun usuario desee ver los detalles de su
+    cuenta.
+
+    Realiza una llamada a la base de datos y si recibe una respuesta
+    satisfactoria el atributo 'cuenta' del session state es actualizado y se
+    devuelve el objeto con datos del usuario.
+    En caso de no recibir una respuesta satisfactoria solo devuelve la cuenta
+    que se encuentre almacenada en el session state.
+
+    uso: usuario = refresh_active_user('enterKey')
+    """
+
+    usuarios = get_usuarios()
+    if not usuarios:
+        print("Error at refresh_active_user()")
+        print('No se actualiza el usuario')
+        return st.session_state.cuenta
+
+    for usuario in usuarios.items:
+        if usuario['key'] == key:
+            st.session_state.cuenta = usuario
+            # print('se actualiza usuario', usuario)
+            return usuario
