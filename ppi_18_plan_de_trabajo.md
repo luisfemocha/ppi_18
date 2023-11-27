@@ -25,12 +25,12 @@
 | Visualización de recetas sencillas.              | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
 
 ## 23/10/2023 - 30/10/2023
-| Tarea                                                | Responsable                                           | Estado   |
-|------------------------------------------------------|-------------------------------------------------------|----------|
-| Filtrar recetas por categoría (fit, sencilla.)       | [Luis Chamorro](https://github.com/Luisfemocha)       | Listo    |
-| Filtrar receta por dificultad y subcategoria.        | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo    |
-| Detalle de receta (incluyendo pasos, descripciones.) | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo    |
-| Perfil de usuario.                                   | [Luis Chamorro](https://github.com/Luisfemocha)       | Empezado |
+| Tarea                                                | Responsable                                           | Estado |
+|------------------------------------------------------|-------------------------------------------------------|--------|
+| Filtrar recetas por categoría (fit, sencilla.)       | [Luis Chamorro](https://github.com/Luisfemocha)       | Listo  |
+| Filtrar receta por dificultad y subcategoria.        | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
+| Detalle de receta (incluyendo pasos, descripciones.) | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
+| Perfil de usuario.                                   | [Luis Chamorro](https://github.com/Luisfemocha)       | Listo  |
 
 ## 30/10/2023 - 06/11/2023
 | Tarea                                       | Responsable                                           | Estado |
@@ -53,6 +53,6 @@
 | Mostrar gráficas de detalles nutricionales.           | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) | Listo  |
 
 ## 20/11/2023 - 27/11/2023
-| Tarea                           | Responsable                                                                                             | Estado      |
-|---------------------------------|---------------------------------------------------------------------------------------------------------|-------------|
-| Pruebas finales y correcciones. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) y [Luis Chamorro](https://github.com/Luisfemocha) | Sin Empezar |
+| Tarea                           | Responsable                                                                                             | Estado |
+|---------------------------------|---------------------------------------------------------------------------------------------------------|--------|
+| Pruebas finales y correcciones. | [Daniel Felipe Garzon](https://github.com/Dgarzonac9) y [Luis Chamorro](https://github.com/Luisfemocha) | Listo  |
