@@ -170,14 +170,14 @@ def set_recetas(categoria="*", forzar=False):
     Ejemplo de uso:
     >>> set_recetas(categoria="recetas_normales", forzar=True)
     """
-    print('entra a set_recetas()', categoria, forzar)
+    # print('entra a set_recetas()', categoria, forzar)
     rutas = get_rutas()
 
     def set_receta(categoria, forzar):
         nom_cat = 'recetas_' + categoria
         if nom_cat not in st.session_state or \
                 nom_cat + "_json" not in st.session_state or forzar:
-            print('se actualiza', cat)
+            # print('se actualiza', cat)
             ruta = rutas[cat]
             json_recetas = cargar_datos(ruta)
 
@@ -208,7 +208,7 @@ def set_recetas(categoria="*", forzar=False):
                     lista_ingredientes = pd.read_json(ruta_ingredientes)
                     lista_ingredientes = lista_ingredientes["ingredients"][0]
                     st.session_state['ingredientes'] = lista_ingredientes
-                    print('se actualiza ingredientes')
+                    # print('se actualiza ingredientes')
 
                 else:
                     print('no se actualiza ingredientes')
@@ -222,8 +222,8 @@ def set_recetas(categoria="*", forzar=False):
         try:
             if int(categoria) in id_rutas:
                 categoria = id_rutas[int(categoria)]
-            else:
-                print('categoria no esta en id_rutas:', categoria)
+            # else:
+            #    print('categoria no esta en id_rutas:', categoria)
 
         except Exception as e:
             print("Error al castear categoria en set_receta", e)
@@ -301,44 +301,43 @@ def detalles_abiertos(recipe):
     with st.expander(f"View Details of {recipe['name']}"):
         st.subheader(recipe["name"])
 
-        if recipe["id"] in st.session_state.cuenta['favorites']:
-            btn_fvrt = st.button(
-                "Remove recipe from favorites",
-                key="unfav-" + recipe["id"]
-            )
-            if btn_fvrt:
-                print('se elimina la receta de favoritas')
-                st.session_state.cuenta['favorites'].remove(recipe["id"])
-                del st.session_state.favoritas[recipe["id"]]
-                conexion.actualizar_usuario(st.session_state.cuenta)
-                st.write('Receipt removed from favorites.')
-                # vistas("home")
-        else:
-            btn_fvrt = st.button(
-                "Add recipe to favorites", key="fav-" + recipe["id"]
-            )
-            if btn_fvrt:
-                print('Se agrega a favoritas la receta')
-                # print(recipe)
-                print(recipe["id"])
+        if st.session_state['logged_in']:
+            if recipe["id"] in st.session_state.cuenta['favorites']:
+                btn_fvrt = st.button("Remove recipe from favorites")
 
-                try:
-                    print("se intenta encontrar la receta con el id")
-
-                    print(
-                        st.session_state['recetas'][recipe["id"]])
-
-                    if 'favoritas' not in st.session_state:
-                        st.session_state['favoritas'] = {}
-                    st.session_state.favoritas[recipe["id"]] = recipe
-                    st.session_state.cuenta['favorites'].append(
-                        recipe["id"])
-
+                if btn_fvrt:
+                    print('se elimina la receta de favoritas', recipe['id'])
+                    st.session_state.cuenta['favorites'].remove(recipe["id"])
+                    del st.session_state.favoritas[recipe["id"]]
                     conexion.actualizar_usuario(st.session_state.cuenta)
-                    st.write('Done, receipt added as favorite')
-                except Exception as e:
-                    print("error a la hora de agregar favorita", e)
-                    st.write('Error, talk to an admin.', datetime.now())
+                    st.write('Receipt removed from favorites.')
+                    # vistas("home")
+            else:
+                btn_fvrt = st.button("Add recipe to favorites")
+                if btn_fvrt:
+                    print('Se agrega a favoritas la receta', recipe['id'])
+                    # print(recipe)
+                    # print(recipe["id"])
+
+                    try:
+                        print("se intenta encontrar la receta con el id")
+
+                        # print(
+                        #     st.session_state['recetas'][recipe["id"]])
+
+                        if 'favoritas' not in st.session_state:
+                            st.session_state['favoritas'] = {}
+                        st.session_state.favoritas[recipe["id"]] = recipe
+                        st.session_state.cuenta['favorites'].append(
+                            recipe["id"]
+                        )
+
+                        conexion.actualizar_usuario(st.session_state.cuenta)
+                        st.write('Done, receipt added as favorite')
+
+                    except Exception as e:
+                        print("error a la hora de agregar favorita", e)
+                        st.write('Error, talk to an admin.', datetime.now())
 
         # Detalles de la receta
         st.header("Recipe Details")
@@ -486,6 +485,8 @@ def vistas(vista):
         return detalles_cuenta()
     elif vista == 'edit_account':
         return detalles_cuenta(True)
+    elif vista == 'change_password':
+        return change_password()
     else:
         print("Error en funcion vistas. Caso no apreciado " + vista)
         return False
@@ -608,7 +609,7 @@ def recetas_normales():
         # session_state, pero para evitar problemas se crea el objeto.
 
         # Se crea un objeto para almacenar las recetas
-        print("no estaba la receta")
+        # print("no estaba la receta")
         obj_recetas_normales = {}
         for receta_n in json_recetas_normales:
             if receta_n["id"] not in obj_recetas_normales:
@@ -753,7 +754,7 @@ def recetas_saludables():
         df_recetas_saludables = pd.DataFrame(json_recetas_saludables)
 
         # Se crea un objeto para almacenar las recetas
-        print("no estaban las recetas saludables")
+        # print("no estaban las recetas saludables")
         obj_recetas_saludables = {}
         for receta_s in json_recetas_saludables:
             if receta_s["id"] not in obj_recetas_saludables:
@@ -896,7 +897,7 @@ def recetas_presupuesto():
         df_recetas_presupuesto = pd.DataFrame(json_recetas_presupuesto)
 
         # Se crea un objeto para almacenar las recetas
-        print("no estaban las recetas presupuesto")
+        # print("no estaban las recetas presupuesto")
         obj_recetas_presupuesto = {}
         for receta_p in json_recetas_presupuesto:
             if receta_p["id"] not in obj_recetas_presupuesto:
@@ -1037,7 +1038,7 @@ def recetas_horneados():
         df_recetas_horneados = pd.DataFrame(json_recetas_horneados)
 
         # Se crea un objeto para almacenar las recetas
-        print("no estaban las recetas horneadas")
+        # print("no estaban las recetas horneadas")
         obj_recetas_horneados = {}
         for receta_horneado in json_recetas_horneados:
             if receta_horneado["id"] not in obj_recetas_horneados:
@@ -1180,7 +1181,7 @@ def recetas_especiales():
         st.session_state['recetas_especiales_json'] = json_recetas_especiales
         df_recetas_especiales = pd.DataFrame(json_recetas_especiales)
         # Se crea un objeto para almacenar las recetas
-        print("no estaban las recetas especiales")
+        # print("no estaban las recetas especiales")
         obj_recetas_especiales = {}
         for receta_e in json_recetas_especiales:
             if receta_e["id"] not in obj_recetas_especiales:
@@ -1291,7 +1292,7 @@ def recetas_especiales():
 def detalles_cuenta(edit=False):
     cuenta_aux = conexion.refresh_active_user(st.session_state.cuenta['key'])
 
-    print(cuenta_aux)
+    # print(cuenta_aux)
     if edit:
         st.title('Edit account')
     else:
@@ -1304,7 +1305,7 @@ def detalles_cuenta(edit=False):
             '/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous"'
             'integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXE'
             'V/Dwwykc2MPK8M2HN">'
-            
+
             '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js'
             '/bootstrap.bundle.min.js" crossorigin="anonymous"'
             'integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/'
@@ -1362,7 +1363,7 @@ def detalles_cuenta(edit=False):
                     aux_favorito.append(st.session_state['recetas'][a]['name'])
                 except Exception as e:
                     print('No se encontro la receta', e)
-                    print(st.session_state['recetas'])
+                    # print(st.session_state['recetas'])
 
             aux_valor = aux_favorito
 
@@ -1384,10 +1385,14 @@ def detalles_cuenta(edit=False):
 
     if edit:
         if st.button('Edit'):
-            st.write("You have 5 seconds to regret that.")
+            st.write("You have 10 seconds to regret that.")
             new_values = {'key': st.session_state.cuenta['key']}
             for valor in edit_values:
                 if edit_values[valor] is not None and edit_values[valor] != '':
+                    if (valor == 'email' and
+                            not conexion.es_correo_valido(edit_values[valor])):
+                        st.error("Please enter a valid email")
+                        continue
                     new_values[valor] = edit_values[valor]
                     st.write(valor + " -> " + edit_values[valor])
 
@@ -1397,7 +1402,7 @@ def detalles_cuenta(edit=False):
                     print('Changes canceled.')
                     st.rerun()
 
-                sleep(5)
+                sleep(10)
 
                 print('Se hace el cambio')
                 print(conexion.actualizar_usuario(new_values))
@@ -1407,7 +1412,6 @@ def detalles_cuenta(edit=False):
                 st.write("No changes made")
 
         if st.button("Restore changes"):
-            print('b')
             st.session_state.page = 'account'
             st.rerun()
 
@@ -1421,9 +1425,42 @@ def detalles_cuenta(edit=False):
             print('No se pudieron mostrar los atributos del usuario', e)
 
         if st.button(
-            'Edit account',
-            help='Click to change your attributes'
+                'Edit account',
+                help='Click to change your attributes'
         ):
             st.session_state.page = 'edit_account'
             st.rerun()
             return True
+
+
+def change_password():
+    st.title("Forgot my password")
+    st.write("You can write a new password. Please confirm it.")
+
+    user = st.session_state['user_change_pass']
+    password = st.text_input(
+        "Password",
+        type='password',
+        key='pass360'
+    )
+    password2 = st.text_input(
+        "Confirm password",
+        type='password',
+        key='conf_pass365'
+    )
+    if st.button("Change", key='btn367'):
+        if password == password2:
+            if user['password'] == password:
+                st.write(
+                    "Password not changed, is the "
+                    "same as the old one.")
+            else:
+                new_user = {
+                    'key': user['key'],
+                    'password': password
+                }
+                print("Respuesta al olvide contrasena")
+                print(conexion.actualizar_usuario(new_user))
+                st.write("Password successfully changed")
+        else:
+            st.error("Password must match.")
