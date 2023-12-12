@@ -81,6 +81,9 @@ def sidebar():
         
         st.sidebar.title("Account")
 
+        if st.sidebar.button("Account", key="account"):
+            st.session_state.page = 'account'
+
         if st.sidebar.button('Favorites', key="favorites"):
             st.session_state.page = 'favorites'
 

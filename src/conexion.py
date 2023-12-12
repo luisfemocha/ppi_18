@@ -110,8 +110,8 @@ def get_comentarios(recipe_id):
         for comentario in comentarios.items:
             if comentario.get('id') == recipe_id:
                 comentarios_receta.append(comentario)
-    return comentarios_receta
 
+    return comentarios_receta
 
 
 def get_usuarios():
@@ -338,8 +338,8 @@ def log_in():
             "Birthdate",
             key='birth332',
             min_value=datetime(1900, 1, 1),
-            max_value=max_date)
-
+            max_value=max_date
+        )
 
         if not es_correo_valido(mail):
             st.error("Please enter a valid email")
@@ -397,7 +397,11 @@ def recetas_favoritas():
 
         ids_favoritas = session_state.cuenta['favorites']
 
-        if 'recetas' not in st.session_state:
+        if [
+            'recetas', 'recetas_normales', 'recetas_saludables',
+            'recetas_presupuesto', 'recetas_horneados',
+            'recetas_especiales'
+        ] not in st.session_state:
             funciones.set_recetas('*', True)
 
         recetas = session_state.recetas

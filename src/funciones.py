@@ -62,6 +62,7 @@ def get_rutas():
         id_rutas[5]: ruta_especiales
     }
 
+
 def obtener_datos_github(usuario):
     """
     Obtiene datos del perfil de GitHub de un usuario dado.
@@ -228,7 +229,10 @@ def set_recetas(categoria="*", forzar=False):
                 else:
                     print("Ya estaba la receta con id", receta["id"])
 
-            st.session_state[nom_cat] = obj_recetas
+            try:
+                st.session_state[nom_cat] = obj_recetas
+            except Exception as e:
+                print("Error al actualizar recetas", e)
 
         else:
             print('no se actualiza', cat)
@@ -353,7 +357,7 @@ def detalles_abiertos(recipe):
                     conexion.actualizar_usuario(st.session_state.cuenta)
                     st.write('Receipt removed from favorites.')
                     st.rerun()
-                    # vistas("home")
+
             else:
                 btn_fvrt = st.button(
                     "Add recipe to favorites",
@@ -380,6 +384,7 @@ def detalles_abiertos(recipe):
                         conexion.actualizar_usuario(st.session_state.cuenta)
                         st.write('Done, receipt added as favorite')
                         st.rerun()
+
                     except Exception as e:
                         print("error a la hora de agregar favorita", e)
                         st.write('Error, talk to an admin.', datetime.now())
@@ -472,19 +477,19 @@ def detalles_abiertos(recipe):
                 # Verifica si el comentario no está vacío
                 if nuevo_comentario:
                     try:
-                        # Lógica para guardar el nuevo comentario en tu
+                        # Lógica para guardar el nuevo comentario en la
+                        # base de datos
                         conexion.insertar_comentario(
                             usuario, id_receta, nuevo_comentario
                         )
                         st.success("Comment added successfully")
                         st.rerun()
                         nuevo_comentario = ""
+
                     except Exception as e:
                         st.error(f"Error adding comment: {e}")
                 else:
                     st.warning("Please write a comment before submitting.")
-
-
 
 
 # Segun esta funcion se cambian de vistas
